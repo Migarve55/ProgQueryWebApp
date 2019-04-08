@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="fragments/head" />
+<body>
+	<nav th:replace="fragments/nav" />
+	<!-- Options -->
+	<script src="/script/progress.js" type="text/javascript"></script>
+	<div class="container">
+		<br>
+		<div class="d-flex justify-content-center align-items-center">
+		  <h2 class="mr-3">Loading...</h2>
+		  <div class="spinner-border" role="status">
+		    <span class="sr-only"></span>
+		  </div>
+		</div>
+		<br>
+		<!-- Report -->
+		<div class="container">
+			<span id="msg">Doing stuff...</span>
+			<div class="progress">
+			  	<div id="progressBar" class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar"></div>
+			</div>
+		</div>
+	</div>
+	<footer th:replace="fragments/footer" />
+</body>
+</html>
