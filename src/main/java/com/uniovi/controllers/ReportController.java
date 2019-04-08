@@ -59,7 +59,7 @@ public class ReportController {
 		if (task.isCancelled())
 			return "redirect:/";
 		if (!task.isDone())
-			return "redirect:/progress/";
+			return "redirect:/loading/";
 		//Is done
 		List<CodeError> errorList = null;
 		try {
