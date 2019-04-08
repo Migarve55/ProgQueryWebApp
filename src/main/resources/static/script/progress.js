@@ -22,6 +22,8 @@ function updateProgressBar() {
 	  })
 }
 
+updateProgressBar();
+
 setInterval(function() {
 	updateProgressBar();
 }, 1500);
