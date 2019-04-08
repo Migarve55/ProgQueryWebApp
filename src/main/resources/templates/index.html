@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="fragments/head" />
+<body>
+	<nav th:replace="fragments/nav" />
+	<!-- Options -->
+	<div class="container">
+		<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+  			<h1 class="display-4">Options</h1>
+ 			 <p class="lead">Choose an option</p>
+		</div>
+		<div class="card-deck mb-3 text-center">
+			<div class="card mb-4 shadow-sm">
+				<div class="card-header">
+					<h4 class="my-0 font-weight-normal">Single File</h4>
+				</div>
+				<div class="card-body">
+					<i class="fa fa-file-o bigIcon"></i>
+					<p>Upload a Single File</p>
+					<a type="button" class="btn btn-block btn-primary" href="/analyzer/file/">Go</a>
+				</div>
+			</div>
+			<div class="card mb-4 shadow-sm">
+				<div class="card-header">
+					<h4 class="my-0 font-weight-normal">Zip File</h4>
+				</div>
+				<div class="card-body">
+					<i class="fa fa-file-archive-o bigIcon"></i>
+					<p>Upload a Zip File</p>
+					<a type="button" class="btn btn-block btn-primary" href="/analyzer/zip/">Go</a>
+				</div>
+			</div>
+			<div class="card mb-4 shadow-sm">
+				<div class="card-header">
+					<h4 class="my-0 font-weight-normal">From GitHub URL</h4>
+				</div>
+				<div class="card-body">
+					<i class="fa fa-github bigIcon"></i>
+					<p>Upload from a GitHub repository URL</p>
+					<a type="button" class="btn btn-block btn-primary" href="/analyzer/git/">Go</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<footer th:replace="fragments/footer" />
+</body>
+</html>

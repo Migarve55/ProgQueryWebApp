@@ -1,0 +1,21 @@
+<!-- nav.html -->
+<nav>
+	<ul class="nav nav-tabs">
+		<li class="nav-item"><a class="nav-link active" href="/"
+			th:text="#{nav.title}">Home</a></li>
+		<li class="nav-item dropdown"><a class="nav-link dropdown-toggle"
+			data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+			aria-expanded="false" th:text="#{language.change}">Dropdown</a>
+			<div class="dropdown-menu">
+				<a class="dropdown-item" id="btnEnglish" value="EN"> <img
+					th:src="@{/img/if_uk_flag.png}"
+					style="border: 0; float: left; margin-right: 15px" /> <span
+					th:text="#{language.en}">Inglés</span>
+				</a> <a class="dropdown-item" id="btnSpanish" value="ES"> <img
+					th:src="@{/img/if_spain_flag.png}"
+					style="border: 0; float: left; margin-right: 15px" /> <span
+					th:text="#{language.es}">Español</span>
+				</a>
+			</div></li>
+	</ul>
+</nav>
