@@ -39,13 +39,7 @@ public class AnalyzerController {
 	@RequestMapping(path = "/analyzer/file", method = RequestMethod.POST, consumes = { "multipart/form-data" })
 	public String postAnalizeFile(@RequestParam("file") MultipartFile file, @RequestParam("args") String args, RedirectAttributes redirect) {
 		try {
-			String fileName = file.getOriginalFilename();
-			InputStream is = file.getInputStream();
-			String path = "src/main/resources/uploads/" + fileName;
-			Files.copy(is, 
-					Paths.get(path),
-					StandardCopyOption.REPLACE_EXISTING);
-			analyzerService.analyzeFile(new File(path), args);
+			analyzerService.analyzeFile(file, args);
 		} catch (IOException e) {
 			e.printStackTrace();
 			redirect.addFlashAttribute("error", "error.fileError");
