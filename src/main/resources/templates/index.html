@@ -9,6 +9,9 @@
   			<h1 class="display-4">Options</h1>
  			 <p class="lead">Choose an option</p>
 		</div>
+		<!-- Error -->
+		<div class="alert alert-danger" role="alert" th:if=${error} th:text=#{${error}}>
+		</div>
 		<div class="card-deck mb-3 text-center">
 			<div class="card mb-4 shadow-sm">
 				<div class="card-header">
