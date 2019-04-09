@@ -1,5 +1,6 @@
 package com.uniovi.tasks.callables;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -31,7 +32,11 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<CodeErro
 	
 	protected ReportFactory setupReportFactory(String dbPath) {
 		ReportFactory reportFactory = new ReportFactory(dbPath);
-		reportFactory.loadQueriesFromFile("/src/resources/queries.properties");
+		try {
+			reportFactory.loadQueriesFromFile("/src/resources/queries.properties");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return reportFactory;
 	}
 

@@ -3,7 +3,7 @@ package com.uniovi.tasks.callables;
 import java.io.File;
 import java.util.List;
 
-import com.uniovi.analyzer.DatabaseManager;
+import com.uniovi.analyzer.EnviromentManager;
 import com.uniovi.analyzer.JavaCompilerUtil;
 import com.uniovi.analyzer.reporter.ReportFactory;
 import com.uniovi.entities.CodeError;
@@ -14,7 +14,7 @@ public class FileAnalyzerCallable extends AbstractAnalyzerCallable {
 	
 	//Utilities
 	private JavaCompilerUtil compiler = new JavaCompilerUtil();
-	private DatabaseManager dbManager = new DatabaseManager();
+	private EnviromentManager enviromentManager = new EnviromentManager();
 	
 	public FileAnalyzerCallable(String args, File file) {
 		super(args);
@@ -23,16 +23,27 @@ public class FileAnalyzerCallable extends AbstractAnalyzerCallable {
 
 	@Override
 	public List<CodeError> call() throws Exception {
-		//Execution
-		task.setStatus("Creating neo4j database...");
-		String dbPath = dbManager.createDb("/src/resources/dbs/");
-		task.incrementProgress(15);
+		//Creating enviroment
+		task.setStatus("Creating enviroment...");
+		String basePath = enviromentManager.createEnviroment();
+		
+		//Compilation
+		task.incrementProgress(25);
 		task.setStatus(String.format("Compiling %s...", file.getName()));
-		compiler.compile(file.getAbsolutePath(), getArgs(), dbPath);
-		task.incrementProgress(50);
+		compiler.compile(basePath, getArgs());
+		
+		//Report creation
+		task.incrementProgress(25);
 		task.setStatus("Creating report...");
-		ReportFactory reportFactory = setupReportFactory(dbPath);
+		ReportFactory reportFactory = setupReportFactory(basePath + "/neo4j/data/ProgQuery.db");
 		List<CodeError> report = reportFactory.generateReport();
+		
+		//Cleaning enviroment
+		task.incrementProgress(25);
+		task.setStatus("Cleaning enviroment...");
+		enviromentManager.deleteEnviroment(basePath);
+		
+		//End
 		return report;
 	}
 
