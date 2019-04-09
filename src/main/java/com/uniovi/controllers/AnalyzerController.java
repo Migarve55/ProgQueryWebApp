@@ -1,12 +1,6 @@
 package com.uniovi.controllers;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,13 +52,7 @@ public class AnalyzerController {
 	@RequestMapping(path = "/analyzer/zip", method = RequestMethod.POST, consumes = { "multipart/form-data" })
 	public String postAnalizeZip(@RequestParam("zip") MultipartFile zip, @RequestParam("args") String args, RedirectAttributes redirect) {
 		try {
-			String fileName = zip.getOriginalFilename();
-			InputStream is = zip.getInputStream();
-			String path = "src/main/resources/uploads/" + fileName;
-			Files.copy(is, 
-					Paths.get(path),
-					StandardCopyOption.REPLACE_EXISTING);
-			analyzerService.analyzeZip(new File(path), args);
+			analyzerService.analyzeZip(zip, args);
 		} catch (IOException e) {
 			e.printStackTrace();
 			redirect.addFlashAttribute("error", "error.fileError");
