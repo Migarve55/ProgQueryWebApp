@@ -33,7 +33,7 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<CodeErro
 	protected ReportFactory setupReportFactory(String dbPath) {
 		ReportFactory reportFactory = new ReportFactory(dbPath);
 		try {
-			reportFactory.loadQueriesFromFile("/src/resources/queries.properties");
+			reportFactory.loadQueriesFromFile("src/main/resources/queries.txt");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.uniovi.tasks.AnalyzerTask;
 import com.uniovi.tasks.callables.AbstractAnalyzerCallable;
@@ -25,7 +26,7 @@ public class AnalyzerService {
 	
 	private ExecutorService executor = Executors.newFixedThreadPool(4); 
 	
-	public void analyzeFile(File file, String args) throws IOException {
+	public void analyzeFile(MultipartFile file, String args) throws IOException {
 		launchAnalyzerTask(new FileAnalyzerCallable(args, file));
 	}
 	

@@ -3,6 +3,7 @@ package com.uniovi.analyzer.reporter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -14,7 +15,7 @@ import com.uniovi.entities.CodeError;
 public class ReportFactory {
 	
 	private String dbPath;
-	private List<Query> queries;
+	private List<Query> queries = new ArrayList<Query>();
 	
 	public ReportFactory(String dbPath) {
 		this.dbPath = dbPath;
@@ -44,7 +45,7 @@ public class ReportFactory {
 		CodeError error = new CodeError();
 		error.setDescription(query.getDescrition());
 		error.setLevel(query.getLevel());
-		return null;
+		return error;
 	}
 	
 }
