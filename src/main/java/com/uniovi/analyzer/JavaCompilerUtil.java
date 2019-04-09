@@ -9,7 +9,7 @@ public class JavaCompilerUtil {
 	private final static String PLUGIN_ARG = "-Xplugin:ProgQueryPlugin";
 	
 	/**
-	 * Compiles everything inside the enviroment
+	 * Compiles everything a file
 	 * 
 	 * @param basePath
 	 * @param fileName
@@ -22,6 +22,21 @@ public class JavaCompilerUtil {
 				PLUGIN_ARG, 
 				"-d", basePath,
 				basePath + filename);
+	}
+	
+	/**
+	 * Compiles everything a file
+	 * 
+	 * @param basePath
+	 * @param arguments
+	 */
+	public void compileFolder(String basePath, String arguments) {
+		JavaCompiler compiler = getCompiler();
+		compiler.run(null, null, null, 
+				"-cp", PLUGIN_CLASSPATH, 
+				PLUGIN_ARG, 
+				"-d", basePath,
+				basePath+ "*");
 	}
 	
 	private JavaCompiler getCompiler() {

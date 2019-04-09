@@ -1,6 +1,5 @@
 package com.uniovi.services;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,7 +29,7 @@ public class AnalyzerService {
 		launchAnalyzerTask(new FileAnalyzerCallable(args, file));
 	}
 	
-	public void analyzeZip(File zip, String args) throws IOException {
+	public void analyzeZip(MultipartFile zip, String args) throws IOException {
 		launchAnalyzerTask(new ZipAnalizerCallable(args, zip));
 	}
 
