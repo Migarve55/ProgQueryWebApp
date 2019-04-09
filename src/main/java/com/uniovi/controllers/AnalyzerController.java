@@ -1,5 +1,12 @@
 package com.uniovi.controllers;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,54 +21,76 @@ import com.uniovi.tasks.AnalyzerTask;
 
 @Controller
 public class AnalyzerController {
-	
+
 	@Autowired
 	private HttpSession session;
-	
+
 	@Autowired
 	private AnalyzerService analyzerService;
-	
-	@RequestMapping(path="/analyzer/file", method=RequestMethod.GET)
+
+	@RequestMapping(path = "/analyzer/file", method = RequestMethod.GET)
 	public String getAnalizeFile() {
 		if (!isTaskDone())
 			return "redirect:/loading";
 		return "/analyzer/file";
 	}
-	
-	@RequestMapping(path="/analyzer/file", method=RequestMethod.POST, consumes = {"multipart/form-data"})
-	public String postAnalizeFile(@RequestParam("file") MultipartFile multipart, @RequestParam("args") String args) {
-		analyzerService.analyzeFile(multipart.getResource(), args);
+
+	@RequestMapping(path = "/analyzer/file", method = RequestMethod.POST, consumes = { "multipart/form-data" })
+	public String postAnalizeFile(@RequestParam("file") MultipartFile file, @RequestParam("args") String args) {
+		try {
+			String fileName = file.getOriginalFilename();
+			InputStream is = file.getInputStream();
+			String path = "src/main/resources/uploads/" + fileName;
+			Files.copy(is, 
+					Paths.get(path),
+					StandardCopyOption.REPLACE_EXISTING);
+			analyzerService.analyzeFile(new File(path), args);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "redirect:/";
+		}
 		return "redirect:/loading";
 	}
-	
-	@RequestMapping(path="/analyzer/zip", method=RequestMethod.GET)
+
+	@RequestMapping(path = "/analyzer/zip", method = RequestMethod.GET)
 	public String getAnalizeZip() {
 		if (!isTaskDone())
 			return "redirect:/loading";
 		return "/analyzer/zip";
 	}
-	
-	@RequestMapping(path="/analyzer/zip", method=RequestMethod.POST, consumes = {"multipart/form-data"})
-	public String postAnalizeZip(@RequestParam("zip") MultipartFile multipart, @RequestParam("args") String args) {
-		analyzerService.analyzeZip(multipart.getResource(), args);
+
+	@RequestMapping(path = "/analyzer/zip", method = RequestMethod.POST, consumes = { "multipart/form-data" })
+	public String postAnalizeZip(@RequestParam("zip") MultipartFile zip, @RequestParam("args") String args) {
+		try {
+			String fileName = zip.getOriginalFilename();
+			InputStream is = zip.getInputStream();
+			String path = "src/main/resources/uploads/" + fileName;
+			Files.copy(is, 
+					Paths.get(path),
+					StandardCopyOption.REPLACE_EXISTING);
+			analyzerService.analyzeZip(new File(path), args);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "redirect:/";
+		}
 		return "redirect:/loading";
 	}
-	
-	@RequestMapping(path="/analyzer/git", method=RequestMethod.GET)
+
+	@RequestMapping(path = "/analyzer/git", method = RequestMethod.GET)
 	public String getAnalizeGit() {
 		if (!isTaskDone())
 			return "redirect:/loading";
 		return "/analyzer/git";
 	}
-	
-	@RequestMapping(path="/analyzer/git", method=RequestMethod.POST)
+
+	@RequestMapping(path = "/analyzer/git", method = RequestMethod.POST)
 	public String postAnalizeGit(@RequestParam("url") String url, @RequestParam("args") String args) {
 		analyzerService.analyzeGitRepo(url, args);
 		return "redirect:/loading";
 	}
-	
-	//Auxiliars
-	
+
+	// Auxiliars
+
 	private boolean isTaskDone() {
 		AnalyzerTask task = (AnalyzerTask) session.getAttribute("task");
 		if (task != null) {
