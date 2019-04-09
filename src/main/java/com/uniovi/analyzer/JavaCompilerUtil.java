@@ -5,21 +5,23 @@ import javax.tools.ToolProvider;
 
 public class JavaCompilerUtil {
 	
-	private final static String PLUGIN_CLASSPATH = "-cp \\src\\main\\resources\\plugin\\ProgQuery.jar;\\src\\main\\resources\\plugin\\neo4jLibs\\*;";
+	private final static String PLUGIN_CLASSPATH = "src/main/resources/plugin/ProgQuery.jar;src/main/resources/plugin/neo4jLibs/*;";
 	private final static String PLUGIN_ARG = "-Xplugin:ProgQueryPlugin";
 	
 	/**
 	 * Compiles everything inside the enviroment
 	 * 
 	 * @param basePath
+	 * @param fileName
 	 * @param arguments
 	 */
-	public void compile(String basePath, String arguments) {
+	public void compileFile(String basePath, String filename, String arguments) {
 		JavaCompiler compiler = getCompiler();
-		String outputPathArg = String.format("-d %sout/", basePath); 
-		compiler.run(null, null, null, PLUGIN_CLASSPATH, PLUGIN_ARG, 
-				outputPathArg, basePath, 
-				arguments == null ? "" : arguments);
+		compiler.run(null, null, null, 
+				"-cp", PLUGIN_CLASSPATH, 
+				PLUGIN_ARG, 
+				"-d", basePath,
+				basePath + filename);
 	}
 	
 	private JavaCompiler getCompiler() {
