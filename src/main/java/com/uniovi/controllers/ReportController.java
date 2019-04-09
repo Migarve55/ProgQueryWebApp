@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.uniovi.entities.CodeError;
 import com.uniovi.tasks.AnalyzerTask;
@@ -24,11 +25,12 @@ public class ReportController {
 	private HttpSession session;
 	
 	@RequestMapping("/loading")
-	public String getLoading() {
+	public String getLoading(RedirectAttributes redirect) {
 		AnalyzerTask task = (AnalyzerTask) session.getAttribute("task");
 		if (task == null) {
 			return "";
 		} else if (task.isCancelled()) {
+			redirect.addFlashAttribute("error", "error.taskCancelled");
 			return "redirect:/";
 		} else if (task.isDone()) {
 			return "redirect:/report";
@@ -52,13 +54,15 @@ public class ReportController {
 	}
 	
 	@RequestMapping("/report")
-	public String getReport(Model model) {
+	public String getReport(Model model, RedirectAttributes redirect) {
 		AnalyzerTask task = (AnalyzerTask) session.getAttribute("task");
-		if (task == null)
+		if (task == null) {
+			redirect.addFlashAttribute("error", "error.noReport");
 			return "redirect:/";
-		if (task.isCancelled())
+		} else if (task.isCancelled()) {
+			redirect.addFlashAttribute("error", "error.taskCancelled");
 			return "redirect:/";
-		if (!task.isDone())
+		} else if (!task.isDone())
 			return "redirect:/loading/";
 		//Is done
 		List<CodeError> errorList = null;
