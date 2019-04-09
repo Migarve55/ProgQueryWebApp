@@ -1,5 +1,8 @@
 package com.uniovi.analyzer;
 
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
+
 public class JavaCompilerUtil {
 	
 	/**
@@ -10,7 +13,9 @@ public class JavaCompilerUtil {
 	 * @param dbPath
 	 */
 	public void compile(String classPath, String arguments, String dbPath) {
-		
+		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		String finalArguments = String.format("%s -Xplugin:ProgQueryPlugin %s", classPath, arguments);
+		compiler.run(null, null, null, finalArguments);
 	}
 
 }
