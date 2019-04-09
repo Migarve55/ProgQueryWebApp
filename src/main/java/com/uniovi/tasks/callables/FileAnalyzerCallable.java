@@ -55,7 +55,7 @@ public class FileAnalyzerCallable extends AbstractAnalyzerCallable {
 		//Compilation
 		task.incrementProgress(25);
 		task.setStatus(String.format("Compiling %s...", file.getName()));
-		compiler.compile(basePath, getArgs());
+		compiler.compileFile(basePath, file.getName(), getArgs());
 		
 		//Report creation
 		task.incrementProgress(25);
