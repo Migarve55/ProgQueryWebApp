@@ -1,13 +1,16 @@
 package com.uniovi.analyzer;
 
+import java.util.UUID;
+
 public class DatabaseManager {
 
-	public void createDb(String dbName) {
-		
+	/**
+	 * 
+	 * @param basePath
+	 * @return
+	 */
+	public String createDb(String basePath) {
+		return String.format("%sddbb_%s", basePath, UUID.randomUUID());
 	}
-	
-	public void destroyDb(String dbName) {
-		
-	}
-	
+
 }

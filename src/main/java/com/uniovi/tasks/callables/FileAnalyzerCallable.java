@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.uniovi.analyzer.DatabaseManager;
 import com.uniovi.analyzer.JavaCompilerUtil;
-import com.uniovi.analyzer.ReportFactory;
+import com.uniovi.analyzer.reporter.ReportFactory;
 import com.uniovi.entities.CodeError;
 
 public class FileAnalyzerCallable extends AbstractAnalyzerCallable {
@@ -15,7 +15,6 @@ public class FileAnalyzerCallable extends AbstractAnalyzerCallable {
 	//Utilities
 	private JavaCompilerUtil compiler = new JavaCompilerUtil();
 	private DatabaseManager dbManager = new DatabaseManager();
-	private ReportFactory reportFactory = new ReportFactory();
 	
 	public FileAnalyzerCallable(String args, File file) {
 		super(args);
@@ -24,18 +23,18 @@ public class FileAnalyzerCallable extends AbstractAnalyzerCallable {
 
 	@Override
 	public List<CodeError> call() throws Exception {
-		String dbName = "testDb";
-		task.setStatus(String.format("Creating neo4j database (%s)...", dbName));
-		dbManager.createDb(dbName);
+		//Execution
+		task.setStatus("Creating neo4j database...");
+		String dbPath = dbManager.createDb("/src/resources/dbs/");
 		task.incrementProgress(15);
 		task.setStatus(String.format("Compiling %s...", file.getName()));
-		compiler.compile(file.getAbsolutePath(), getArgs(), dbName);
+		compiler.compile(file.getAbsolutePath(), getArgs(), dbPath);
 		task.incrementProgress(50);
 		task.setStatus("Creating report...");
-		List<CodeError> report = reportFactory.generateReport(dbName);
-		task.incrementProgress(90);
-		task.setStatus(String.format("Deleting neo4j database (%s)...", dbName));
+		ReportFactory reportFactory = setupReportFactory(dbPath);
+		List<CodeError> report = reportFactory.generateReport();
 		return report;
 	}
+
 
 }

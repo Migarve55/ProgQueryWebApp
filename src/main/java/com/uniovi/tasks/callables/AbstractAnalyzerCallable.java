@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import com.uniovi.analyzer.reporter.ReportFactory;
 import com.uniovi.entities.CodeError;
 import com.uniovi.tasks.AnalyzerTask;
 
@@ -26,6 +27,12 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<CodeErro
 	protected void waitLoop() {
 		long pow = (long) Math.pow(10, 10);
 		for(long i = 0;i < pow;i++);
+	}
+	
+	protected ReportFactory setupReportFactory(String dbPath) {
+		ReportFactory reportFactory = new ReportFactory(dbPath);
+		reportFactory.loadQueriesFromFile("/src/resources/queries.properties");
+		return reportFactory;
 	}
 
 	public void setTask(AnalyzerTask task) {
