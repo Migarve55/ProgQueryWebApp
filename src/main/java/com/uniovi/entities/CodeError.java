@@ -3,8 +3,8 @@ package com.uniovi.entities;
 public class CodeError {
 
 	private String file;
-	private int line;
-	private int column;
+	private long line = 0;
+	private long column = 0;
 	private String level;
 	private String description;
 	
@@ -29,19 +29,19 @@ public class CodeError {
 		this.file = file;
 	}
 
-	public int getLine() {
+	public long getLine() {
 		return line;
 	}
 
-	public void setLine(int line) {
+	public void setLine(long line) {
 		this.line = line;
 	}
 
-	public int getColumn() {
+	public long getColumn() {
 		return column;
 	}
 
-	public void setColumn(int column) {
+	public void setColumn(long column) {
 		this.column = column;
 	}
 
