@@ -3,7 +3,7 @@ package com.uniovi.analyzer.tasks;
 import java.util.List;
 import java.util.concurrent.FutureTask;
 
-import com.uniovi.entities.CodeError;
+import com.uniovi.analyzer.tools.reporter.CodeError;
 
 public class AnalyzerTask extends FutureTask<List<CodeError>> {
 	
