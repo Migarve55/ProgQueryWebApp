@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.uniovi.analyzer.tasks.AnalyzerTask;
 import com.uniovi.entities.CodeError;
-import com.uniovi.tasks.AnalyzerTask;
 
 @Controller
 public class ReportController {
