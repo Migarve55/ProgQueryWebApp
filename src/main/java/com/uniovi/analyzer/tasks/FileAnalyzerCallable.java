@@ -36,7 +36,7 @@ public class FileAnalyzerCallable extends AbstractAnalyzerCallable {
 		super.prepareEnviroment();
 		basePath = enviromentManager.createEnviroment();
 		if (basePath == null) {
-			throw new RuntimeException("The enviroment was not created");
+			throw new EnviromentException();
 		}
 
 		// Coping required files

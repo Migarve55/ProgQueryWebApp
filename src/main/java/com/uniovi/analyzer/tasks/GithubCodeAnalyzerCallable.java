@@ -33,19 +33,23 @@ public class GithubCodeAnalyzerCallable extends AbstractAnalyzerCallable {
 		nextStep("Creating enviroment", 10);
 		basePath = enviromentManager.createEnviroment();
 		if (basePath == null) {
-			throw new RuntimeException("The enviroment was not created");
+			throw new EnviromentException();
 		}
 
 		// Download URL
 		nextStep(String.format("Downloading repository from %s...", url), 15);
+		
+		Git result = null;
 		try {
-			Git.cloneRepository()
+			result = Git.cloneRepository()
 			  .setURI(url)
 			  .setDirectory(new File(basePath))
-			  .call()
-			  .close();
+			  .call();
 		} catch (GitAPIException e) {
 			throw new EnviromentException(e);
+		} finally {
+			result.getRepository().close();
+			result.close();
 		}
 		
 	}
@@ -54,7 +58,7 @@ public class GithubCodeAnalyzerCallable extends AbstractAnalyzerCallable {
 	protected void compile() throws CompilerException {
 		super.compile();
 		if(!compiler.compileFolder(basePath, "", getArgs())) {
-			throw new RuntimeException("Could not compile");
+			throw new CompilerException();
 		}
 	}
 

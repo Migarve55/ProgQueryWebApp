@@ -11,6 +11,10 @@ public class EnviromentException extends Exception {
 		super(e);
 	}
 
+	public EnviromentException() {
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public String getLocalizedMessage() {
 		return "error.enviroment";
