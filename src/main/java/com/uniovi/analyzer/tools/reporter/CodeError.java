@@ -1,4 +1,4 @@
-package com.uniovi.entities;
+package com.uniovi.analyzer.tools.reporter;
 
 public class CodeError {
 

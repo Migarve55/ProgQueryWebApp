@@ -11,8 +11,8 @@ import com.uniovi.analyzer.exceptions.EnviromentException;
 import com.uniovi.analyzer.exceptions.ReportException;
 import com.uniovi.analyzer.tools.EnviromentManagerTool;
 import com.uniovi.analyzer.tools.JavaCompilerTool;
+import com.uniovi.analyzer.tools.reporter.CodeError;
 import com.uniovi.analyzer.tools.reporter.ReportTool;
-import com.uniovi.entities.CodeError;
 
 public class GithubCodeAnalyzerCallable extends AbstractAnalyzerCallable {
 

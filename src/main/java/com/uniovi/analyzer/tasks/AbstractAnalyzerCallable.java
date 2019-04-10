@@ -8,8 +8,8 @@ import java.util.concurrent.Callable;
 import com.uniovi.analyzer.exceptions.CompilerException;
 import com.uniovi.analyzer.exceptions.EnviromentException;
 import com.uniovi.analyzer.exceptions.ReportException;
+import com.uniovi.analyzer.tools.reporter.CodeError;
 import com.uniovi.analyzer.tools.reporter.ReportTool;
-import com.uniovi.entities.CodeError;
 
 public abstract class AbstractAnalyzerCallable implements Callable<List<CodeError>> {
 
