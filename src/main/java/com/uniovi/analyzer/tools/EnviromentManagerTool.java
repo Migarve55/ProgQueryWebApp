@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 
+import com.uniovi.analyzer.exceptions.EnviromentException;
+
 public class EnviromentManagerTool {
 	
 	private final static String PATH = "src/main/resources/uploads/";
@@ -26,8 +28,12 @@ public class EnviromentManagerTool {
 	 * @param basePath
 	 * @throws IOException 
 	 */
-	public void deleteEnviroment(String basePath) throws IOException {
-		FileUtils.deleteDirectory(new File(basePath));
+	public void deleteEnviroment(String basePath) throws EnviromentException {
+		try {
+			FileUtils.deleteDirectory(new File(basePath));
+		} catch (IOException e) {
+			throw new EnviromentException(e);
+		}
 	}
 
 }

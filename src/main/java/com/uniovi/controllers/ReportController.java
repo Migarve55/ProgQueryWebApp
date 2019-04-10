@@ -70,7 +70,7 @@ public class ReportController {
 			errorList = task.get();
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
-			redirect.addFlashAttribute("error", "error.taskError");
+			redirect.addFlashAttribute("error", e.getCause().getLocalizedMessage());
 			return "redirect:/";
 		} 
 		model.addAttribute("errorList", errorList);

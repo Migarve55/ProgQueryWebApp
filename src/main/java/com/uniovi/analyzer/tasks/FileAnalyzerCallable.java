@@ -8,6 +8,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 
+import com.uniovi.analyzer.exceptions.EnviromentException;
+import com.uniovi.analyzer.exceptions.ReportException;
 import com.uniovi.analyzer.tools.EnviromentManagerTool;
 import com.uniovi.analyzer.tools.JavaCompilerTool;
 import com.uniovi.analyzer.tools.reporter.ReportTool;
@@ -30,7 +32,7 @@ public class FileAnalyzerCallable extends AbstractAnalyzerCallable {
 	}
 
 	@Override
-	protected void prepareEnviroment() throws IOException {
+	protected void prepareEnviroment() throws EnviromentException {
 		super.prepareEnviroment();
 		basePath = enviromentManager.createEnviroment();
 		if (basePath == null) {
@@ -44,7 +46,7 @@ public class FileAnalyzerCallable extends AbstractAnalyzerCallable {
 		} catch (IOException ioe) {
 			task.setStatus("Cleaning enviroment...");
 			enviromentManager.deleteEnviroment(basePath);
-			throw ioe;
+			throw new EnviromentException(ioe);
 		}
 	}
 
@@ -57,14 +59,14 @@ public class FileAnalyzerCallable extends AbstractAnalyzerCallable {
 	}
 
 	@Override
-	protected List<CodeError> createReport() {
+	protected List<CodeError> createReport() throws ReportException {
 		super.createReport();
 		ReportTool reportFactory = setupReportTool(basePath + JavaCompilerTool.DB_PATH);
 		return reportFactory.generateReport();
 	}
 
 	@Override
-	protected void cleanEnviroment() throws IOException {
+	protected void cleanEnviroment() throws EnviromentException {
 		super.cleanEnviroment();
 		enviromentManager.deleteEnviroment(basePath);
 	}
