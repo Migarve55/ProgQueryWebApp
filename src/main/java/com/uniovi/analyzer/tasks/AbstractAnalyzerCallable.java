@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import com.uniovi.analyzer.exceptions.CompilerException;
+import com.uniovi.analyzer.exceptions.EnviromentException;
+import com.uniovi.analyzer.exceptions.ReportException;
 import com.uniovi.analyzer.tools.reporter.ReportTool;
 import com.uniovi.entities.CodeError;
 
@@ -18,7 +21,7 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<CodeErro
 	}
 
 	@Override
-	public final List<CodeError> call() throws Exception {
+	public final List<CodeError> call() throws EnviromentException, ReportException, CompilerException {
 		List<CodeError> result = null;
 		try {
 			prepareEnviroment();
@@ -37,20 +40,20 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<CodeErro
 
 	// Template methods
 
-	protected void prepareEnviroment() throws IOException {
+	protected void prepareEnviroment() throws EnviromentException {
 		nextStep("Preparing enviroment...", 25);
 	}
 
-	protected void compile() {
+	protected void compile() throws CompilerException {
 		nextStep("Compiling...", 25);
 	}
 
-	protected List<CodeError> createReport() {
+	protected List<CodeError> createReport() throws ReportException {
 		nextStep("Creating report", 25);
 		return Collections.emptyList();
 	}
 
-	protected void cleanEnviroment() throws IOException {
+	protected void cleanEnviroment() throws EnviromentException {
 		nextStep("Cleaning enviroment", 25);
 	}
 

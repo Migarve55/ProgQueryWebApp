@@ -11,7 +11,7 @@ import javax.tools.ToolProvider;
 public class JavaCompilerTool {
 
 	private final static String PLUGIN_CLASSPATH = "src/main/resources/plugin/ProgQuery.jar;src/main/resources/plugin/neo4jLibs/*;";
-	private final static String ENCODING = "utf8";
+	private final static String ENCODING = "UTF-8";
 	private final static String PLUGIN_ARG = "-Xplugin:ProgQueryPlugin %s";
 	public final static String DB_PATH = "neo4j/data/ProgQuery.db";
 

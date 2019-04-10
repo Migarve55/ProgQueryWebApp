@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import com.uniovi.analyzer.exceptions.CompilerException;
+import com.uniovi.analyzer.exceptions.EnviromentException;
+import com.uniovi.analyzer.exceptions.ReportException;
 import com.uniovi.analyzer.tools.EnviromentManagerTool;
 import com.uniovi.analyzer.tools.JavaCompilerTool;
 import com.uniovi.analyzer.tools.reporter.ReportTool;
@@ -25,7 +28,7 @@ public class ZipAnalizerCallable extends AbstractAnalyzerCallable {
 	}
 
 	@Override
-	protected void prepareEnviroment() throws IOException {
+	protected void prepareEnviroment() throws EnviromentException {
 		super.prepareEnviroment();
 		basePath = enviromentManager.createEnviroment();
 		if (basePath == null) {
@@ -36,14 +39,12 @@ public class ZipAnalizerCallable extends AbstractAnalyzerCallable {
 		try (BufferedInputStream is = new BufferedInputStream(fileIs)) {
 			UnzipUtility.unzip(is, basePath);
 		} catch (IOException ioe) {
-			task.setStatus("Cleaning enviroment...");
-			enviromentManager.deleteEnviroment(basePath);
-			throw ioe;
+			throw new EnviromentException(ioe);
 		}
 	}
 
 	@Override
-	protected void compile() {
+	protected void compile() throws CompilerException {
 		super.compile();
 		if(!compiler.compileFolder(basePath, "", getArgs())) {
 			throw new RuntimeException("Could not compile");
@@ -51,14 +52,14 @@ public class ZipAnalizerCallable extends AbstractAnalyzerCallable {
 	}
 
 	@Override
-	protected List<CodeError> createReport() {
+	protected List<CodeError> createReport() throws ReportException {
 		super.createReport();
 		ReportTool reportFactory = setupReportTool(basePath + "/neo4j/data/ProgQuery.db");
 		return reportFactory.generateReport();
 	}
 
 	@Override
-	protected void cleanEnviroment() throws IOException {
+	protected void cleanEnviroment() throws EnviromentException {
 		super.cleanEnviroment();
 		enviromentManager.deleteEnviroment(basePath);
 	}
