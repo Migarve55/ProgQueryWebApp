@@ -38,8 +38,8 @@ public class ReportController {
 		return "loading";
 	}
 	
-	@RequestMapping("/progress")
 	@ResponseBody
+	@RequestMapping("/progress")
 	public Map<String, String> getProgress(HttpServletResponse response) {
 		AnalyzerTask task = (AnalyzerTask) session.getAttribute("task");
 		if (task == null) {
@@ -51,6 +51,13 @@ public class ReportController {
 		map.put("progress", String.format("%d", task.getProgress()));
 		map.put("status", task.getStatus());
 		return map;
+	}
+	
+	@RequestMapping("/cancel")
+	public String cancelTask() {
+		AnalyzerTask task = (AnalyzerTask) session.getAttribute("task");
+		task.cancel(false);
+		return "redirect:/";
 	}
 	
 	@RequestMapping("/report")

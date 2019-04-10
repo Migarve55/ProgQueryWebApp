@@ -1,6 +1,9 @@
 package com.uniovi.analyzer.tools;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,12 +11,17 @@ import java.util.List;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class JavaCompilerTool {
 
 	private final static String PLUGIN_CLASSPATH = "src/main/resources/plugin/ProgQuery.jar;src/main/resources/plugin/neo4jLibs/*;";
 	private final static String ENCODING = "ISO-8859-1";
 	private final static String PLUGIN_ARG = "-Xplugin:ProgQueryPlugin %s";
 	public final static String DB_PATH = "neo4j/data/ProgQuery.db";
+	
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	/**
 	 * 
@@ -32,9 +40,7 @@ public class JavaCompilerTool {
 		// All files
 		args.add(filename);
 		// Compilation
-		String argsArray[] = new String[args.size()];
-		args.toArray(argsArray);
-		return compiler.run(null, null, null, argsArray) == 0;
+		return compile(compiler, args);
 	}
 
 	/**
@@ -51,10 +57,15 @@ public class JavaCompilerTool {
 		// Extra arguments
 		addArgumentsFromString(args, arguments);
 		// All files
-		args.addAll(getAllJavaSourceFilesInFolder(basePath));
+		generateSourcesFile(basePath);
 		// Compilation
+		return compile(compiler, args);
+	}
+	
+	private boolean compile(JavaCompiler compiler,List<String> args) {
 		String argsArray[] = new String[args.size()];
 		args.toArray(argsArray);
+		logger.info("Executing compilation command: javac {}", String.join(" ", args));
 		return compiler.run(null, null, null, argsArray) == 0;
 	}
 
@@ -72,19 +83,28 @@ public class JavaCompilerTool {
 				Arrays.asList("-cp", PLUGIN_CLASSPATH + extraClassPath.trim(), 
 						"-encoding", ENCODING,
 						String.format(PLUGIN_ARG, basePath + DB_PATH), 
-						"-d", basePath, "-nowarn", "-g:none", "-Xlint:none"));
+						"-d", basePath, "-nowarn", "-g:none", 
+						"-Xlint:none", "@" + basePath + "sources.txt"));
 	}
 
 	private void addArgumentsFromString(List<String> args, String extraArgs) {
-		Arrays.asList(extraArgs.split(" ")).stream().map((arg) -> arg.trim()).filter((arg) -> !arg.isEmpty())
-				.forEach((arg) -> args.add(arg));
+		Arrays.asList(extraArgs.split(" ")).stream()
+			.map((arg) -> arg.trim())
+			.filter((arg) -> !arg.isEmpty())
+			.forEach((arg) -> args.add(arg));
 	}
 
-	private List<String> getAllJavaSourceFilesInFolder(String folder) {
+	private void generateSourcesFile(String folder) {
 		File baseFolder = new File(folder);
 		List<String> files = new ArrayList<String>();
 		addJavaFiles(files, baseFolder);
-		return files;
+		File sourcesFile = new File(folder + "sources.txt");
+		try {
+			sourcesFile.createNewFile();
+			Files.write(sourcesFile.toPath(), files, Charset.defaultCharset());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void addJavaFiles(List<String> files, File folder) {
