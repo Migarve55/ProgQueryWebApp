@@ -42,7 +42,8 @@ public class GithubCodeAnalyzerCallable extends AbstractAnalyzerCallable {
 			Git.cloneRepository()
 			  .setURI(url)
 			  .setDirectory(new File(basePath))
-			  .call();
+			  .call()
+			  .close();
 		} catch (GitAPIException e) {
 			throw new EnviromentException(e);
 		}
