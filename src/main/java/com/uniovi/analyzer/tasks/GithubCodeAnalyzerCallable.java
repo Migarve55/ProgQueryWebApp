@@ -28,14 +28,14 @@ public class GithubCodeAnalyzerCallable extends AbstractAnalyzerCallable {
 	
 	@Override
 	protected void prepareEnviroment() throws IOException {
-		super.prepareEnviroment();
+		nextStep("Creating enviroment", 10);
 		basePath = enviromentManager.createEnviroment();
 		if (basePath == null) {
 			throw new RuntimeException("The enviroment was not created");
 		}
 
 		// Download URL
-		
+		nextStep(String.format("Downloading repository from %s...", url), 15);
 		try {
 			Git.cloneRepository()
 			  .setURI(url)
