@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.uniovi.analyzer.tasks.AnalyzerTask;
 import com.uniovi.services.AnalyzerService;
-import com.uniovi.tasks.AnalyzerTask;
 
 @Controller
 public class AnalyzerController {

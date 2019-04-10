@@ -1,4 +1,4 @@
-package com.uniovi.analyzer.reporter;
+package com.uniovi.analyzer.tools.reporter;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,12 +10,12 @@ import java.util.stream.Stream;
 
 import com.uniovi.entities.CodeError;
 
-public class ReportFactory {
+public class ReportTool {
 	
 	private String dbPath;
 	private List<Query> queries = new ArrayList<Query>();
 	
-	public ReportFactory(String dbPath) {
+	public ReportTool(String dbPath) {
 		this.dbPath = dbPath;
 	}
 

@@ -1,4 +1,4 @@
-package com.uniovi.analyzer.reporter;
+package com.uniovi.analyzer.tools.reporter;
 
 import java.io.File;
 import java.util.Map;

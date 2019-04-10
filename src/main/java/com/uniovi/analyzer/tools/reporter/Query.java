@@ -1,4 +1,4 @@
-package com.uniovi.analyzer.reporter;
+package com.uniovi.analyzer.tools.reporter;
 
 public class Query {
 

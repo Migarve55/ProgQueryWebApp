@@ -1,6 +1,7 @@
 package com.uniovi.services;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -11,11 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.uniovi.tasks.AnalyzerTask;
-import com.uniovi.tasks.callables.AbstractAnalyzerCallable;
-import com.uniovi.tasks.callables.FileAnalyzerCallable;
-import com.uniovi.tasks.callables.GithubCodeAnalyzerCallable;
-import com.uniovi.tasks.callables.ZipAnalizerCallable;
+import com.uniovi.analyzer.tasks.AbstractAnalyzerCallable;
+import com.uniovi.analyzer.tasks.AnalyzerTask;
+import com.uniovi.analyzer.tasks.FileAnalyzerCallable;
+import com.uniovi.analyzer.tasks.GithubCodeAnalyzerCallable;
+import com.uniovi.analyzer.tasks.ZipAnalizerCallable;
 
 @Service
 public class AnalyzerService {
@@ -26,11 +27,15 @@ public class AnalyzerService {
 	private ExecutorService executor = Executors.newFixedThreadPool(4); 
 	
 	public void analyzeFile(MultipartFile file, String args) throws IOException {
-		launchAnalyzerTask(new FileAnalyzerCallable(args, file));
+		try (InputStream is = file.getInputStream()) {
+			launchAnalyzerTask(new FileAnalyzerCallable(args, file.getOriginalFilename(), is));
+		} 
 	}
 	
 	public void analyzeZip(MultipartFile zip, String args) throws IOException {
-		launchAnalyzerTask(new ZipAnalizerCallable(args, zip));
+		try (InputStream is = zip.getInputStream()) {
+			launchAnalyzerTask(new ZipAnalizerCallable(args, is));
+		}
 	}
 
 	public void analyzeGitRepo(String repoUrl, String args) {
@@ -43,9 +48,7 @@ public class AnalyzerService {
 			if (!oldTask.isDone())
 				oldTask.cancel(false);
 		}
-		AnalyzerTask task = new AnalyzerTask(callable, () -> {
-			//session.setAttribute("task", null);
-		});
+		AnalyzerTask task = new AnalyzerTask(callable);
 		executor.execute(task);
 		session.setAttribute("task", task);
 	}

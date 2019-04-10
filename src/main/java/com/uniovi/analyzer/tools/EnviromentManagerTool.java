@@ -1,4 +1,4 @@
-package com.uniovi.analyzer;
+package com.uniovi.analyzer.tools;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 
-public class EnviromentManager {
+public class EnviromentManagerTool {
 	
 	private final static String PATH = "src/main/resources/uploads/";
 

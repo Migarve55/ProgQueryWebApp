@@ -1,9 +1,9 @@
-package com.uniovi.analyzer;
+package com.uniovi.analyzer.tools;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 
-public class JavaCompilerUtil {
+public class JavaCompilerTool {
 	
 	private final static String PLUGIN_CLASSPATH = "src/main/resources/plugin/ProgQuery.jar;src/main/resources/plugin/neo4jLibs/*;";
 	private final static String PLUGIN_ARG = "-Xplugin:ProgQueryPlugin";
