@@ -57,7 +57,7 @@ public class FileAnalyzerCallable extends AbstractAnalyzerCallable {
 	@Override
 	protected List<CodeError> createReport() {
 		super.createReport();
-		ReportTool reportFactory = setupReportTool(basePath + "/neo4j/data/ProgQuery.db");
+		ReportTool reportFactory = setupReportTool(basePath + JavaCompilerTool.DB_PATH);
 		return reportFactory.generateReport();
 	}
 
