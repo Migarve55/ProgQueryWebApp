@@ -1,7 +1,6 @@
 package com.uniovi.services;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -27,15 +26,11 @@ public class AnalyzerService {
 	private ExecutorService executor = Executors.newFixedThreadPool(4); 
 	
 	public void analyzeFile(MultipartFile file, String args) throws IOException {
-		try (InputStream is = file.getInputStream()) {
-			launchAnalyzerTask(new FileAnalyzerCallable(args, file.getOriginalFilename(), is));
-		} 
+		launchAnalyzerTask(new FileAnalyzerCallable(args, file.getOriginalFilename(), file.getInputStream()));
 	}
 	
 	public void analyzeZip(MultipartFile zip, String args) throws IOException {
-		try (InputStream is = zip.getInputStream()) {
-			launchAnalyzerTask(new ZipAnalizerCallable(args, is));
-		}
+		launchAnalyzerTask(new ZipAnalizerCallable(args, zip.getInputStream()));
 	}
 
 	public void analyzeGitRepo(String repoUrl, String args) {
