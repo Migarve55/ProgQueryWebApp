@@ -45,7 +45,9 @@ public class ZipAnalizerCallable extends AbstractAnalyzerCallable {
 	@Override
 	protected void compile() {
 		super.compile();
-		compiler.compileFolder(basePath, getArgs());
+		if(!compiler.compileFolder(basePath, "", getArgs())) {
+			throw new RuntimeException("Could not compile");
+		}
 	}
 
 	@Override

@@ -51,7 +51,9 @@ public class FileAnalyzerCallable extends AbstractAnalyzerCallable {
 	@Override
 	protected void compile() {
 		nextStep(String.format("Compiling %s...", fileName), 25);
-		compiler.compileFile(basePath, fileName, getArgs());
+		if(!compiler.compileFile(basePath, "", fileName, getArgs())) {
+			throw new RuntimeException("Could not compile");
+		}
 	}
 
 	@Override
