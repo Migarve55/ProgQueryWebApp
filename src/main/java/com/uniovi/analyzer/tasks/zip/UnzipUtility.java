@@ -1,4 +1,4 @@
-package com.uniovi.analyzer.tasks;
+package com.uniovi.analyzer.tasks.zip;
 
 import java.io.File;
 import java.io.IOException;
