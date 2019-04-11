@@ -10,8 +10,8 @@ import java.util.List;
 
 import com.uniovi.analyzer.exceptions.EnviromentException;
 import com.uniovi.analyzer.exceptions.ReportException;
-import com.uniovi.analyzer.tools.EnviromentManagerTool;
-import com.uniovi.analyzer.tools.JavaCompilerTool;
+import com.uniovi.analyzer.tools.compilators.JavaCompilerTool;
+import com.uniovi.analyzer.tools.enviroment.EnviromentManagerTool;
 import com.uniovi.analyzer.tools.reporter.CodeError;
 import com.uniovi.analyzer.tools.reporter.ReportTool;
 
