@@ -48,6 +48,12 @@
 			<version>4.7.0.201704051617-r</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.apache.maven.shared</groupId>
+			<artifactId>maven-invoker</artifactId>
+			<version>3.0.1</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
