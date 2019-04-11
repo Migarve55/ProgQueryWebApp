@@ -30,17 +30,16 @@ public class FileAnalyzerCallable extends AbstractAnalyzerCallable {
 		String path = basePath + fileName;
 		try (BufferedInputStream is = new BufferedInputStream(fileIs)) {
 			Files.copy(is, Paths.get(path), StandardCopyOption.REPLACE_EXISTING);
-		} catch (IOException ioe) {
-			throw new EnviromentException(ioe);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new EnviromentException("error.enviroment.io");
 		}
 	}
 
 	@Override
 	protected void compile() throws CompilerException {
 		nextStep(String.format("Compiling %s...", fileName), 25);
-		if(!ToolFactory.getJavaCompilerTool().compileFile(basePath, "", fileName, getArgs())) {
-			throw new CompilerException();
-		}
+		ToolFactory.getJavaCompilerTool().compileFile(basePath, "", fileName, getArgs());
 	}
 
 }

@@ -23,17 +23,16 @@ public class ZipAnalizerCallable extends AbstractAnalyzerCallable {
 		// Coping required files
 		try (BufferedInputStream is = new BufferedInputStream(fileIs)) {
 			UnzipUtility.unzip(is, basePath);
-		} catch (IOException ioe) {
-			throw new EnviromentException(ioe);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new EnviromentException("error.enviroment.io");
 		}
 	}
 
 	@Override
 	protected void compile() throws CompilerException {
 		super.compile();
-		if(!ToolFactory.getJavaCompilerTool().compileFolder(basePath, "", getArgs())) {
-			throw new CompilerException();
-		}
+		ToolFactory.getJavaCompilerTool().compileFolder(basePath, "", getArgs());
 	}
 
 }

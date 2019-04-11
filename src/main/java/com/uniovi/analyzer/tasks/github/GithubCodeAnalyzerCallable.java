@@ -30,7 +30,7 @@ public class GithubCodeAnalyzerCallable extends AbstractAnalyzerCallable {
 			  .setDirectory(new File(basePath))
 			  .call();
 		} catch (GitAPIException e) {
-			throw new EnviromentException(e);
+			throw new EnviromentException("error.enviroment.create.github");
 		} finally {
 			result.getRepository().close();
 			result.close();
@@ -40,9 +40,7 @@ public class GithubCodeAnalyzerCallable extends AbstractAnalyzerCallable {
 	@Override
 	protected void compile() throws CompilerException {
 		super.compile();
-		if(!ToolFactory.getMavenCompilerTool().compileFolder(basePath, "", getArgs())) {
-			throw new CompilerException();
-		}
+		ToolFactory.getMavenCompilerTool().compileFolder(basePath, "", getArgs());
 	}
 	
 }

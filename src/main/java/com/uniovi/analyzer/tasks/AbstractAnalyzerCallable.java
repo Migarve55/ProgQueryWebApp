@@ -44,9 +44,6 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<CodeErro
 	protected void prepareEnviroment() throws EnviromentException {
 		nextStep("Preparing enviroment...", 25);
 		basePath = ToolFactory.getEnviromentTool().createEnviroment();
-		if (basePath == null) {
-			throw new EnviromentException();
-		}
 	}
 
 	protected void compile() throws CompilerException {
