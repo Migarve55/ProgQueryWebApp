@@ -13,17 +13,18 @@ import org.apache.maven.shared.invoker.MavenInvocationException;
 
 public class MavenCompilerTool {
 
-	private static final List<String> PUBLISH_GOALS = Arrays.asList( "install", "build" );
+	private static final List<String> PUBLISH_GOALS = Arrays.asList( "install", "compile" );
 	 
 	public boolean compileFolder(String basePath, String extraClassPath, String arguments) {
 		Invoker newInvoker = new DefaultInvoker();
 		File folder = new File(basePath);
 		newInvoker.setLocalRepositoryDirectory(folder);
+		newInvoker.setMavenHome(new File(System.getenv("MAVEN_HOME")));
 		InvocationRequest request = new DefaultInvocationRequest();
 	    request.setBaseDirectory(folder);
-	    //request.setInteractive( false );
+	    request.setBatchMode(true);
 	    request.setGoals( PUBLISH_GOALS );
-	    
+	
 	    InvocationResult result = null;
 		try {
 			result = newInvoker.execute( request );
