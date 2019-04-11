@@ -13,9 +13,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.uniovi.analyzer.tasks.AbstractAnalyzerCallable;
 import com.uniovi.analyzer.tasks.AnalyzerTask;
-import com.uniovi.analyzer.tasks.FileAnalyzerCallable;
-import com.uniovi.analyzer.tasks.GithubCodeAnalyzerCallable;
-import com.uniovi.analyzer.tasks.ZipAnalizerCallable;
+import com.uniovi.analyzer.tasks.file.FileAnalyzerCallable;
+import com.uniovi.analyzer.tasks.github.GithubCodeAnalyzerCallable;
+import com.uniovi.analyzer.tasks.zip.ZipAnalizerCallable;
 
 @Service
 public class AnalyzerService {
