@@ -20,10 +20,10 @@ public class EnviromentManagerTool {
 	 * Creates the eniroment folder folder
 	 * @return the base path to the created folder, null if it was not created
 	 */
-	public String createEnviroment() {
+	public String createEnviroment() throws EnviromentException {
 		String folder = String.format("%senv_%s/", PATH, UUID.randomUUID());
 		if (!new File(folder).mkdirs())
-			return null;
+				throw new EnviromentException("error.enviroment.create");
 		logger.info("Created enviroment in {}", folder);
 		return folder;
 	}
@@ -38,7 +38,8 @@ public class EnviromentManagerTool {
 			FileUtils.deleteDirectory(new File(basePath));
 			logger.info("Deleted enviroment in {}", basePath);
 		} catch (IOException e) {
-			throw new EnviromentException(e);
+			e.printStackTrace();
+			throw new EnviromentException("error.enviroment.delete");
 		}
 	}
 
