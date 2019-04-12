@@ -1,8 +1,6 @@
 package com.uniovi.controllers;
 
 import java.io.IOException;
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,9 +14,6 @@ import com.uniovi.services.AnalyzerService;
 
 @Controller
 public class AnalyzerController {
-
-	@Autowired
-	private HttpSession session;
 
 	@Autowired
 	private AnalyzerService analyzerService;
@@ -74,10 +69,10 @@ public class AnalyzerController {
 		return "redirect:/loading";
 	}
 
-	// Auxiliars
+	// Auxiliary methods
 
 	private boolean isTaskDone() {
-		AnalyzerTask task = (AnalyzerTask) session.getAttribute("task");
+		AnalyzerTask task = analyzerService.getCurrentTask();
 		if (task != null) {
 			if (!task.isDone() && !task.isCancelled())
 				return false;
