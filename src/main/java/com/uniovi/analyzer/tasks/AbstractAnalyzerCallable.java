@@ -29,7 +29,7 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<CodeErro
 			compile();
 			result = createReport();
 		} finally {
-			cleanEnviroment();
+			task.cancel(false);
 		}
 		return result;
 	}

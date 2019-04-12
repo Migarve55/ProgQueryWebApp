@@ -25,6 +25,14 @@ public class AnalyzerService {
 	
 	private ExecutorService executor = Executors.newFixedThreadPool(4); 
 	
+	public AnalyzerTask getCurrentTask() {
+		return (AnalyzerTask) session.getAttribute("task");
+	}
+	
+	public void cancelCurrentTask() {
+		getCurrentTask().cancel(false);
+	}
+	
 	public void analyzeFile(MultipartFile file, String args) throws IOException {
 		launchAnalyzerTask(new FileAnalyzerCallable(args, file.getOriginalFilename(), file.getInputStream()));
 	}

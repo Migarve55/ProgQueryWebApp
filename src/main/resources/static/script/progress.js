@@ -4,21 +4,30 @@ function updateUI(progress, status) {
 	$("#progressBar").css("width", progress + "%");
 }
 
+function setErrorUI() {
+	 updateUI(100, "Error");
+	 $("#progressBar")
+	 	.addClass("bg-danger")
+	 	.removeClass("bg-success");
+	 setTimeout(function() {
+		 window.location.replace("/");
+	 }, 500);
+}
+
 function updateProgressBar() {
 	$.ajax( "/progress" )
 	  .done(function(data) {
 		  updateUI(data.progress, data.status);
-		  if (data.progress >= 100) {
+		  if (data.error === true) {
+			  setErrorUI();
+	  	  } else if (data.progress >= 100) {
 			  setTimeout(function() {
 				  window.location.replace("/report");
-			  }, 800);
+			  }, 500);
 		  }
 	  })
 	  .fail(function() {
-		  updateUI(100, "Error");
-		  setTimeout(function() {
-				window.location.replace("/");
-		  }, 1000);
+		  setErrorUI();
 	  })
 }
 

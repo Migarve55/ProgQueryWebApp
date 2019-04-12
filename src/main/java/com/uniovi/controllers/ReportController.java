@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,16 +15,17 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.uniovi.analyzer.tasks.AnalyzerTask;
 import com.uniovi.analyzer.tools.reporter.CodeError;
+import com.uniovi.services.AnalyzerService;
 
 @Controller
 public class ReportController {
 	
 	@Autowired
-	private HttpSession session;
+	private AnalyzerService analyzerService;
 	
 	@RequestMapping("/loading")
 	public String getLoading(RedirectAttributes redirect) {
-		AnalyzerTask task = (AnalyzerTask) session.getAttribute("task");
+		AnalyzerTask task = analyzerService.getCurrentTask();
 		if (task == null) {
 			return "";
 		} else if (task.isCancelled()) {
@@ -40,29 +39,29 @@ public class ReportController {
 	
 	@ResponseBody
 	@RequestMapping("/progress")
-	public Map<String, String> getProgress(HttpServletResponse response) {
-		AnalyzerTask task = (AnalyzerTask) session.getAttribute("task");
+	public Map<String, Object> getProgress(HttpServletResponse response) {
+		AnalyzerTask task = analyzerService.getCurrentTask();
 		if (task == null) {
-			response.setStatus(403);
+			response.setStatus(400);
 			return null;
 		} 
 		//Response
-		Map<String, String> map = new HashMap<>();
-		map.put("progress", String.format("%d", task.getProgress()));
+		Map<String, Object> map = new HashMap<>();
+		map.put("progress", task.getProgress());
 		map.put("status", task.getStatus());
+		map.put("error", task.isCancelled());
 		return map;
 	}
 	
 	@RequestMapping("/cancel")
 	public String cancelTask() {
-		AnalyzerTask task = (AnalyzerTask) session.getAttribute("task");
-		task.cancel(false);
+		analyzerService.cancelCurrentTask();
 		return "redirect:/";
 	}
 	
 	@RequestMapping("/report")
 	public String getReport(Model model, RedirectAttributes redirect) {
-		AnalyzerTask task = (AnalyzerTask) session.getAttribute("task");
+		AnalyzerTask task = analyzerService.getCurrentTask();
 		if (task == null) {
 			redirect.addFlashAttribute("error", "error.noReport");
 			return "redirect:/";
