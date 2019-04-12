@@ -14,9 +14,11 @@ import javax.tools.ToolProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.uniovi.analyzer.exceptions.CompilerException;
+
 public class JavaCompilerTool {
 
-	private final static String PLUGIN_CLASSPATH = "src/main/resources/plugin/ProgQuery.jar;src/main/resources/plugin/neo4jLibs/*;";
+	private final static String PLUGIN_CLASSPATH = "./src/main/resources/plugin/ProgQuery.jar;./src/main/resources/plugin/neo4jLibs/*;";
 	private final static String ENCODING = "ISO-8859-1";
 	private final static String PLUGIN_ARG = "-Xplugin:ProgQueryPlugin %s";
 	public final static String DB_PATH = "neo4j/data/ProgQuery.db";
@@ -30,8 +32,9 @@ public class JavaCompilerTool {
 	 * @param filename
 	 * @param arguments
 	 * @return if it has compiled everything ok
+	 * @throws CompilerException 
 	 */
-	public boolean compileFile(String basePath, String extraClassPath, String filename, String arguments) {
+	public void compileFile(String basePath, String extraClassPath, String filename, String arguments) throws CompilerException {
 		JavaCompiler compiler = getCompiler();
 		// Basic config
 		List<String> args = basicArgs(basePath, extraClassPath);
@@ -40,7 +43,7 @@ public class JavaCompilerTool {
 		// All files
 		args.add(filename);
 		// Compilation
-		return compile(compiler, args);
+		compile(compiler, args);
 	}
 
 	/**
@@ -49,8 +52,9 @@ public class JavaCompilerTool {
 	 * @param extraClassPath
 	 * @param arguments
 	 * @return if it has compiled everything ok
+	 * @throws CompilerException 
 	 */
-	public boolean compileFolder(String basePath, String extraClassPath, String arguments) {
+	public void compileFolder(String basePath, String extraClassPath, String arguments) throws CompilerException {
 		JavaCompiler compiler = getCompiler();
 		// Basic config
 		List<String> args = basicArgs(basePath, extraClassPath);
@@ -59,14 +63,16 @@ public class JavaCompilerTool {
 		// All files
 		generateSourcesFile(basePath);
 		// Compilation
-		return compile(compiler, args);
+		compile(compiler, args);
 	}
 	
-	private boolean compile(JavaCompiler compiler,List<String> args) {
+	private void compile(JavaCompiler compiler,List<String> args) throws CompilerException {
 		String argsArray[] = new String[args.size()];
 		args.toArray(argsArray);
 		logger.info("Executing compilation command: javac {}", String.join(" ", args));
-		return compiler.run(null, null, null, argsArray) == 0;
+		if(compiler.run(null, null, null, argsArray) != 0) {
+			throw new CompilerException();
+		}
 	}
 
 	private JavaCompiler getCompiler() {

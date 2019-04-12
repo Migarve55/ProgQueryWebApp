@@ -6,6 +6,10 @@ public class CompilerException extends Exception {
 	
 	private String localizedMessage = "error.compiler";
 
+	public CompilerException() {
+		
+	}
+	
 	public CompilerException(String localizedMessage) {
 		this.localizedMessage = localizedMessage;
 	}

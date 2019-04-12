@@ -29,7 +29,7 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<CodeErro
 			compile();
 			result = createReport();
 		} finally {
-			task.cancel(false);
+			cleanEnviroment();
 		}
 		return result;
 	}
@@ -48,7 +48,6 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<CodeErro
 
 	protected void compile() throws CompilerException {
 		nextStep("Compiling...", 25);
-		// This needs to be overrided
 	}
 
 	protected List<CodeError> createReport() throws ReportException {

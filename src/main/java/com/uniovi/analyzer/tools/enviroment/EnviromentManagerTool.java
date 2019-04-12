@@ -17,7 +17,7 @@ public class EnviromentManagerTool {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	/**
-	 * Creates the eniroment folder folder
+	 * Creates the enviroment folder folder
 	 * @return the base path to the created folder, null if it was not created
 	 */
 	public String createEnviroment() throws EnviromentException {
@@ -37,6 +37,8 @@ public class EnviromentManagerTool {
 		try {
 			FileUtils.deleteDirectory(new File(basePath));
 			logger.info("Deleted enviroment in {}", basePath);
+		} catch (IllegalArgumentException e) {
+			logger.info("Enviroment in {} was already deleted", basePath);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new EnviromentException("error.enviroment.delete");
