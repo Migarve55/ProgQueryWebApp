@@ -1,34 +1,50 @@
 package com.uniovi.controllers;
 
 import java.io.IOException;
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.uniovi.analyzer.tasks.AnalyzerTask;
+import com.uniovi.entities.User;
 import com.uniovi.services.AnalyzerService;
+import com.uniovi.services.UsersService;
 
 @Controller
 public class AnalyzerController {
 
 	@Autowired
 	private AnalyzerService analyzerService;
+	
+	@Autowired
+	private UsersService usersService;
 
 	@RequestMapping(path = "/analyzer/file", method = RequestMethod.GET)
-	public String getAnalizeFile() {
-		if (!isTaskDone())
+	public String getAnalizeFile(Principal principal) {
+		String email = principal.getName();
+		User user = usersService.getUserByEmail(email);
+		if (!isTaskDone(user))
 			return "redirect:/loading";
 		return "/analyzer/file";
 	}
 
 	@RequestMapping(path = "/analyzer/file", method = RequestMethod.POST, consumes = { "multipart/form-data" })
-	public String postAnalizeFile(@RequestParam("file") MultipartFile file, @RequestParam("args") String args, RedirectAttributes redirect) {
+	public String postAnalizeFile(@RequestParam("file") MultipartFile file, @RequestParam("args") String args, Principal principal, RedirectAttributes redirect) {
+		String email = principal.getName();
+		User user = usersService.getUserByEmail(email);
 		try {
-			analyzerService.analyzeFile(file, args);
+			analyzerService.analyzeFile(user, file, args);
 		} catch (IOException e) {
 			e.printStackTrace();
 			redirect.addFlashAttribute("error", "error.fileError");
@@ -38,16 +54,20 @@ public class AnalyzerController {
 	}
 
 	@RequestMapping(path = "/analyzer/zip", method = RequestMethod.GET)
-	public String getAnalizeZip() {
-		if (!isTaskDone())
+	public String getAnalizeZip(Principal principal) {
+		String email = principal.getName();
+		User user = usersService.getUserByEmail(email);
+		if (!isTaskDone(user))
 			return "redirect:/loading";
 		return "/analyzer/zip";
 	}
 
 	@RequestMapping(path = "/analyzer/zip", method = RequestMethod.POST, consumes = { "multipart/form-data" })
-	public String postAnalizeZip(@RequestParam("zip") MultipartFile zip, @RequestParam("args") String args, RedirectAttributes redirect) {
+	public String postAnalizeZip(@RequestParam("zip") MultipartFile zip, @RequestParam("args") String args, Principal principal, RedirectAttributes redirect) {
+		String email = principal.getName();
+		User user = usersService.getUserByEmail(email);
 		try {
-			analyzerService.analyzeZip(zip, args);
+			analyzerService.analyzeZip(user, zip, args);
 		} catch (IOException e) {
 			e.printStackTrace();
 			redirect.addFlashAttribute("error", "error.fileError");
@@ -57,22 +77,68 @@ public class AnalyzerController {
 	}
 
 	@RequestMapping(path = "/analyzer/git", method = RequestMethod.GET)
-	public String getAnalizeGit() {
-		if (!isTaskDone())
+	public String getAnalizeGit(Principal principal) {
+		String email = principal.getName();
+		User user = usersService.getUserByEmail(email);
+		if (!isTaskDone(user))
 			return "redirect:/loading";
 		return "/analyzer/git";
 	}
 
 	@RequestMapping(path = "/analyzer/git", method = RequestMethod.POST)
-	public String postAnalizeGit(@RequestParam("url") String url, @RequestParam("args") String args) {
-		analyzerService.analyzeGitRepo(url, args);
+	public String postAnalizeGit(@RequestParam("url") String url, @RequestParam("args") String args, Principal principal) {
+		String email = principal.getName();
+		User user = usersService.getUserByEmail(email);
+		analyzerService.analyzeGitRepo(user, url, args);
 		return "redirect:/loading";
+	}
+	
+	@RequestMapping("/analyzer/loading")
+	public String getLoading(Principal principal, RedirectAttributes redirect) {
+		String email = principal.getName();
+		User user = usersService.getUserByEmail(email);
+		AnalyzerTask task = analyzerService.getCurrentTask(user);
+		if (task == null) {
+			return "";
+		} else if (task.isCancelled()) {
+			redirect.addFlashAttribute("error", "error.taskCancelled");
+			return "redirect:/";
+		} else if (task.isDone()) {
+			return "redirect:/report";
+		}
+		return "loading";
+	}
+	
+	@ResponseBody
+	@RequestMapping("/analyzer/progress")
+	public Map<String, Object> getProgress(Principal principal, HttpServletResponse response) {
+		String email = principal.getName();
+		User user = usersService.getUserByEmail(email);
+		AnalyzerTask task = analyzerService.getCurrentTask(user);
+		if (task == null) {
+			response.setStatus(400);
+			return null;
+		} 
+		//Response
+		Map<String, Object> map = new HashMap<>();
+		map.put("progress", task.getProgress());
+		map.put("status", task.getStatus());
+		map.put("error", task.isCancelled());
+		return map;
+	}
+	
+	@RequestMapping("/analyzer/cancel")
+	public String cancelTask(Principal principal) {
+		String email = principal.getName();
+		User user = usersService.getUserByEmail(email);
+		analyzerService.cancelCurrentTask(user);
+		return "redirect:/";
 	}
 
 	// Auxiliary methods
 
-	private boolean isTaskDone() {
-		AnalyzerTask task = analyzerService.getCurrentTask();
+	private boolean isTaskDone(User user) {
+		AnalyzerTask task = analyzerService.getCurrentTask(user);
 		if (task != null) {
 			if (!task.isDone() && !task.isCancelled())
 				return false;

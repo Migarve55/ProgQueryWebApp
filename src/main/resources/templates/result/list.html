@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="fragments/head" />
+<body>
+	<!-- Barra de Navegación superior -->
+	<nav th:replace="fragments/nav" />
+	<div class="container">
+		<h2 th:text="#{query.list.title}">Resultados</h2>
+		<div class="table-responsive">
+			<table class="table table-hover tableQueries" th:fragment="tableQueries" id="tableQueries">
+				<thead>
+					<tr>
+						<th th:text="#{query.list.name}">Nombre</th>
+						<th th:text="#{query.list.query}">Fecha</th>
+						<th th:text="#{query.list.query}">Errores</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="result : ${resultsList}">
+						<td th:text="${result.name}"></td>
+						<td th:text="${result.timestamp}"></td>
+						<td th:text="${result.problems.size()}"></td>
+						<td>
+							<a class="btn btn-primary" th:href="${'/result/detail/' + query.id}">Detalles</a>
+						</td>
+						<td>
+							<a class="btn btn-danger" th:href="${'/result/delete/' + query.id}">Eliminar</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<footer th:replace="fragments/pagination"/>
+	</div>
+	<footer th:replace="fragments/footer" />
+</body>
+</html>>
