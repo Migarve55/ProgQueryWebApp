@@ -1,22 +1,25 @@
 package com.uniovi.controllers;
 
-import java.util.HashMap;
+import java.security.Principal;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.uniovi.analyzer.tasks.AnalyzerTask;
 import com.uniovi.analyzer.tools.reporter.CodeError;
+import com.uniovi.entities.Result;
+import com.uniovi.entities.User;
 import com.uniovi.services.AnalyzerService;
+import com.uniovi.services.ResultService;
+import com.uniovi.services.UsersService;
 
 @Controller
 public class ResultController {
@@ -24,45 +27,27 @@ public class ResultController {
 	@Autowired
 	private AnalyzerService analyzerService;
 	
-	@RequestMapping("/analysis/{id}/loading")
-	public String getLoading(@PathVariable Long id, RedirectAttributes redirect) {
-		AnalyzerTask task = analyzerService.getCurrentTask();
-		if (task == null) {
-			return "";
-		} else if (task.isCancelled()) {
-			redirect.addFlashAttribute("error", "error.taskCancelled");
-			return "redirect:/";
-		} else if (task.isDone()) {
-			return "redirect:/report";
-		}
-		return "loading";
+	@Autowired
+	private UsersService usersService;
+	
+	@Autowired
+	private ResultService resultService;
+	
+	@RequestMapping("/result/list")
+	public String list(Model model, Principal principal, Pageable pageable) {
+		String email = principal.getName();
+		User user = usersService.getUserByEmail(email);
+		Page<Result> results = resultService.getResultsByUser(pageable, user);
+		model.addAttribute("resultsList", results.getContent());
+		model.addAttribute("page", results);
+		return "result/list";
 	}
 	
-	@ResponseBody
-	@RequestMapping("/analysis/{id}/progress")
-	public Map<String, Object> getProgress(@PathVariable Long id, HttpServletResponse response) {
-		AnalyzerTask task = analyzerService.getCurrentTask();
-		if (task == null) {
-			response.setStatus(400);
-			return null;
-		} 
-		//Response
-		Map<String, Object> map = new HashMap<>();
-		map.put("progress", task.getProgress());
-		map.put("status", task.getStatus());
-		map.put("error", task.isCancelled());
-		return map;
-	}
-	
-	@RequestMapping("/analysis/{id}/cancel")
-	public String cancelTask(@PathVariable Long id) {
-		analyzerService.cancelCurrentTask();
-		return "redirect:/";
-	}
-	
-	@RequestMapping("/analysis/{id}")
-	public String getReport(Model model, @PathVariable Long id, RedirectAttributes redirect) {
-		AnalyzerTask task = analyzerService.getCurrentTask();
+	@RequestMapping("/result/{id}")
+	public String detail(Model model, @PathVariable Long id, Principal principal, RedirectAttributes redirect) {
+		String email = principal.getName();
+		User user = usersService.getUserByEmail(email);
+		AnalyzerTask task = analyzerService.getCurrentTask(user);
 		if (task == null) {
 			redirect.addFlashAttribute("error", "error.noReport");
 			return "redirect:/";
@@ -81,7 +66,22 @@ public class ResultController {
 			return "redirect:/";
 		} 
 		model.addAttribute("errorList", errorList);
-		return "report";
+		return "result/detail";
+	}
+	
+	@RequestMapping("/result/delete/{id}") 
+	public String delete(@PathVariable Long id, Principal principal, RedirectAttributes redirect) {
+		String email = principal.getName();
+		User user = usersService.getUserByEmail(email);
+		Result result = resultService.getResult(id);
+		if (result == null) {
+			return "redirect:/result/list";
+		}
+		if (!result.getUser().equals(user)) {
+			return "redirect:/result/list";
+		}
+		resultService.deleteResult(result);
+		return "redirect:/result/list";
 	}
 
 }
