@@ -10,9 +10,9 @@
 			 <div class="form-group">
 			 	<input name="searchText" type="text" class="form-control" size="50" placeholder="...">
 			 </div>
-		 	<button type="submit" class="btn btn-default" th:text="#{query.list.search}">Buscar por nombre</button>
+		 	<button type="submit" class="btn btn-primary" th:text="#{query.list.search}">Buscar por nombre</button>
 		</form>
-		<p th:text="#{query.list.text}">Lista de tus consultas:</p>
+		<h2 th:text="#{query.list.text}">Lista de tus consultas:</h2>
 		<div class="table-responsive">
 			<table class="table table-hover tableQueries" th:fragment="tableQueries" id="tableQueries">
 				<thead>
@@ -20,17 +20,19 @@
 						<th th:text="#{query.list.name}">Nombre</th>
 						<th th:text="#{query.list.description}">Descripción</th>
 						<th th:text="#{query.list.query}">Consulta Cipher</th>
-						<th th:text="#{query.list.isPublic}">Pública</th>
-						<th class="col-md-1"></th>
-						<th class="col-md-1"></th>
+						<th th:text="#{query.list.privacity}">Privacidad</th>
+						
 					</tr>
 				</thead>
 				<tbody>
 					<tr th:each="query : ${queriesList}">
 						<td th:text="${query.name}"></td>
-						<td th:text="${query.description}"></td>
-						<td th:text="${query.queryText}"></td>
-						<td th:text="${query.publicForAll}"></td>
+						<td class="description tcWrapText" th:text="${query.description}"></td>
+						<td class="queryText tcWrapText" th:text="${query.queryText}"></td>
+						<td>
+							<span th:if="${query.publicForAll}" th:text="#{public}">Pública</span>
+							<span th:if="${!query.publicForAll}" th:text="#{private}">Privada</span>
+						</td>
 						<td>
 							<a class="btn btn-primary" th:href="${'/query/detail/' + query.id}">Detalles</a>
 						</td>

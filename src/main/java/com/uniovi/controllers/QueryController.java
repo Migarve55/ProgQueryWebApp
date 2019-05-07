@@ -88,24 +88,35 @@ public class QueryController {
 	@RequestMapping(value = "/query/edit/{id}", method = RequestMethod.GET)
 	public String editGet(Model model, @PathVariable Long id) {
 		Query query = queryService.findQuery(id);
+		if (query == null) {
+			return "redirect:/";
+		}
 		model.addAttribute("query", query);
 		return "/query/edit";
 	}
 	
-	@RequestMapping(value = "/query/edit/", method = RequestMethod.POST)
-	public String editPost(@Validated Query query, BindingResult result, Principal principal) {
+	@RequestMapping(value = "/query/edit/{id}", method = RequestMethod.POST)
+	public String editPost(@Validated Query query, @PathVariable Long id, BindingResult result, Principal principal) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		addQueryValidator.validate(query, result);
+		Query original = queryService.findQuery(id);
 		if (result.hasErrors()) {
 			return "/query/edit/" + query.getId();
 		}
-		if (!canModifyQuery(user, query)) {
-			return "redirect:/query/list";
+		if (original == null) {
+			return "redirect:/";
+		}
+		if (!canModifyQuery(user, original)) {
+			return "redirect:/";
 		}
 		//Finally save
-		queryService.saveQuery(query);
-		return "redirect:/query/detail/" + query.getId();
+		original.setName(query.getName());
+		original.setDescription(query.getDescription());
+		original.setQueryText(query.getQueryText());
+		original.setPublicForAll(query.isPublicForAll());
+		queryService.saveQuery(original);
+		return "redirect:/query/detail/" + id;
 	}
 	
 	@RequestMapping("/query/delete/{id}")
