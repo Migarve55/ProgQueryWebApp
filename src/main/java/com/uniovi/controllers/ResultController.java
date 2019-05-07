@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -18,13 +19,13 @@ import com.uniovi.analyzer.tools.reporter.CodeError;
 import com.uniovi.services.AnalyzerService;
 
 @Controller
-public class ReportController {
+public class ResultController {
 	
 	@Autowired
 	private AnalyzerService analyzerService;
 	
-	@RequestMapping("/loading")
-	public String getLoading(RedirectAttributes redirect) {
+	@RequestMapping("/analysis/{id}/loading")
+	public String getLoading(@PathVariable Long id, RedirectAttributes redirect) {
 		AnalyzerTask task = analyzerService.getCurrentTask();
 		if (task == null) {
 			return "";
@@ -38,8 +39,8 @@ public class ReportController {
 	}
 	
 	@ResponseBody
-	@RequestMapping("/progress")
-	public Map<String, Object> getProgress(HttpServletResponse response) {
+	@RequestMapping("/analysis/{id}/progress")
+	public Map<String, Object> getProgress(@PathVariable Long id, HttpServletResponse response) {
 		AnalyzerTask task = analyzerService.getCurrentTask();
 		if (task == null) {
 			response.setStatus(400);
@@ -53,14 +54,14 @@ public class ReportController {
 		return map;
 	}
 	
-	@RequestMapping("/cancel")
-	public String cancelTask() {
+	@RequestMapping("/analysis/{id}/cancel")
+	public String cancelTask(@PathVariable Long id) {
 		analyzerService.cancelCurrentTask();
 		return "redirect:/";
 	}
 	
-	@RequestMapping("/report")
-	public String getReport(Model model, RedirectAttributes redirect) {
+	@RequestMapping("/analysis/{id}")
+	public String getReport(Model model, @PathVariable Long id, RedirectAttributes redirect) {
 		AnalyzerTask task = analyzerService.getCurrentTask();
 		if (task == null) {
 			redirect.addFlashAttribute("error", "error.noReport");
