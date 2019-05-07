@@ -25,28 +25,28 @@ public class SignUpFormValidator implements Validator {
 	@Override
 	public void validate(Object target, Errors errors) {
 		User user = (User) target;
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "Error.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "Error.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "Error.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "Error.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passwordConfirm", "Error.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "error.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "error.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "error.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "error.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passwordConfirm", "error.empty");
 		if (!user.getEmail().matches(EMAIL_REGEX)) {
-			errors.rejectValue("email", "Error.signup.email.regex");
+			errors.rejectValue("email", "error.signup.email.regex");
 		}
 		if (usersService.getUserByEmail(user.getEmail()) != null) {
-			errors.rejectValue("email", "Error.signup.email.duplicate");
+			errors.rejectValue("email", "error.signup.email.duplicate");
 		}
 		if (user.getName().length() < 5 || user.getName().length() > 24) {
-			errors.rejectValue("name", "Error.signup.name.length");
+			errors.rejectValue("name", "error.signup.name.length");
 		}
 		if (user.getLastName().length() < 5 || user.getLastName().length() > 24) {
-			errors.rejectValue("lastName", "Error.signup.lastName.length");
+			errors.rejectValue("lastName", "error.signup.lastName.length");
 		}
 		if (user.getPassword().length() < 5 || user.getPassword().length() > 24) {
-			errors.rejectValue("password", "Error.signup.password.length");
+			errors.rejectValue("password", "error.signup.password.length");
 		}
 		if (!user.getPasswordConfirm().equals(user.getPassword())) {
-			errors.rejectValue("passwordConfirm", "Error.signup.passwordConfirm.coincidence");
+			errors.rejectValue("passwordConfirm", "error.signup.passwordConfirm.coincidence");
 		}
 	}
 

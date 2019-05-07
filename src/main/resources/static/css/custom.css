@@ -14,3 +14,22 @@ footer {
 .navbar-right {
 	margin-left: auto;
 }
+
+.tableQueries {
+    width: 100%;
+}
+
+.tcWrapText {
+    max-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+td.description {
+    width: 50%;
+}
+
+td.queryText {
+    width: 40%;
+}
