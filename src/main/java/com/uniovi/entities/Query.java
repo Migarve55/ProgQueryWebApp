@@ -12,6 +12,7 @@ public class Query {
 	
 	private String name;
 	private String description;
+	@Column(length=4096)
 	private String queryText;
 	private boolean publicForAll;
 	

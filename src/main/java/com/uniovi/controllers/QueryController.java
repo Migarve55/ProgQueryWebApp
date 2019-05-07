@@ -73,8 +73,14 @@ public class QueryController {
 	}
 	
 	@RequestMapping("/query/detail/{id}")
-	public String detail(Model model, @PathVariable Long id) {
+	public String detail(Model model, @PathVariable Long id, Principal principal) {
 		Query query = queryService.findQuery(id);
+		String email = principal.getName();
+		User user = usersService.getUserByEmail(email);
+		if (!canSeeQuery(user, query)) {
+			return "redirect:/";
+		}
+		//Display the query
 		model.addAttribute("query", query);
 		return "/query/detail";
 	}
@@ -94,7 +100,7 @@ public class QueryController {
 		if (result.hasErrors()) {
 			return "/query/edit/" + query.getId();
 		}
-		if (!query.getUser().equals(user)) {
+		if (!canModifyQuery(user, query)) {
 			return "redirect:/query/list";
 		}
 		//Finally save
@@ -110,12 +116,31 @@ public class QueryController {
 		if (query == null) {
 			return "redirect:/query/list";
 		}
-		if (!query.getUser().equals(user)) {
+		if (!canModifyQuery(user, query)) {
 			return "redirect:/query/list";
 		}
 		//Finally delete
 		queryService.deleteQuery(query);
 		return "redirect:/query/list";
+	}
+	
+	private boolean canSeeQuery(User user, Query query) {
+		if (!query.isPublicForAll()) {
+			if (!(query.getPublicTo().contains(user) || query.getUser().equals(user))) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	private boolean canModifyQuery(User user, Query query) {
+		if (!canSeeQuery(user, query)) {
+			return false;
+		}
+		if (!query.getUser().equals(user)) {
+			return false;
+		}
+		return true;
 	}
 	
 }
