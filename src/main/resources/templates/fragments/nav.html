@@ -4,7 +4,7 @@
 		<li class="nav-item"><a class="nav-link active" href="/"
 			th:text="#{nav.title}">Home</a></li>
 		<!-- Queries -->
-		<li id="users-menu" class="nav-item dropdown" sec:authorize="hasRole('USER')" ><a class="nav-link dropdown-toggle" 
+		<li id="users-menu" class="nav-item dropdown" sec:authorize="isAuthenticated()" ><a class="nav-link dropdown-toggle" 
 			th:text="#{nav.query.title}" data-toggle="dropdown" href="#"> Gestión de consultas</a>
 			<div class="dropdown-menu">
 				<a class="dropdown-item" href="/query/add" th:text="#{nav.query.add}">Crear consulta</a>
@@ -12,7 +12,7 @@
 			</div>
 		</li>
 		<!-- Results -->
-		<li id="users-menu" class="nav-item dropdown" sec:authorize="hasRole('USER')" ><a class="nav-link dropdown-toggle" 
+		<li id="users-menu" class="nav-item dropdown" sec:authorize="isAuthenticated()" ><a class="nav-link dropdown-toggle" 
 			th:text="#{nav.result.title}" data-toggle="dropdown" href="#"> Gestión de resultados</a>
 			<div class="dropdown-menu">
 				<a class="dropdown-item" href="/analysis/list" th:text="#{nav.result.progress}">En curso</a>
@@ -20,7 +20,7 @@
 			</div>
 		</li>
 		<!-- Language -->
-		<li class="nav-item dropdown"><a class="nav-link dropdown-toggle"
+		<li class="nav-item dropdown navbar-right"><a class="nav-link dropdown-toggle"
 			data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
 			aria-expanded="false" th:text="#{language.change}">Dropdown</a>
 			<div class="dropdown-menu">

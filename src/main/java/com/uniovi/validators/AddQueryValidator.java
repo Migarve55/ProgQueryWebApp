@@ -20,6 +20,7 @@ public class AddQueryValidator implements Validator {
 		Query query = (Query) target;
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "Error.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "Error.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "queryText", "Error.empty");
 	}
 
 }
