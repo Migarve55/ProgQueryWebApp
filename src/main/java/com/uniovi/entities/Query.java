@@ -12,13 +12,18 @@ public class Query {
 	
 	private String name;
 	private String description;
-	private boolean isPublic;
+	private String queryText;
+	private boolean publicForAll;
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
 	
 	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(
+			name="CAN_EDIT",
+	        joinColumns={@JoinColumn(name="QUERY_ID")},
+	        inverseJoinColumns={@JoinColumn(name="USER_ID")})
 	private Set<User> publicTo;
 
 	public Query() {
@@ -41,12 +46,28 @@ public class Query {
 		this.name = name;
 	}
 
-	public boolean isPublic() {
-		return isPublic;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setPublic(boolean isPublic) {
-		this.isPublic = isPublic;
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getQueryText() {
+		return queryText;
+	}
+
+	public void setQueryText(String queryText) {
+		this.queryText = queryText;
+	}
+
+	public boolean isPublicForAll() {
+		return publicForAll;
+	}
+
+	public void setPublicForAll(boolean publicForAll) {
+		this.publicForAll = publicForAll;
 	}
 
 	public User getUser() {
@@ -63,14 +84,6 @@ public class Query {
 
 	public void setPublicTo(Set<User> publicTo) {
 		this.publicTo = publicTo;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 	
 }

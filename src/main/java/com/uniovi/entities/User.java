@@ -28,6 +28,10 @@ public class User {
 	private Set<Result> results;
 	
 	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(
+			name="CAN_EDIT",
+	        joinColumns={@JoinColumn(name="USER_ID")},
+	        inverseJoinColumns={@JoinColumn(name="QUERY_ID")})
 	private Set<Query> canModify;
 	
 	public User(String email, String name, String lastName) {
