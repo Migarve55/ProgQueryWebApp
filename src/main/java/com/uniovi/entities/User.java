@@ -27,7 +27,7 @@ public class User {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private Set<Result> results;
 	
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = {CascadeType.MERGE})
 	@JoinTable(
 			name="CAN_EDIT",
 	        joinColumns={@JoinColumn(name="USER_ID")},

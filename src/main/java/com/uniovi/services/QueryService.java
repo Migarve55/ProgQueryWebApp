@@ -1,5 +1,7 @@
 package com.uniovi.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +20,10 @@ public class QueryService {
 	public Query findQuery(Long id) {
 		return queriesRepository.findById(id).orElse(null);
 	}
+	
+	public Query findQueryByName(String name) {
+		return queriesRepository.findByName(name);
+	}
 
 	public Page<Query> getQueriesFromUser(Pageable pageable, User user) {
 		return queriesRepository.findAllByUser(pageable, user);
@@ -26,6 +32,10 @@ public class QueryService {
 	public Page<Query> getQueriesFromUser(Pageable pageable, User user, String searchText) {
 		searchText = "%" + searchText + "%";
 		return queriesRepository.findAllByUserAndName(pageable, user, searchText);
+	}
+	
+	public List<Query> getAvailableQueriesForUser(User user) {
+		return queriesRepository.findAvailableQueriesForUser(user);
 	}
 	
 	public void saveQuery(Query query) {

@@ -10,6 +10,7 @@ public class Query {
 	@GeneratedValue
 	private long id;
 	
+	@Column(unique = true)
 	private String name;
 	private String description;
 	@Column(length=4096)
@@ -20,7 +21,7 @@ public class Query {
 	@JoinColumn(name = "user_id")
 	private User user;
 	
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = {CascadeType.MERGE})
 	@JoinTable(
 			name="CAN_EDIT",
 	        joinColumns={@JoinColumn(name="QUERY_ID")},
@@ -29,6 +30,12 @@ public class Query {
 
 	public Query() {
 		
+	}
+
+	public Query(String name, String description, String queryText) {
+		this.name = name;
+		this.description = description;
+		this.queryText = queryText;
 	}
 
 	public long getId() {
