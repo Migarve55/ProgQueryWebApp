@@ -15,10 +15,13 @@ public interface QueriesRepository extends CrudRepository<Query, Long> {
 	
 	Query findByName(String name);
 	
+	@org.springframework.data.jpa.repository.Query(value = "select q.* from Query q where REGEXP_MATCHES(q.name,?1)", nativeQuery = true)
+	List<Query> findAllByFamily(String family);
+	
 	@org.springframework.data.jpa.repository.Query("select q from Query q where user = ?1 and name like ?2")
 	Page<Query> findAllByUserAndName(Pageable pageable, User user, String name);
 	
-	@org.springframework.data.jpa.repository.Query("select q from Query q where user = ?1 and ?1 in publicTo")
+	@org.springframework.data.jpa.repository.Query("select q from Query q where user = ?1 or publicForAll = true")
 	List<Query> findAvailableQueriesForUser(User user);
 	
 }

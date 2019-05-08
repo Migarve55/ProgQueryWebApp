@@ -1,6 +1,7 @@
 package com.uniovi.services;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,9 +21,11 @@ import com.uniovi.analyzer.tasks.github.GithubCodeAnalyzerCallable;
 import com.uniovi.analyzer.tasks.zip.ZipAnalizerCallable;
 import com.uniovi.analyzer.tools.reporter.CodeError;
 import com.uniovi.entities.Problem;
+import com.uniovi.entities.Query;
 import com.uniovi.entities.Result;
 import com.uniovi.entities.User;
 import com.uniovi.repositories.ProblemsRepository;
+import com.uniovi.repositories.QueriesRepository;
 import com.uniovi.repositories.ResultsRepository;
 
 @Service
@@ -37,6 +40,9 @@ public class AnalyzerService {
 	@Autowired
 	private ProblemsRepository problemsRepository;
 	
+	@Autowired
+	private QueriesRepository queriesRepository;
+	
 	public AnalyzerTask getCurrentTask(User user) {
 		return usersTasks.get(user);
 	}
@@ -49,19 +55,20 @@ public class AnalyzerService {
 		getCurrentTask(user).cancel(false);
 	}
 	
-	public void analyzeFile(User user, MultipartFile file, String args) throws IOException {
-		launchAnalyzerTask(user, new FileAnalyzerCallable(args, file.getOriginalFilename(), file.getInputStream()));
+	public void analyzeFile(User user, MultipartFile file, String args, String[] queries) throws IOException {
+		launchAnalyzerTask(user, new FileAnalyzerCallable(args, file.getOriginalFilename(), file.getInputStream()), queries);
 	}
 	
-	public void analyzeZip(User user, MultipartFile zip, String args) throws IOException {
-		launchAnalyzerTask(user, new ZipAnalizerCallable(args, zip.getInputStream()));
+	public void analyzeZip(User user, MultipartFile zip, String args, String[] queries) throws IOException {
+		launchAnalyzerTask(user, new ZipAnalizerCallable(args, zip.getInputStream()), queries);
 	}
 
-	public void analyzeGitRepo(User user, String repoUrl, String args) {
-		launchAnalyzerTask(user, new GithubCodeAnalyzerCallable(repoUrl, args));
+	public void analyzeGitRepo(User user, String repoUrl, String args, String[] queries) {
+		launchAnalyzerTask(user, new GithubCodeAnalyzerCallable(repoUrl, args), queries);
 	}
 	
-	private void launchAnalyzerTask(User user, AbstractAnalyzerCallable callable) {
+	private void launchAnalyzerTask(User user, AbstractAnalyzerCallable callable, String[] queries) {
+		//callable.setQueries(getQueries(queries));
 		AnalyzerTask oldTask = getCurrentTask(user);
 		if (oldTask != null) {
 			if (!oldTask.isDone())
@@ -87,6 +94,23 @@ public class AnalyzerService {
 			problem.setCompilationUnit(error.getFile());
 			problemsRepository.save(problem);
 		}
+	}
+	
+	private List<Query> getQueries(String[] queriesIds) {
+		List<Query> result = new ArrayList<Query>();
+		for (String queryId : queriesIds) {
+			if (queryId.endsWith("*")) {
+			    String regex = queryId.replace(".", "\\.");
+			    regex = queryId.replace("*", "");
+			    regex = String.format("^%s[^\\.]*", regex);
+				result.addAll(queriesRepository.findAllByFamily(regex));
+			} else {
+				Query query = queriesRepository.findByName(queryId);
+				if (query != null)
+					result.add(query);
+			}
+		}
+		return result;
 	}
 
 	@PreDestroy

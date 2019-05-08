@@ -15,7 +15,7 @@
 		<li id="users-menu" class="nav-item dropdown" sec:authorize="isAuthenticated()" ><a class="nav-link dropdown-toggle" 
 			th:text="#{nav.result.title}" data-toggle="dropdown" href="#"> Gestión de resultados</a>
 			<div class="dropdown-menu">
-				<a class="dropdown-item" href="/loading" th:text="#{nav.result.progress}">En curso</a>
+				<a class="dropdown-item" href="/analyzer/loading" th:text="#{nav.result.progress}">En curso</a>
 				<a class="dropdown-item" href="/result/list" th:text="#{nav.result.list}">Mis resultados</a>
 			</div>
 		</li>

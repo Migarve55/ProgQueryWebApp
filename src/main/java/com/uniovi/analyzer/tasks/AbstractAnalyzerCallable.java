@@ -1,6 +1,5 @@
 package com.uniovi.analyzer.tasks;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
@@ -19,6 +18,7 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<CodeErro
 	protected AnalyzerTask task;
 	
 	private Consumer<List<CodeError>> callback;
+	private List<String> queries;
 
 	public AbstractAnalyzerCallable(String args) {
 		this.args = args;
@@ -73,11 +73,7 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<CodeErro
 
 	protected ReportTool setupReportTool(String dbPath) {
 		ReportTool reportFactory = new ReportTool(dbPath);
-		try {
-			reportFactory.loadQueriesFromFile("src/main/resources/queries.txt");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		reportFactory.addAllQueries(queries);
 		return reportFactory;
 	}
 
@@ -89,6 +85,10 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<CodeErro
 
 	public void setCallback(Consumer<List<CodeError>> callback) {
 		this.callback = callback;
+	}
+
+	public void setQueries(List<String> queries) {
+		this.queries = queries;
 	}
 
 	public String getArgs() {
