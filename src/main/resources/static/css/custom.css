@@ -33,3 +33,11 @@ td.description {
 td.queryText {
     width: 40%;
 }
+
+option:checked {
+	background-color: green;
+}
+
+option:checked::after {
+	content: "<- Selected";
+}

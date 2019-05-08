@@ -46,17 +46,18 @@ public class AnalyzerController {
 	}
 
 	@RequestMapping(path = "/analyzer/file", method = RequestMethod.POST, consumes = { "multipart/form-data" })
-	public String postAnalizeFile(@RequestParam("file") MultipartFile file, @RequestParam("args") String args, Principal principal, RedirectAttributes redirect) {
+	public String postAnalizeFile(@RequestParam("file") MultipartFile file, @RequestParam("args") String args, 
+			@RequestParam("queries") String[] queries, Principal principal, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		try {
-			analyzerService.analyzeFile(user, file, args);
+			analyzerService.analyzeFile(user, file, args, queries);
 		} catch (IOException e) {
 			e.printStackTrace();
 			redirect.addFlashAttribute("error", "error.fileError");
 			return "redirect:/";
 		}
-		return "redirect:/loading";
+		return "redirect:/analyzer/loading";
 	}
 
 	@RequestMapping(path = "/analyzer/zip", method = RequestMethod.GET)
@@ -70,17 +71,19 @@ public class AnalyzerController {
 	}
 
 	@RequestMapping(path = "/analyzer/zip", method = RequestMethod.POST, consumes = { "multipart/form-data" })
-	public String postAnalizeZip(@RequestParam("zip") MultipartFile zip, @RequestParam("args") String args, Principal principal, RedirectAttributes redirect) {
+	public String postAnalizeZip(@RequestParam("zip") MultipartFile zip, 
+			@RequestParam("args") String args, @RequestParam("queries") String[] queries, 
+			Principal principal, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		try {
-			analyzerService.analyzeZip(user, zip, args);
+			analyzerService.analyzeZip(user, zip, args, queries);
 		} catch (IOException e) {
 			e.printStackTrace();
 			redirect.addFlashAttribute("error", "error.fileError");
 			return "redirect:/";
 		}
-		return "redirect:/loading";
+		return "redirect:/analyzer/loading";
 	}
 
 	@RequestMapping(path = "/analyzer/git", method = RequestMethod.GET)
@@ -94,11 +97,12 @@ public class AnalyzerController {
 	}
 
 	@RequestMapping(path = "/analyzer/git", method = RequestMethod.POST)
-	public String postAnalizeGit(@RequestParam("url") String url, @RequestParam("args") String args, Principal principal) {
+	public String postAnalizeGit(@RequestParam("url") String url, @RequestParam("args") String args, 
+			@RequestParam("queries") String[] queries, Principal principal) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
-		analyzerService.analyzeGitRepo(user, url, args);
-		return "redirect:/loading";
+		analyzerService.analyzeGitRepo(user, url, args, queries);
+		return "redirect:/analyzer/loading";
 	}
 	
 	@RequestMapping("/analyzer/loading")
@@ -107,7 +111,8 @@ public class AnalyzerController {
 		User user = usersService.getUserByEmail(email);
 		AnalyzerTask task = analyzerService.getCurrentTask(user);
 		if (task == null) {
-			return "";
+			redirect.addFlashAttribute("error", "error.noTask");
+			return "redirect:/";
 		} else if (task.isCancelled()) {
 			redirect.addFlashAttribute("error", "error.taskCancelled");
 			return "redirect:/";
