@@ -11,20 +11,24 @@ import java.util.stream.Stream;
 public class ReportTool {
 	
 	private String dbPath;
-	private List<Query> queries = new ArrayList<Query>();
+	private List<String> queries = new ArrayList<String>();
 	
 	public ReportTool(String dbPath) {
 		this.dbPath = dbPath;
 	}
 
-	public void addQuery(Query query) {
+	public void addQuery(String query) {
 		queries.add(query);
+	}
+	
+	public void addAllQueries(List<String> queries) {
+		queries.addAll(queries);
 	}
 	
 	public void loadQueriesFromFile(String filepath) throws IOException {
 		try (Stream<String> stream = Files.lines(Paths.get(filepath))) {
 			stream.forEach((line) -> {
-				queries.add(new Query(line, "", ""));
+				queries.add(line);
 			});
 		}
 	}
@@ -33,8 +37,8 @@ public class ReportTool {
 		List<CodeError> errors = new ArrayList<CodeError>();
 		Neo4jQueryRunner queryRunner = new Neo4jQueryRunner(dbPath);
 		try {
-			for (Query query : queries) {
-				queryRunner.runQuery(query.getQuery()).forEach((result) -> {
+			for (String query : queries) {
+				queryRunner.runQuery(query).forEach((result) -> {
 					errors.add(getCodeErrorFromResult(result));
 				});
 			}
@@ -53,8 +57,6 @@ public class ReportTool {
 		Long column = (Long) result.get("column");
 		if (column != null)
 			error.setColumn(column);
-		error.setLevel(result.get("level").toString());
-		error.setDescription(result.get("description").toString());
 		return error;
 	}
 	

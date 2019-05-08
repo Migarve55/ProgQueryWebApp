@@ -2,6 +2,7 @@ package com.uniovi.analyzer.tasks;
 
 import java.util.List;
 import java.util.concurrent.FutureTask;
+import java.util.function.Consumer;
 
 import com.uniovi.analyzer.exceptions.EnviromentException;
 import com.uniovi.analyzer.tools.reporter.CodeError;
@@ -56,6 +57,10 @@ public class AnalyzerTask extends FutureTask<List<CodeError>> {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+	
+	public void setCallback(Consumer<List<CodeError>> callback) {
+		this.callable.setCallback(callback);
 	}
 
 }

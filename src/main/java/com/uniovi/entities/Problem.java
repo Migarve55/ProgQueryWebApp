@@ -26,7 +26,7 @@ public class Problem {
 	@JoinColumn(name = "result_id")
 	private Result result;
 	
-	Problem() {
+	public Problem() {
 		
 	}
 

@@ -3,6 +3,7 @@ package com.uniovi.analyzer.tasks;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 
 import com.uniovi.analyzer.exceptions.CompilerException;
 import com.uniovi.analyzer.exceptions.EnviromentException;
@@ -16,9 +17,16 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<CodeErro
 	private String args;
 	protected String basePath;
 	protected AnalyzerTask task;
+	
+	private Consumer<List<CodeError>> callback;
 
 	public AbstractAnalyzerCallable(String args) {
 		this.args = args;
+	}
+	
+	public AbstractAnalyzerCallable(String args, Consumer<List<CodeError>> callback) {
+		this(args);
+		this.callback = callback;
 	}
 
 	@Override
@@ -28,6 +36,8 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<CodeErro
 			prepareEnviroment();
 			compile();
 			result = createReport();
+			if (callback != null)
+				callback.accept(result);
 		} finally {
 			cleanEnviroment();
 		}
@@ -75,6 +85,10 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<CodeErro
 
 	public void setTask(AnalyzerTask task) {
 		this.task = task;
+	}
+
+	public void setCallback(Consumer<List<CodeError>> callback) {
+		this.callback = callback;
 	}
 
 	public String getArgs() {

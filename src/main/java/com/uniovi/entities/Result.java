@@ -1,5 +1,6 @@
 package com.uniovi.entities;
 
+import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -9,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 public class Result {
@@ -16,6 +19,11 @@ public class Result {
 	@Id
 	@GeneratedValue
 	private long id;
+	
+	private String name;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date timestamp;
 	
 	@OneToMany(mappedBy = "result", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Problem> problems;
@@ -34,6 +42,22 @@ public class Result {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Date getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(Date timestamp) {
+		this.timestamp = timestamp;
 	}
 
 	public Set<Problem> getProblems() {

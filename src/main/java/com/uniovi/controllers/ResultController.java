@@ -1,9 +1,6 @@
 package com.uniovi.controllers;
 
 import java.security.Principal;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.uniovi.analyzer.tasks.AnalyzerTask;
-import com.uniovi.analyzer.tools.reporter.CodeError;
 import com.uniovi.entities.Result;
 import com.uniovi.entities.User;
 import com.uniovi.services.AnalyzerService;
@@ -57,15 +53,12 @@ public class ResultController {
 		} else if (!task.isDone())
 			return "redirect:/loading/";
 		//Is done
-		List<CodeError> errorList = null;
-		try {
-			errorList = task.get();
-		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
-			redirect.addFlashAttribute("error", e.getCause().getLocalizedMessage());
+		Result result = resultService.getResult(id);
+		if (result == null) {
+			redirect.addFlashAttribute("error", "error.noReport");
 			return "redirect:/";
-		} 
-		model.addAttribute("errorList", errorList);
+		}
+		model.addAttribute("errorList", result.getProblems());
 		return "result/detail";
 	}
 	
