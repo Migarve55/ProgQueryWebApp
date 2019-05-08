@@ -16,7 +16,6 @@
 						<th>File</th>
 						<th>Line</th>
 						<th>Column</th>
-						<th>Level</th>
 						<th>Description</th>
 					</tr>
 				</thead>
@@ -25,8 +24,7 @@
 						<td th:text="${error.file}"></td>
 						<td th:text="${error.line}"></td>
 						<td th:text="${error.column}"></td>
-						<td th:text="${error.level}"></td>
-						<td th:text="${error.Description}"></td>
+						<td th:text="${error.query.description}"></td>
 					</tr>
 				</tbody>
 			</table>

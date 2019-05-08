@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.uniovi.analyzer.tasks.AnalyzerTask;
 import com.uniovi.entities.User;
 import com.uniovi.services.AnalyzerService;
+import com.uniovi.services.QueryService;
 import com.uniovi.services.UsersService;
 
 @Controller
@@ -29,13 +31,17 @@ public class AnalyzerController {
 	
 	@Autowired
 	private UsersService usersService;
+	
+	@Autowired
+	private QueryService queryService;
 
 	@RequestMapping(path = "/analyzer/file", method = RequestMethod.GET)
-	public String getAnalizeFile(Principal principal) {
+	public String getAnalizeFile(Model model, Principal principal) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		if (!isTaskDone(user))
 			return "redirect:/loading";
+		model.addAttribute("queriesList", queryService.getAvailableQueriesForUser(user));
 		return "/analyzer/file";
 	}
 
@@ -54,11 +60,12 @@ public class AnalyzerController {
 	}
 
 	@RequestMapping(path = "/analyzer/zip", method = RequestMethod.GET)
-	public String getAnalizeZip(Principal principal) {
+	public String getAnalizeZip(Model model, Principal principal) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		if (!isTaskDone(user))
 			return "redirect:/loading";
+		model.addAttribute("queriesList", queryService.getAvailableQueriesForUser(user));
 		return "/analyzer/zip";
 	}
 
@@ -77,11 +84,12 @@ public class AnalyzerController {
 	}
 
 	@RequestMapping(path = "/analyzer/git", method = RequestMethod.GET)
-	public String getAnalizeGit(Principal principal) {
+	public String getAnalizeGit(Model model, Principal principal) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		if (!isTaskDone(user))
 			return "redirect:/loading";
+		model.addAttribute("queriesList", queryService.getAvailableQueriesForUser(user));
 		return "/analyzer/git";
 	}
 

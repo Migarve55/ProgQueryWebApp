@@ -20,6 +20,7 @@ import com.uniovi.entities.User;
 import com.uniovi.services.QueryService;
 import com.uniovi.services.UsersService;
 import com.uniovi.validators.AddQueryValidator;
+import com.uniovi.validators.EditQueryValidator;
 
 @Controller
 public class QueryController {
@@ -32,6 +33,9 @@ public class QueryController {
 	
 	@Autowired
 	private AddQueryValidator addQueryValidator;
+	
+	@Autowired
+	private EditQueryValidator editQueryValidator;
 
 	@RequestMapping(value = "/query/add", method = RequestMethod.GET)
 	public String addGet(Model model, Principal principal) {
@@ -77,6 +81,9 @@ public class QueryController {
 		Query query = queryService.findQuery(id);
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
+		if (query == null) {
+			return "redirect:/";
+		}
 		if (!canSeeQuery(user, query)) {
 			return "redirect:/";
 		}
@@ -86,9 +93,14 @@ public class QueryController {
 	}
 	
 	@RequestMapping(value = "/query/edit/{id}", method = RequestMethod.GET)
-	public String editGet(Model model, @PathVariable Long id) {
+	public String editGet(Model model, Principal principal, @PathVariable Long id) {
+		String email = principal.getName();
+		User user = usersService.getUserByEmail(email);
 		Query query = queryService.findQuery(id);
 		if (query == null) {
+			return "redirect:/";
+		}
+		if (!canModifyQuery(user, query)) {
 			return "redirect:/";
 		}
 		model.addAttribute("query", query);
@@ -99,10 +111,10 @@ public class QueryController {
 	public String editPost(@Validated Query query, @PathVariable Long id, BindingResult result, Principal principal) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
-		addQueryValidator.validate(query, result);
+		editQueryValidator.validate(query, result);
 		Query original = queryService.findQuery(id);
 		if (result.hasErrors()) {
-			return "/query/edit/" + query.getId();
+			return "/query/edit";
 		}
 		if (original == null) {
 			return "redirect:/";

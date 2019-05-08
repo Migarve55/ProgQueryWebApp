@@ -1,0 +1,7 @@
+<!-- Queries -->
+<div class="form-group">
+	<label for="queries">Queries to run:</label>
+	<select multiple class="form-control" name="queries">
+		<option th:each="query : ${queriesList}" th:value="${query.id}" th:text="${query.name}"></option>
+	</select>
+</div>

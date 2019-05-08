@@ -41,9 +41,9 @@
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="publicTo">Visible para:</label>
 				<div class="col-sm-10">
-					<select multiple class="form-control" name="publicTo" th:field="${usersList}">
+					<select multiple class="form-control" name="publicTo">
 						<option th:each="user : ${usersList}" 
-							th:value="${user}"
+							th:value="${user.id}"
 							th:text="${user.name}">
 						</option>
 					</select>
