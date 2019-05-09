@@ -21,7 +21,7 @@
 				</thead>
 				<tbody>
 					<tr th:each="error : ${errorList}">
-						<td th:text="${error.file}"></td>
+						<td th:text="${error.compilationUnit}"></td>
 						<td th:text="${error.line}"></td>
 						<td th:text="${error.column}"></td>
 						<td th:text="${error.query.description}"></td>

@@ -5,14 +5,14 @@
 	<!-- Barra de Navegación superior -->
 	<nav th:replace="fragments/nav" />
 	<div class="container">
-		<h2 th:text="#{query.list.title}">Resultados</h2>
+		<h2 th:text="#{result.list.title}">Resultados</h2>
 		<div class="table-responsive">
 			<table class="table table-hover tableQueries" th:fragment="tableQueries" id="tableQueries">
 				<thead>
 					<tr>
-						<th th:text="#{query.list.name}">Nombre</th>
-						<th th:text="#{query.list.query}">Fecha</th>
-						<th th:text="#{query.list.query}">Errores</th>
+						<th th:text="#{result.list.name}">Nombre</th>
+						<th th:text="#{result.list.date}">Fecha</th>
+						<th th:text="#{result.list.errors}">Errores</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -21,10 +21,10 @@
 						<td th:text="${result.timestamp}"></td>
 						<td th:text="${result.problems.size()}"></td>
 						<td>
-							<a class="btn btn-primary" th:href="${'/result/detail/' + query.id}">Detalles</a>
+							<a class="btn btn-primary" th:href="${'/result/' + result.id}">Detalles</a>
 						</td>
 						<td>
-							<a class="btn btn-danger" th:href="${'/result/delete/' + query.id}">Eliminar</a>
+							<a class="btn btn-danger" th:href="${'/result/delete/' + result.id}">Eliminar</a>
 						</td>
 					</tr>
 				</tbody>

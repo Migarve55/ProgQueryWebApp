@@ -2,6 +2,7 @@ package com.uniovi.services;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -58,18 +59,18 @@ public class AnalyzerService {
 	}
 	
 	public void analyzeFile(User user, MultipartFile file, String args, String[] queries) throws IOException {
-		launchAnalyzerTask(user, new FileAnalyzerCallable(args, file.getOriginalFilename(), file.getInputStream()), queries);
+		launchAnalyzerTask(user, file.getOriginalFilename(), new FileAnalyzerCallable(args, file.getOriginalFilename(), file.getInputStream()), queries);
 	}
 	
 	public void analyzeZip(User user, MultipartFile zip, String args, String[] queries) throws IOException {
-		launchAnalyzerTask(user, new ZipAnalizerCallable(args, zip.getInputStream()), queries);
+		launchAnalyzerTask(user, zip.getOriginalFilename(), new ZipAnalizerCallable(args, zip.getInputStream()), queries);
 	}
 
 	public void analyzeGitRepo(User user, String repoUrl, String args, String[] queries) {
-		launchAnalyzerTask(user, new GithubCodeAnalyzerCallable(repoUrl, args), queries);
+		launchAnalyzerTask(user, repoUrl, new GithubCodeAnalyzerCallable(repoUrl, args), queries);
 	}
 	
-	private void launchAnalyzerTask(User user, AbstractAnalyzerCallable callable, String[] queries) {
+	private void launchAnalyzerTask(User user, String name, AbstractAnalyzerCallable callable, String[] queries) {
 		List<Query> queriesList = getQueries(queries, user);
 		callable.setQueries(toQueryDto(queriesList));
 		AnalyzerTask oldTask = getCurrentTask(user);
@@ -79,15 +80,17 @@ public class AnalyzerService {
 		}
 		AnalyzerTask task = new AnalyzerTask(callable);
 		task.setCallback((errors) -> {
-			createReport(user, errors);
+			createReport(user, name, errors);
 		});
 		executor.execute(task);
 		setCurrentTask(user, task);
 	}
 	
-	private void createReport(User user, List<ProblemDto> problems) {
+	private void createReport(User user, String name, List<ProblemDto> problems) {
 		Result result = new Result();
 		result.setUser(user);
+		result.setTimestamp(new Date());
+		result.setName(name);
 		result = resultsRepository.save(result);
 		for (ProblemDto problemDto : problems) {
 			Problem problem = new Problem();

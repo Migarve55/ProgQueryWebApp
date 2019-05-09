@@ -7,7 +7,7 @@
 		<button id="delBtn" type="button" class="btn btn-danger">Delete</button>
 	</div>
 	<select id="queriesList" multiple class="form-control" name="queries">
-		<option th:each="query : ${queriesList}" th:value="${query.id}" th:text="${query.name}"></option>
+		<option th:each="query : ${queriesList}" th:value="${query.name}" th:text="${query.name}"></option>
 	</select>
 	<script type="text/javascript" src="/script/queries.js"></script>
 </div>

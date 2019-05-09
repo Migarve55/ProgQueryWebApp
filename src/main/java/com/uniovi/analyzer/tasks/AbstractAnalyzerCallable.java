@@ -8,7 +8,6 @@ import com.uniovi.analyzer.exceptions.CompilerException;
 import com.uniovi.analyzer.exceptions.EnviromentException;
 import com.uniovi.analyzer.exceptions.ReportException;
 import com.uniovi.analyzer.tools.ToolFactory;
-import com.uniovi.analyzer.tools.reporter.ReportTool;
 import com.uniovi.analyzer.tools.reporter.dto.ProblemDto;
 import com.uniovi.analyzer.tools.reporter.dto.QueryDto;
 
@@ -64,18 +63,12 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 	protected List<ProblemDto> createReport() throws ReportException {
 		nextStep("Creating report", 25);
 		String dbPath = basePath + "/neo4j/data/ProgQuery.db";
-		return ToolFactory.getReportTool(dbPath).generateReport();
+		return ToolFactory.getReportTool(dbPath, queries).generateReport();
 	}
 
 	protected void cleanEnviroment() throws EnviromentException {
 		nextStep("Cleaning enviroment", 25);
 		ToolFactory.getEnviromentTool().deleteEnviroment(basePath);
-	}
-
-	protected ReportTool setupReportTool(String dbPath) {
-		ReportTool reportFactory = new ReportTool(dbPath);
-		reportFactory.setQueries(queries);
-		return reportFactory;
 	}
 
 	// Setters

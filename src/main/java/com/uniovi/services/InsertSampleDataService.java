@@ -50,7 +50,7 @@ public class InsertSampleDataService {
 		usersService.addUser(user5);
 		usersService.addUser(admin);
 
-		Query query1 = new Query("es.uniovi.query1", "Warning [CMU-MET50]", "...");
+		Query query1 = new Query("es.uniovi.query1", "Warning [CMU-MET50]", "MATCH (n) RETURN n.lineNumber as line, n.column as column, n.fileName as file");
 		query1.setUser(user1);
 		query1.setPublicForAll(true);
 		
