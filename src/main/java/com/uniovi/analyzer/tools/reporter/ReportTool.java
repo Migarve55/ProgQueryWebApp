@@ -1,45 +1,33 @@
 package com.uniovi.analyzer.tools.reporter;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
+import com.uniovi.analyzer.tools.reporter.dto.ProblemDto;
+import com.uniovi.analyzer.tools.reporter.dto.QueryDto;
 
 public class ReportTool {
 	
 	private String dbPath;
-	private List<String> queries = new ArrayList<String>();
+	private List<QueryDto> queries = new ArrayList<QueryDto>();
 	
 	public ReportTool(String dbPath) {
 		this.dbPath = dbPath;
 	}
-
-	public void addQuery(String query) {
-		queries.add(query);
-	}
 	
-	public void addAllQueries(List<String> queries) {
-		queries.addAll(queries);
-	}
-	
-	public void loadQueriesFromFile(String filepath) throws IOException {
-		try (Stream<String> stream = Files.lines(Paths.get(filepath))) {
-			stream.forEach((line) -> {
-				queries.add(line);
-			});
-		}
+	public void setQueries(List<QueryDto> queries) {
+		this.queries = queries;
 	}
 
-	public List<CodeError> generateReport() {
-		List<CodeError> errors = new ArrayList<CodeError>();
+	public List<ProblemDto> generateReport() {
+		List<ProblemDto> errors = new ArrayList<ProblemDto>();
 		Neo4jQueryRunner queryRunner = new Neo4jQueryRunner(dbPath);
 		try {
-			for (String query : queries) {
-				queryRunner.runQuery(query).forEach((result) -> {
-					errors.add(getCodeErrorFromResult(result));
+			for (QueryDto query : queries) {
+				queryRunner.runQuery(query.getQueryText()).forEach((result) -> {
+					ProblemDto problem = getProblemDtoFromResult(result);
+					problem.setQueryName(query.getName());
+					errors.add(problem);
 				});
 			}
 		} finally {
@@ -48,8 +36,8 @@ public class ReportTool {
 		return errors;
 	}
 	
-	private CodeError getCodeErrorFromResult(Map<String,Object> result) {
-		CodeError error = new CodeError();
+	private ProblemDto getProblemDtoFromResult(Map<String,Object> result) {
+		ProblemDto error = new ProblemDto();
 		error.setFile(result.get("file").toString());
 		Long line = (Long) result.get("line");
 		if (line != null)
