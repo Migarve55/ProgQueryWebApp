@@ -15,14 +15,14 @@ function setErrorUI() {
 }
 
 function updateProgressBar() {
-	$.ajax( "/progress" )
+	$.ajax( "/analyzer/progress" )
 	  .done(function(data) {
 		  updateUI(data.progress, data.status);
 		  if (data.error === true) {
 			  setErrorUI();
 	  	  } else if (data.progress >= 100) {
 			  setTimeout(function() {
-				  window.location.replace("/report");
+				  window.location.replace("/result/last");
 			  }, 500);
 		  }
 	  })
@@ -35,4 +35,4 @@ updateProgressBar();
 
 setInterval(function() {
 	updateProgressBar();
-}, 1500);
+}, 1000);

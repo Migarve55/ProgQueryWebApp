@@ -10,18 +10,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.uniovi.analyzer.tasks.AnalyzerTask;
 import com.uniovi.entities.Result;
 import com.uniovi.entities.User;
-import com.uniovi.services.AnalyzerService;
 import com.uniovi.services.ResultService;
 import com.uniovi.services.UsersService;
 
 @Controller
 public class ResultController {
-	
-	@Autowired
-	private AnalyzerService analyzerService;
 	
 	@Autowired
 	private UsersService usersService;
@@ -39,23 +34,30 @@ public class ResultController {
 		return "result/list";
 	}
 	
+	@RequestMapping("/result/last") 
+	public String last(Model model, Principal principal, RedirectAttributes redirect) {
+		String email = principal.getName();
+		User user = usersService.getUserByEmail(email);
+		Result result = resultService.getLastFromUser(user);
+		if (result == null) {
+			redirect.addFlashAttribute("error", "error.noReport");
+			return "redirect:/";
+		}
+		model.addAttribute("errorList", result.getProblems());
+		return "result/detail";
+	}
+	
 	@RequestMapping("/result/{id}")
 	public String detail(Model model, @PathVariable Long id, Principal principal, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
-		AnalyzerTask task = analyzerService.getCurrentTask(user);
-		if (task == null) {
-			redirect.addFlashAttribute("error", "error.noReport");
-			return "redirect:/";
-		} else if (task.isCancelled()) {
-			redirect.addFlashAttribute("error", "error.taskCancelled");
-			return "redirect:/";
-		} else if (!task.isDone())
-			return "redirect:/loading/";
 		//Is done
 		Result result = resultService.getResult(id);
 		if (result == null) {
 			redirect.addFlashAttribute("error", "error.noReport");
+			return "redirect:/";
+		}
+		if (!result.getUser().equals(user)) {
 			return "redirect:/";
 		}
 		model.addAttribute("errorList", result.getProblems());
