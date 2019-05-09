@@ -12,7 +12,7 @@ import com.uniovi.services.QueryService;
 @Component
 public class AddQueryValidator implements Validator {
 	
-	public final static String NAME_REGEX = "((([a-zA-Z]+)\\.)+(\\*|[a-zA-Z]+))|[a-zA-Z]+";
+	public final static String NAME_REGEX = "((([a-zA-Z0-9]+)\\.)+(\\*|[a-zA-Z0-9]+))|[a-zA-Z0-9]+";
 	
 	@Autowired
 	private QueryService queryService;

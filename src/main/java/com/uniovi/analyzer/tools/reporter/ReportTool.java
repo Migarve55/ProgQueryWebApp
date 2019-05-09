@@ -48,7 +48,7 @@ public class ReportTool {
 	private ProblemDto getProblemDtoFromResult(Map<String,Object> result) {
 		ProblemDto error = new ProblemDto();
 		Object file = result.get("file");
-		error.setFile(file == null ? "???" : file.toString());
+		error.setFile(file == null ? "???" : prettifyFilename(file.toString()));
 		Long line = (Long) result.get("line");
 		if (line != null)
 			error.setLine(line);
@@ -56,6 +56,11 @@ public class ReportTool {
 		if (column != null)
 			error.setColumn(column);
 		return error;
+	}
+	
+	private String prettifyFilename(String filename) {
+		int i = filename.indexOf("env_");
+		return filename.substring(i + 41, filename.length());
 	}
 	
 }

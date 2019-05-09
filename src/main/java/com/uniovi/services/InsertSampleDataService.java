@@ -20,7 +20,7 @@ public class InsertSampleDataService {
 	@Autowired
 	private QueryService queryService;
 	
-	@PostConstruct
+	//@PostConstruct
 	public void init() {
 		
 		User user1 = new User("miguel@email.com", "Miguel", "Garnacho Vélez");
