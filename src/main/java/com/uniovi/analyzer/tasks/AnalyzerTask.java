@@ -5,9 +5,9 @@ import java.util.concurrent.FutureTask;
 import java.util.function.Consumer;
 
 import com.uniovi.analyzer.exceptions.EnviromentException;
-import com.uniovi.analyzer.tools.reporter.CodeError;
+import com.uniovi.analyzer.tools.reporter.dto.ProblemDto;
 
-public class AnalyzerTask extends FutureTask<List<CodeError>> {
+public class AnalyzerTask extends FutureTask<List<ProblemDto>> {
 	
 	private int progress = 0;
 	private String status = "In progress...";
@@ -59,7 +59,7 @@ public class AnalyzerTask extends FutureTask<List<CodeError>> {
 		this.status = status;
 	}
 	
-	public void setCallback(Consumer<List<CodeError>> callback) {
+	public void setCallback(Consumer<List<ProblemDto>> callback) {
 		this.callable.setCallback(callback);
 	}
 

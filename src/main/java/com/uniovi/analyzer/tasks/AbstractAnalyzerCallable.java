@@ -8,30 +8,31 @@ import com.uniovi.analyzer.exceptions.CompilerException;
 import com.uniovi.analyzer.exceptions.EnviromentException;
 import com.uniovi.analyzer.exceptions.ReportException;
 import com.uniovi.analyzer.tools.ToolFactory;
-import com.uniovi.analyzer.tools.reporter.CodeError;
 import com.uniovi.analyzer.tools.reporter.ReportTool;
+import com.uniovi.analyzer.tools.reporter.dto.ProblemDto;
+import com.uniovi.analyzer.tools.reporter.dto.QueryDto;
 
-public abstract class AbstractAnalyzerCallable implements Callable<List<CodeError>> {
+public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemDto>> {
 
 	private String args;
 	protected String basePath;
 	protected AnalyzerTask task;
 	
-	private Consumer<List<CodeError>> callback;
-	private List<String> queries;
+	private Consumer<List<ProblemDto>> callback;
+	private List<QueryDto> queries;
 
 	public AbstractAnalyzerCallable(String args) {
 		this.args = args;
 	}
 	
-	public AbstractAnalyzerCallable(String args, Consumer<List<CodeError>> callback) {
+	public AbstractAnalyzerCallable(String args, Consumer<List<ProblemDto>> callback) {
 		this(args);
 		this.callback = callback;
 	}
 
 	@Override
-	public final List<CodeError> call() throws EnviromentException, ReportException, CompilerException {
-		List<CodeError> result = null;
+	public final List<ProblemDto> call() throws EnviromentException, ReportException, CompilerException {
+		List<ProblemDto> result = null;
 		try {
 			prepareEnviroment();
 			compile();
@@ -60,7 +61,7 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<CodeErro
 		nextStep("Compiling...", 25);
 	}
 
-	protected List<CodeError> createReport() throws ReportException {
+	protected List<ProblemDto> createReport() throws ReportException {
 		nextStep("Creating report", 25);
 		String dbPath = basePath + "/neo4j/data/ProgQuery.db";
 		return ToolFactory.getReportTool(dbPath).generateReport();
@@ -73,7 +74,7 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<CodeErro
 
 	protected ReportTool setupReportTool(String dbPath) {
 		ReportTool reportFactory = new ReportTool(dbPath);
-		reportFactory.addAllQueries(queries);
+		reportFactory.setQueries(queries);
 		return reportFactory;
 	}
 
@@ -83,11 +84,11 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<CodeErro
 		this.task = task;
 	}
 
-	public void setCallback(Consumer<List<CodeError>> callback) {
+	public void setCallback(Consumer<List<ProblemDto>> callback) {
 		this.callback = callback;
 	}
 
-	public void setQueries(List<String> queries) {
+	public void setQueries(List<QueryDto> queries) {
 		this.queries = queries;
 	}
 

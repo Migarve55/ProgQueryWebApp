@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import javax.annotation.PreDestroy;
 
@@ -19,7 +20,8 @@ import com.uniovi.analyzer.tasks.AnalyzerTask;
 import com.uniovi.analyzer.tasks.file.FileAnalyzerCallable;
 import com.uniovi.analyzer.tasks.github.GithubCodeAnalyzerCallable;
 import com.uniovi.analyzer.tasks.zip.ZipAnalizerCallable;
-import com.uniovi.analyzer.tools.reporter.CodeError;
+import com.uniovi.analyzer.tools.reporter.dto.ProblemDto;
+import com.uniovi.analyzer.tools.reporter.dto.QueryDto;
 import com.uniovi.entities.Problem;
 import com.uniovi.entities.Query;
 import com.uniovi.entities.Result;
@@ -68,7 +70,8 @@ public class AnalyzerService {
 	}
 	
 	private void launchAnalyzerTask(User user, AbstractAnalyzerCallable callable, String[] queries) {
-		//callable.setQueries(getQueries(queries));
+		List<Query> queriesList = getQueries(queries, user);
+		callable.setQueries(toQueryDto(queriesList));
 		AnalyzerTask oldTask = getCurrentTask(user);
 		if (oldTask != null) {
 			if (!oldTask.isDone())
@@ -82,35 +85,49 @@ public class AnalyzerService {
 		setCurrentTask(user, task);
 	}
 	
-	private void createReport(User user, List<CodeError> errors) {
+	private void createReport(User user, List<ProblemDto> problems) {
 		Result result = new Result();
 		result.setUser(user);
 		result = resultsRepository.save(result);
-		for (CodeError error : errors) {
+		for (ProblemDto problemDto : problems) {
 			Problem problem = new Problem();
 			problem.setResult(result);
-			problem.setLine((int) error.getLine());
-			problem.setColumn((int) error.getColumn());
-			problem.setCompilationUnit(error.getFile());
+			problem.setQuery(queriesRepository.findByName(problemDto.getQueryName()));
+			problem.setLine((int) problemDto.getLine());
+			problem.setColumn((int) problemDto.getColumn());
+			problem.setCompilationUnit(problemDto.getFile());
 			problemsRepository.save(problem);
 		}
 	}
 	
-	private List<Query> getQueries(String[] queriesIds) {
+	private List<Query> getQueries(String[] queriesIds, User user) {
 		List<Query> result = new ArrayList<Query>();
 		for (String queryId : queriesIds) {
 			if (queryId.endsWith("*")) {
 			    String regex = queryId.replace(".", "\\.");
 			    regex = queryId.replace("*", "");
 			    regex = String.format("^%s[^\\.]*", regex);
-				result.addAll(queriesRepository.findAllByFamily(regex));
+				result.addAll(queriesRepository.findAllByFamily(regex, user));
 			} else {
-				Query query = queriesRepository.findByName(queryId);
+				Query query = queriesRepository.findByNameFromUser(queryId, user);
 				if (query != null)
 					result.add(query);
 			}
 		}
 		return result;
+	}
+	
+	private List<QueryDto> toQueryDto(List<Query> queries) {
+		return queries.stream()
+				.map((q) -> toQueryDto(q))
+				.collect(Collectors.toList());
+	}
+	
+	private QueryDto toQueryDto(Query query) {
+		QueryDto queryDto = new QueryDto();
+		queryDto.setName(query.getName());
+		queryDto.setQueryText(query.getQueryText());
+		return queryDto;
 	}
 
 	@PreDestroy
