@@ -1,6 +1,8 @@
 package com.uniovi.controllers;
 
 import java.security.Principal;
+import java.util.concurrent.ExecutionException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,8 +12,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.uniovi.analyzer.tasks.AnalyzerTask;
 import com.uniovi.entities.Result;
 import com.uniovi.entities.User;
+import com.uniovi.services.AnalyzerService;
 import com.uniovi.services.ResultService;
 import com.uniovi.services.UsersService;
 
@@ -24,6 +28,9 @@ public class ResultController {
 	@Autowired
 	private ResultService resultService;
 	
+	@Autowired
+	private AnalyzerService analyzerService;
+	
 	@RequestMapping("/result/list")
 	public String list(Model model, Principal principal, Pageable pageable) {
 		String email = principal.getName();
@@ -35,16 +42,28 @@ public class ResultController {
 	}
 	
 	@RequestMapping("/result/last") 
-	public String last(Model model, Principal principal, RedirectAttributes redirect) {
+	public String last(Principal principal, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		Result result = resultService.getLastFromUser(user);
+		AnalyzerTask task = analyzerService.getCurrentTask(user);
+		if (task.isCancelled()) {
+			redirect.addFlashAttribute("error", "error.taskCancelled");
+			return "redirect:/";
+		}
+		try {
+			task.get();
+		} catch (ExecutionException e) {
+			redirect.addFlashAttribute("error", e.getCause().getLocalizedMessage());
+			return "redirect:/";
+		} catch (InterruptedException e) {
+			return "redirect:/";
+		} 
 		if (result == null) {
 			redirect.addFlashAttribute("error", "error.noReport");
 			return "redirect:/";
 		}
-		model.addAttribute("errorList", result.getProblems());
-		return "result/detail";
+		return "redirect:/result/" + result.getId();
 	}
 	
 	@RequestMapping("/result/{id}")

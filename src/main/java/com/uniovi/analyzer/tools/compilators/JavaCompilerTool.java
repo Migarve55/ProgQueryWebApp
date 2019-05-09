@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.uniovi.analyzer.exceptions.CompilerException;
 
-public class JavaCompilerTool {
+public class JavaCompilerTool implements CompilerTool {
 
 	private final static String PLUGIN_CLASSPATH = "./src/main/resources/plugin/ProgQuery.jar;./src/main/resources/plugin/neo4jLibs/*;";
 	private final static String ENCODING = "ISO-8859-1";
@@ -46,14 +46,6 @@ public class JavaCompilerTool {
 		compile(compiler, args);
 	}
 
-	/**
-	 * 
-	 * @param basePath
-	 * @param extraClassPath
-	 * @param arguments
-	 * @return if it has compiled everything ok
-	 * @throws CompilerException 
-	 */
 	public void compileFolder(String basePath, String extraClassPath, String arguments) throws CompilerException {
 		JavaCompiler compiler = getCompiler();
 		// Basic config

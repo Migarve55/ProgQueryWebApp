@@ -15,6 +15,13 @@
 				<input class="form-control" type="file" name="zip" accept=".zip" required/>
 			</div>
 			<div class="form-group">
+				<label for="compOpt">Compilation option:</label>
+				<select class="form-control" name="compOpt">
+					<option value="java">Java compilation</option>
+					<option value="maven">Maven compilation</option>
+				</select>
+			</div>
+			<div class="form-group">
 				<label for="args">Java compilation arguments:</label>
 				<input class="form-control" name="args"/>
 				<small class="form-text text-muted">This is optional</small>
