@@ -1,13 +1,13 @@
 package com.uniovi.analyzer.tasks.github;
 
 import java.io.File;
+
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import com.uniovi.analyzer.exceptions.CompilerException;
 import com.uniovi.analyzer.exceptions.EnviromentException;
 import com.uniovi.analyzer.tasks.AbstractAnalyzerCallable;
-import com.uniovi.analyzer.tools.ToolFactory;
 
 public class GithubCodeAnalyzerCallable extends AbstractAnalyzerCallable {
 
@@ -40,7 +40,7 @@ public class GithubCodeAnalyzerCallable extends AbstractAnalyzerCallable {
 	@Override
 	protected void compile() throws CompilerException {
 		super.compile();
-		ToolFactory.getMavenCompilerTool().compileFolder(basePath, "", getArgs());
+		compiler.compileFolder(basePath, "", args);
 	}
 	
 }

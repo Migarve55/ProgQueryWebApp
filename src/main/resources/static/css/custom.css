@@ -34,10 +34,6 @@ td.queryText {
     width: 40%;
 }
 
-option:checked {
-	background-color: green;
-}
-
-option:checked::after {
+.queryOp:checked::after {
 	content: "<- Selected";
 }

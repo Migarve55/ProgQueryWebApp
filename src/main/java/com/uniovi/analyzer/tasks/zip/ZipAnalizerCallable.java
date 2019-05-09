@@ -3,10 +3,10 @@ package com.uniovi.analyzer.tasks.zip;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 import com.uniovi.analyzer.exceptions.CompilerException;
 import com.uniovi.analyzer.exceptions.EnviromentException;
 import com.uniovi.analyzer.tasks.AbstractAnalyzerCallable;
-import com.uniovi.analyzer.tools.ToolFactory;
 
 public class ZipAnalizerCallable extends AbstractAnalyzerCallable {
 
@@ -32,7 +32,7 @@ public class ZipAnalizerCallable extends AbstractAnalyzerCallable {
 	@Override
 	protected void compile() throws CompilerException {
 		super.compile();
-		ToolFactory.getJavaCompilerTool().compileFolder(basePath, "", getArgs());
+		compiler.compileFolder(basePath, "", args);
 	}
 
 }

@@ -39,7 +39,7 @@ public class FileAnalyzerCallable extends AbstractAnalyzerCallable {
 	@Override
 	protected void compile() throws CompilerException {
 		nextStep(String.format("Compiling %s...", fileName), 25);
-		ToolFactory.getJavaCompilerTool().compileFile(basePath, "", fileName, getArgs());
+		ToolFactory.getJavaCompilerTool().compileFile(basePath, "", fileName, args);
 	}
 
 }

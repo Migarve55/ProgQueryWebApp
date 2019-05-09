@@ -47,11 +47,12 @@ public class AnalyzerController {
 
 	@RequestMapping(path = "/analyzer/file", method = RequestMethod.POST, consumes = { "multipart/form-data" })
 	public String postAnalizeFile(@RequestParam("file") MultipartFile file, @RequestParam("args") String args, 
-			@RequestParam("queries") String[] queries, Principal principal, RedirectAttributes redirect) {
+			@RequestParam("compOpt") String compOpt, @RequestParam("queries") String[] queries, Principal principal
+			, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		try {
-			analyzerService.analyzeFile(user, file, args, queries);
+			analyzerService.analyzeFile(user, file, compOpt, args, queries);
 		} catch (IOException e) {
 			e.printStackTrace();
 			redirect.addFlashAttribute("error", "error.fileError");
@@ -72,12 +73,12 @@ public class AnalyzerController {
 
 	@RequestMapping(path = "/analyzer/zip", method = RequestMethod.POST, consumes = { "multipart/form-data" })
 	public String postAnalizeZip(@RequestParam("zip") MultipartFile zip, 
-			@RequestParam("args") String args, @RequestParam("queries") String[] queries, 
+			@RequestParam("compOpt") String compOpt, @RequestParam("args") String args, @RequestParam("queries") String[] queries, 
 			Principal principal, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		try {
-			analyzerService.analyzeZip(user, zip, args, queries);
+			analyzerService.analyzeZip(user, zip, compOpt, args, queries);
 		} catch (IOException e) {
 			e.printStackTrace();
 			redirect.addFlashAttribute("error", "error.fileError");
@@ -98,10 +99,10 @@ public class AnalyzerController {
 
 	@RequestMapping(path = "/analyzer/git", method = RequestMethod.POST)
 	public String postAnalizeGit(@RequestParam("url") String url, @RequestParam("args") String args, 
-			@RequestParam("queries") String[] queries, Principal principal) {
+			@RequestParam("compOpt") String compOpt, @RequestParam("queries") String[] queries, Principal principal) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
-		analyzerService.analyzeGitRepo(user, url, args, queries);
+		analyzerService.analyzeGitRepo(user, url, compOpt, args, queries);
 		return "redirect:/analyzer/loading";
 	}
 	

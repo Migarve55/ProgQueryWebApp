@@ -21,6 +21,8 @@ import com.uniovi.analyzer.tasks.AnalyzerTask;
 import com.uniovi.analyzer.tasks.file.FileAnalyzerCallable;
 import com.uniovi.analyzer.tasks.github.GithubCodeAnalyzerCallable;
 import com.uniovi.analyzer.tasks.zip.ZipAnalizerCallable;
+import com.uniovi.analyzer.tools.ToolFactory;
+import com.uniovi.analyzer.tools.compilators.CompilerTool;
 import com.uniovi.analyzer.tools.reporter.dto.ProblemDto;
 import com.uniovi.analyzer.tools.reporter.dto.QueryDto;
 import com.uniovi.entities.Problem;
@@ -58,21 +60,22 @@ public class AnalyzerService {
 		getCurrentTask(user).cancel(false);
 	}
 	
-	public void analyzeFile(User user, MultipartFile file, String args, String[] queries) throws IOException {
-		launchAnalyzerTask(user, file.getOriginalFilename(), new FileAnalyzerCallable(args, file.getOriginalFilename(), file.getInputStream()), queries);
+	public void analyzeFile(User user, MultipartFile file, String compOp, String args, String[] queries) throws IOException {
+		launchAnalyzerTask(user, file.getOriginalFilename(), compOp, new FileAnalyzerCallable(args, file.getOriginalFilename(), file.getInputStream()), queries);
 	}
 	
-	public void analyzeZip(User user, MultipartFile zip, String args, String[] queries) throws IOException {
-		launchAnalyzerTask(user, zip.getOriginalFilename(), new ZipAnalizerCallable(args, zip.getInputStream()), queries);
+	public void analyzeZip(User user, MultipartFile zip, String compOp, String args, String[] queries) throws IOException {
+		launchAnalyzerTask(user, zip.getOriginalFilename(), compOp, new ZipAnalizerCallable(args, zip.getInputStream()), queries);
 	}
 
-	public void analyzeGitRepo(User user, String repoUrl, String args, String[] queries) {
-		launchAnalyzerTask(user, repoUrl, new GithubCodeAnalyzerCallable(repoUrl, args), queries);
+	public void analyzeGitRepo(User user, String repoUrl, String compOp, String args, String[] queries) {
+		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(repoUrl, args), queries);
 	}
 	
-	private void launchAnalyzerTask(User user, String name, AbstractAnalyzerCallable callable, String[] queries) {
+	private void launchAnalyzerTask(User user, String name, String compOp, AbstractAnalyzerCallable callable, String[] queries) {
 		List<Query> queriesList = getQueries(queries, user);
 		callable.setQueries(toQueryDto(queriesList));
+		callable.setCompiler(getCompilationTool(compOp));
 		AnalyzerTask oldTask = getCurrentTask(user);
 		if (oldTask != null) {
 			if (!oldTask.isDone())
@@ -84,6 +87,17 @@ public class AnalyzerService {
 		});
 		executor.execute(task);
 		setCurrentTask(user, task);
+	}
+	
+	private CompilerTool getCompilationTool(String compilator) {
+		switch (compilator) {
+			case "java":
+				return ToolFactory.getJavaCompilerTool();
+			case "maven":
+				return ToolFactory.getMavenCompilerTool();
+			default:
+				return ToolFactory.getJavaCompilerTool();
+		}
 	}
 	
 	private void createReport(User user, String name, List<ProblemDto> problems) {

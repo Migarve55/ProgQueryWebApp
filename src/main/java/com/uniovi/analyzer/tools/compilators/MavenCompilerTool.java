@@ -23,7 +23,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.uniovi.analyzer.exceptions.CompilerException;
 
-public class MavenCompilerTool {
+public class MavenCompilerTool implements CompilerTool {
 	
 	private final static String PLUGIN_CLASSPATH = "src/main/resources/plugin/ProgQuery.jar;src/main/resources/plugin/neo4jLibs/*;";
 	
@@ -79,7 +79,6 @@ public class MavenCompilerTool {
 			modifyCompilerArgs(dom, basepath);
 			plugin.setConfiguration(dom);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 			throw new CompilerException("error.compiler.maven.pomFileNotFound");
 		} catch (IOException e) {
 			e.printStackTrace();

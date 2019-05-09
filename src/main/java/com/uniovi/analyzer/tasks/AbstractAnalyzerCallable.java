@@ -8,14 +8,16 @@ import com.uniovi.analyzer.exceptions.CompilerException;
 import com.uniovi.analyzer.exceptions.EnviromentException;
 import com.uniovi.analyzer.exceptions.ReportException;
 import com.uniovi.analyzer.tools.ToolFactory;
+import com.uniovi.analyzer.tools.compilators.CompilerTool;
 import com.uniovi.analyzer.tools.reporter.dto.ProblemDto;
 import com.uniovi.analyzer.tools.reporter.dto.QueryDto;
 
 public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemDto>> {
 
-	private String args;
+	protected String args;
 	protected String basePath;
 	protected AnalyzerTask task;
+	protected CompilerTool compiler;
 	
 	private Consumer<List<ProblemDto>> callback;
 	private List<QueryDto> queries;
@@ -73,10 +75,6 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 
 	// Setters
 
-	public void setTask(AnalyzerTask task) {
-		this.task = task;
-	}
-
 	public void setCallback(Consumer<List<ProblemDto>> callback) {
 		this.callback = callback;
 	}
@@ -84,9 +82,13 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 	public void setQueries(List<QueryDto> queries) {
 		this.queries = queries;
 	}
+	
+	public void setTask(AnalyzerTask task) {
+		this.task = task;
+	}
 
-	public String getArgs() {
-		return args;
+	public void setCompiler(CompilerTool compiler) {
+		this.compiler = compiler;
 	}
 
 }
