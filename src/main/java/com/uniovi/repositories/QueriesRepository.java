@@ -11,7 +11,7 @@ import com.uniovi.entities.User;
 
 public interface QueriesRepository extends CrudRepository<Query, Long> {
 
-	Page<Query> findAllByUser(Pageable pageable, User user);
+	Page<Query> findAllByUserOrderByName(Pageable pageable, User user);
 	
 	Query findByName(String name);
 	

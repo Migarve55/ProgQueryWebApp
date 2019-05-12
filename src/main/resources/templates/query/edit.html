@@ -35,8 +35,14 @@
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="publicForAll">Visibilidad:</label>
 				<div class="col-sm-1">
-					<input type="checkbox" class="form-control" name="publicForAll" data-toggle="toggle" th:value="*{publicForAll}" th:data-on="#{public}" th:data-off="#{private}">
+					<input id="togglePublic" type="checkbox" class="form-control" name="publicForAll" data-toggle="toggle" th:data-on="#{public}" th:data-off="#{private}">
 				</div>
+				<script th:inline="javascript">
+					/*<![CDATA[*/>
+					var publicForAll = [[*{publicForAll}]]; 
+					$('#togglePublic').bootstrapToggle(publicForAll ? 'on' : 'off')
+					/*]]>*/
+				</script>
 			</div>
 			<div class="form-group">
 				<div class="col-sm-offset-2 col-sm-10">

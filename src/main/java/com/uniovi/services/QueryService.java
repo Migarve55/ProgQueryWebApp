@@ -26,7 +26,7 @@ public class QueryService {
 	}
 
 	public Page<Query> getQueriesFromUser(Pageable pageable, User user) {
-		return queriesRepository.findAllByUser(pageable, user);
+		return queriesRepository.findAllByUserOrderByName(pageable, user);
 	}
 	
 	public Page<Query> getQueriesFromUser(Pageable pageable, User user, String searchText) {

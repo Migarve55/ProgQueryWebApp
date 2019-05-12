@@ -72,13 +72,13 @@ public class AnalyzerController {
 	}
 
 	@RequestMapping(path = "/analyzer/zip", method = RequestMethod.POST, consumes = { "multipart/form-data" })
-	public String postAnalizeZip(@RequestParam("zip") MultipartFile zip, 
-			@RequestParam("compOpt") String compOpt, @RequestParam("args") String args, @RequestParam("queries") String[] queries, 
-			Principal principal, RedirectAttributes redirect) {
+	public String postAnalizeZip(@RequestParam("zip") MultipartFile zip, @RequestParam("compOpt") String compOpt,
+			@RequestParam(value = "extraCP", required = false) String extraCP, @RequestParam(value = "args", required = false) String args, @RequestParam("queries") String[] queries, 
+            Principal principal, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		try {
-			analyzerService.analyzeZip(user, zip, compOpt, args, queries);
+			analyzerService.analyzeZip(user, zip, compOpt, extraCP, args, queries);
 		} catch (IOException e) {
 			e.printStackTrace();
 			redirect.addFlashAttribute("error", "error.fileError");
