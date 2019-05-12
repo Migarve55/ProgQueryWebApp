@@ -123,7 +123,6 @@ public class QueryController {
 			return "redirect:/";
 		}
 		//Finally save
-		original.setName(query.getName());
 		original.setDescription(query.getDescription());
 		original.setQueryText(query.getQueryText());
 		original.setPublicForAll(query.isPublicForAll());

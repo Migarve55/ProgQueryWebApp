@@ -64,8 +64,8 @@ public class AnalyzerService {
 		launchAnalyzerTask(user, file.getOriginalFilename(), compOp, new FileAnalyzerCallable(args, file.getOriginalFilename(), file.getInputStream()), queries);
 	}
 	
-	public void analyzeZip(User user, MultipartFile zip, String compOp, String args, String[] queries) throws IOException {
-		launchAnalyzerTask(user, zip.getOriginalFilename(), compOp, new ZipAnalizerCallable(args, zip.getInputStream()), queries);
+	public void analyzeZip(User user, MultipartFile zip, String compOp, String extraCP, String args, String[] queries) throws IOException {
+		launchAnalyzerTask(user, zip.getOriginalFilename(), compOp, new ZipAnalizerCallable(args, extraCP, zip.getInputStream()), queries);
 	}
 
 	public void analyzeGitRepo(User user, String repoUrl, String compOp, String args, String[] queries) {

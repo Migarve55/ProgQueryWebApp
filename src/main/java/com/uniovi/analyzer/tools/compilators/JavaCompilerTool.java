@@ -51,7 +51,8 @@ public class JavaCompilerTool implements CompilerTool {
 		// Basic config
 		List<String> args = basicArgs(basePath, extraClassPath);
 		// Extra arguments
-		addArgumentsFromString(args, arguments);
+		if (arguments != null)
+			addArgumentsFromString(args, arguments);
 		// All files
 		generateSourcesFile(basePath);
 		// Compilation
@@ -77,8 +78,13 @@ public class JavaCompilerTool implements CompilerTool {
 	}
 
 	private List<String> basicArgs(String basePath, String extraClassPath) {
+		String ecp = extraClassPath.trim();
+		String extraClassPathLocal = "";
+		if (!ecp.isEmpty()) {
+			extraClassPathLocal = "./" + basePath + ecp + ";";
+		}
 		return new ArrayList<>(
-				Arrays.asList("-cp", PLUGIN_CLASSPATH + extraClassPath.trim(), 
+				Arrays.asList("-cp", PLUGIN_CLASSPATH + extraClassPathLocal, 
 						"-encoding", ENCODING,
 						String.format(PLUGIN_ARG, basePath + DB_PATH), 
 						"-d", basePath, "-nowarn", "-g:none", 

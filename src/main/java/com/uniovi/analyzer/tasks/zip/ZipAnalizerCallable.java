@@ -11,10 +11,12 @@ import com.uniovi.analyzer.tasks.AbstractAnalyzerCallable;
 public class ZipAnalizerCallable extends AbstractAnalyzerCallable {
 
 	private InputStream fileIs;
+	private String extraCP;
 
-	public ZipAnalizerCallable(String args, InputStream fileIs) {
+	public ZipAnalizerCallable(String args, String extraCP, InputStream fileIs) {
 		super(args);
 		this.fileIs = fileIs;
+		this.extraCP = extraCP;
 	}
 
 	@Override
@@ -32,7 +34,7 @@ public class ZipAnalizerCallable extends AbstractAnalyzerCallable {
 	@Override
 	protected void compile() throws CompilerException {
 		super.compile();
-		compiler.compileFolder(basePath, "", args);
+		compiler.compileFolder(basePath, extraCP, args);
 	}
 
 }
