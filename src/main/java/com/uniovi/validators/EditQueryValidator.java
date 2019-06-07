@@ -18,7 +18,6 @@ public class EditQueryValidator implements Validator {
 	@Override
 	public void validate(Object target, Errors errors) {
 		//Query query = (Query) target;
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "error.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "error.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "queryText", "error.empty");
 	}
