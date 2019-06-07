@@ -8,8 +8,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
+import org.apache.maven.model.Repository;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
@@ -70,14 +72,9 @@ public class MavenCompilerTool implements CompilerTool {
 		try (FileReader fr = new FileReader(pom)) {
 			MavenXpp3Reader reader = new MavenXpp3Reader();
 			model = reader.read(fr);
-			Plugin plugin = model.getBuild().getPluginsAsMap()
-			.get("org.apache.maven.plugins:maven-compiler-plugin");
-			//Change plugin configuarion
-			Xpp3Dom dom = (Xpp3Dom) plugin.getConfiguration();
-			if (dom == null)
-				throw new CompilerException("error.compiler.maven.pomCompilerPluginConfig");
-			modifyCompilerArgs(dom, basepath);
-			plugin.setConfiguration(dom);
+			addRepo(model);
+			addDependencies(model);
+			modifyCompilerArgs(model, basepath);
 		} catch (FileNotFoundException e) {
 			throw new CompilerException("error.compiler.maven.pomFileNotFound");
 		} catch (IOException e) {
@@ -97,16 +94,48 @@ public class MavenCompilerTool implements CompilerTool {
 		}
 	}
 	
-	private void modifyCompilerArgs(Xpp3Dom configuration, String basepath) {
+	private void addRepo(Model model) {
+		Repository repository = new Repository();
+		repository.setId("LocalRepo");
+		repository.setName("LocalRepo");
+		repository.setUrl("file://${project.basedir}/../../plugin");
+		model.addPluginRepository(repository);
+	}
+	
+	private void addDependencies(Model model) {
+		Dependency pluginDependency = new Dependency();
+		pluginDependency.setGroupId("es.uniovi.progQuery");
+		pluginDependency.setArtifactId("progQuery");
+		pluginDependency.setVersion("1.0");
+		model.addDependency(pluginDependency);
+//		Dependency pluginLibsDependency = new Dependency();
+//		pluginLibsDependency.setGroupId("es.uniovi.progQuery.libs");
+//		pluginLibsDependency.setArtifactId("libs");
+//		pluginLibsDependency.setVersion("1.0");
+//		model.addDependency(pluginLibsDependency);
+	}
+	
+	private void modifyCompilerArgs(Model model, String basepath) throws CompilerException {
+		Plugin plugin = model.getBuild().getPluginsAsMap()
+			.get("org.apache.maven.plugins:maven-compiler-plugin");
+		if (plugin == null) {
+			plugin = new Plugin();
+			plugin.setGroupId("org.apache.maven.plugins");
+			plugin.setArtifactId("maven-compiler-plugin");
+			model.getBuild().addPlugin(plugin);
+		}
+		//Change plugin configuarion
+		Xpp3Dom configuration = (Xpp3Dom) plugin.getConfiguration();
+		if (configuration == null)
+			throw new CompilerException("error.compiler.maven.pomCompilerPluginConfig");
 		Xpp3Dom compArgs = configuration.getChild("compilerArgs");
 		if (compArgs == null) {
 			compArgs = new Xpp3Dom("compilerArgs");
 			configuration.addChild(compArgs);
 		}
 		//Xplugin argument
-		addArg(compArgs, "-cp");
-		addArg(compArgs, PLUGIN_CLASSPATH);
 		addArg(compArgs, String.format(PLUGIN_ARG, basepath + DB_PATH));
+		plugin.setConfiguration(configuration);
 	}
 	
 	private void addArg(Xpp3Dom compArgs, String argument) {
