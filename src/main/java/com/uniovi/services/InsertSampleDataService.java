@@ -1,11 +1,19 @@
 package com.uniovi.services;
 
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.uniovi.entities.Query;
@@ -13,16 +21,20 @@ import com.uniovi.entities.User;
 
 @Service
 public class InsertSampleDataService {
-	
+
 	@Autowired
 	private UsersService usersService;
-	
+
 	@Autowired
 	private QueryService queryService;
-	
-	//@PostConstruct
+
+	@Value("${spring.jpa.hibernate.ddl-auto}")
+	private String userBucketPath;
+
+	@PostConstruct
 	public void init() {
-		
+		if (!userBucketPath.equals("create"))
+			return;
 		User user1 = new User("miguel@email.com", "Miguel", "Garnacho Vélez");
 		user1.setPassword("123456");
 		user1.setRole(User.USER_ROLE);
@@ -50,11 +62,9 @@ public class InsertSampleDataService {
 		usersService.addUser(user5);
 		usersService.addUser(admin);
 
-		Query query1 = new Query("es.uniovi.query1", "Warning [CMU-MET50]", "MATCH (n) RETURN n.lineNumber as line, n.column as column, n.fileName as file");
-		query1.setUser(user1);
-		query1.setPublicForAll(true);
-		
-		Query query2 = new Query("es.uniovi.query2", "Warning [CMU-MET51]", "...");
+		loadQueriesFromFile(user1);
+
+		Query query2 = new Query("es.uniovi.query1", "Warning [CMU-MET51]", "...");
 		query2.setUser(user1);
 		query2.setPublicForAll(false);
 		Set<User> publicTo = new HashSet<User>();
@@ -62,23 +72,43 @@ public class InsertSampleDataService {
 		publicTo.add(user3);
 		publicTo.add(user4);
 		query2.setPublicTo(publicTo);
-		
-		Query query3 = new Query("es.uniovi.query3", "Warning [CMU-MET52]", "...");
+
+		Query query3 = new Query("es.uniovi.query2", "Test 2", "...");
 		query3.setUser(user2);
-		
-		Query query4 = new Query("es.uniovi.query4", "Warning [CMU-MET53]", "...");
+
+		Query query4 = new Query("es.uniovi.query3", "Test 3", "...");
 		query4.setUser(user3);
-		
-		Query query5 = new Query("es.uniovi.query5", "Warning [CMU-MET54]", "...");
+
+		Query query5 = new Query("es.uniovi.query4", "Test 4", "...");
 		query5.setUser(user4);
 		query5.setPublicForAll(true);
-		
-		queryService.saveQuery(query1);
+
 		queryService.saveQuery(query2);
 		queryService.saveQuery(query3);
 		queryService.saveQuery(query4);
 		queryService.saveQuery(query5);
-		
 	}
-	
+
+	private void loadQueriesFromFile(User user) {
+		try {
+			Object obj = new JSONParser().parse(new FileReader("src/main/resources/queries.json"));
+			JSONObject jo = (JSONObject) obj;
+			JSONArray ja = (JSONArray) jo.get("queries");
+			@SuppressWarnings("unchecked")
+			Iterator<JSONObject> queryIterator = ja.iterator(); 
+			while (queryIterator.hasNext()) {
+				JSONObject queryJson = queryIterator.next();
+				Query query = new Query(
+						(String) queryJson.get("name"), 
+						(String) queryJson.get("description"), 
+						(String) queryJson.get("query"));
+				query.setUser(user);
+				query.setPublicForAll(true);
+				queryService.saveQuery(query);
+			}
+		} catch (IOException | ParseException e) {
+			e.printStackTrace();
+		}
+	}
+
 }
