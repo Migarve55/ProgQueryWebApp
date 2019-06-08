@@ -9,8 +9,8 @@
 		<version>2.1.4.RELEASE</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.uniovi</groupId>
-	<artifactId>progQuery</artifactId>
+	<groupId>es.uniovi</groupId>
+	<artifactId>progQueryWebApp</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>ProgQueryWebApp</name>
 	<description>Web app for the prog query plugin</description>
