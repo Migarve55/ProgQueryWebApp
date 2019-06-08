@@ -22,7 +22,6 @@ public class ToolFactory {
 		return new MavenCompilerTool();
 	}
 
-
 	public static ReportTool getReportTool(String dbPath, List<QueryDto> queries) {
 		ReportTool tool = new ReportTool(dbPath);
 		tool.setQueries(queries);

@@ -27,18 +27,48 @@ import com.uniovi.analyzer.exceptions.CompilerException;
 
 public class MavenCompilerTool implements CompilerTool {
 	
-	private final static String PLUGIN_CLASSPATH = "src/main/resources/plugin/ProgQuery.jar;src/main/resources/plugin/neo4jLibs/*;";
+	private final static boolean USE_MAVEN_INVOKER_API = true;
 	
+	private final static String PLUGIN_VERSION = "0.0.1-SNAPSHOT";
 	private final static String PLUGIN_ARG = "-Xplugin:ProgQueryPlugin %s";
 	private final static String DB_PATH = "neo4j/data/ProgQuery.db";
 
-	private static final List<String> PUBLISH_GOALS = Arrays.asList( "install", "compile" );
+	private static final List<String> PUBLISH_GOALS = Arrays.asList( "compile" );
 	 
-	public void compileFolder(String basePath, String extraClassPath, String arguments) throws CompilerException {
+	public void compileFolder(String basePath, String extraClassPath, String extraArgs) throws CompilerException {
+		
+	    //Configure model
+	    try {
+			configurePOMFIle(new File(basePath + "pom.xml"), basePath, extraArgs);
+		} catch (CompilerException e) {
+			e.printStackTrace();
+			throw e;
+		}
+	    //Execute
+	    if (USE_MAVEN_INVOKER_API)
+	    	compileUsingMavenAPI(basePath);
+	    else
+	    	compileUsingCommandInterface(basePath);
+	}
+	
+	private void compileUsingCommandInterface(String basePath) throws CompilerException {
+		File folder = new File(System.getProperty("user.dir"), basePath);
+		try {
+			Process process=Runtime.getRuntime().exec(
+					"mvn " + String.join(" ", PUBLISH_GOALS),
+			        null, 
+			        folder);
+			if (process.waitFor() != 0)
+				throw new CompilerException("error.compiler.maven.execution");
+		} catch (IOException | InterruptedException e) {
+			e.printStackTrace();
+			throw new CompilerException("error.compiler.maven.invocation");
+		}
+	}
+	
+	private void compileUsingMavenAPI(String basePath) throws CompilerException {
 		File folder = new File(basePath);
-		//Config invoker
 		Invoker newInvoker = new DefaultInvoker();
-		newInvoker.setLocalRepositoryDirectory(folder);
 		newInvoker.setMavenHome(new File(System.getenv("MAVEN_HOME")));
 		//newInvoker.setOutputHandler(null);
 		//Configure request 
@@ -46,15 +76,7 @@ public class MavenCompilerTool implements CompilerTool {
 	    request.setBaseDirectory(folder);
 	    request.setBatchMode(true);
 	    request.setGoals( PUBLISH_GOALS );
-	    //Configure model
-	    try {
-			configurePOMFIle(new File(basePath + "pom.xml"), basePath);
-		} catch (CompilerException e) {
-			e.printStackTrace();
-			throw e;
-		}
-	    //Execute
-	    InvocationResult result = null;
+		InvocationResult result = null;
 		try {
 			result = newInvoker.execute( request );
 		} catch (MavenInvocationException e) {
@@ -66,15 +88,15 @@ public class MavenCompilerTool implements CompilerTool {
 	    }
 	}
 	
-	private void configurePOMFIle(File pom, String basepath) throws CompilerException {
+	private void configurePOMFIle(File pom, String basepath, String extraArgs) throws CompilerException {
 		Model model = null;
 		//Read model
 		try (FileReader fr = new FileReader(pom)) {
 			MavenXpp3Reader reader = new MavenXpp3Reader();
 			model = reader.read(fr);
-			addRepo(model);
+			modifyCompilerArgs(model, basepath, extraArgs);
 			addDependencies(model);
-			modifyCompilerArgs(model, basepath);
+			//addRepo(model);
 		} catch (FileNotFoundException e) {
 			throw new CompilerException("error.compiler.maven.pomFileNotFound");
 		} catch (IOException e) {
@@ -94,11 +116,11 @@ public class MavenCompilerTool implements CompilerTool {
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private void addRepo(Model model) {
 		Repository repository = new Repository();
-		repository.setId("LocalRepo");
-		repository.setName("LocalRepo");
-		repository.setUrl("file://${project.basedir}/../../plugin");
+		repository.setId("repo");
+		repository.setUrl("file://${project.basedir}/../../repo");
 		model.addPluginRepository(repository);
 	}
 	
@@ -106,16 +128,12 @@ public class MavenCompilerTool implements CompilerTool {
 		Dependency pluginDependency = new Dependency();
 		pluginDependency.setGroupId("es.uniovi.progQuery");
 		pluginDependency.setArtifactId("progQuery");
-		pluginDependency.setVersion("1.0");
+		pluginDependency.setVersion(PLUGIN_VERSION);
 		model.addDependency(pluginDependency);
-//		Dependency pluginLibsDependency = new Dependency();
-//		pluginLibsDependency.setGroupId("es.uniovi.progQuery.libs");
-//		pluginLibsDependency.setArtifactId("libs");
-//		pluginLibsDependency.setVersion("1.0");
-//		model.addDependency(pluginLibsDependency);
+		//Add neo4j plugins used by the compilator plugin
 	}
 	
-	private void modifyCompilerArgs(Model model, String basepath) throws CompilerException {
+	private void modifyCompilerArgs(Model model, String basepath, String extraArgs) throws CompilerException {
 		Plugin plugin = model.getBuild().getPluginsAsMap()
 			.get("org.apache.maven.plugins:maven-compiler-plugin");
 		if (plugin == null) {
@@ -124,7 +142,7 @@ public class MavenCompilerTool implements CompilerTool {
 			plugin.setArtifactId("maven-compiler-plugin");
 			model.getBuild().addPlugin(plugin);
 		}
-		//Change plugin configuarion
+		//Change plugin configuration
 		Xpp3Dom configuration = (Xpp3Dom) plugin.getConfiguration();
 		if (configuration == null)
 			throw new CompilerException("error.compiler.maven.pomCompilerPluginConfig");
@@ -136,6 +154,13 @@ public class MavenCompilerTool implements CompilerTool {
 		//Xplugin argument
 		addArg(compArgs, String.format(PLUGIN_ARG, basepath + DB_PATH));
 		plugin.setConfiguration(configuration);
+		//Extra arguments
+		if (!extraArgs.trim().isEmpty()) {
+			for (String arg : extraArgs.split(" ")) {
+				if (!arg.trim().isEmpty()) 
+					addArg(compArgs, arg);
+			}
+		}
 	}
 	
 	private void addArg(Xpp3Dom compArgs, String argument) {
