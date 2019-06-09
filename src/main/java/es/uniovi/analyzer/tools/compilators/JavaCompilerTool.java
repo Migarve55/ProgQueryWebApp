@@ -25,19 +25,10 @@ public class JavaCompilerTool implements CompilerTool {
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	/**
-	 * 
-	 * @param basePath
-	 * @param extraClassPath
-	 * @param filename
-	 * @param arguments
-	 * @return if it has compiled everything ok
-	 * @throws CompilerException 
-	 */
-	public void compileFile(String basePath, String extraClassPath, String filename, String arguments) throws CompilerException {
+	public void compileFile(String basePath, String filename, String arguments) throws CompilerException {
 		JavaCompiler compiler = getCompiler();
 		// Basic config
-		List<String> args = basicArgs(basePath, extraClassPath);
+		List<String> args = basicArgs(basePath);
 		// Extra arguments
 		addArgumentsFromString(args, arguments);
 		// All files
@@ -46,10 +37,10 @@ public class JavaCompilerTool implements CompilerTool {
 		compile(compiler, args);
 	}
 
-	public void compileFolder(String basePath, String extraClassPath, String arguments) throws CompilerException {
+	public void compileFolder(String basePath, String arguments) throws CompilerException {
 		JavaCompiler compiler = getCompiler();
 		// Basic config
-		List<String> args = basicArgs(basePath, extraClassPath);
+		List<String> args = basicArgs(basePath);
 		// Extra arguments
 		if (arguments != null)
 			addArgumentsFromString(args, arguments);
@@ -77,14 +68,9 @@ public class JavaCompilerTool implements CompilerTool {
 		return compiler;
 	}
 
-	private List<String> basicArgs(String basePath, String extraClassPath) {
-		String ecp = extraClassPath.trim();
-		String extraClassPathLocal = "";
-		if (!ecp.isEmpty()) {
-			extraClassPathLocal = "./" + basePath + ecp + ";";
-		}
+	private List<String> basicArgs(String basePath) {
 		return new ArrayList<>(
-				Arrays.asList("-cp", PLUGIN_CLASSPATH + extraClassPathLocal, 
+				Arrays.asList("-cp", PLUGIN_CLASSPATH, 
 						"-encoding", ENCODING,
 						String.format(PLUGIN_ARG, basePath + DB_PATH), 
 						"-d", basePath, "-nowarn", "-g:none", 

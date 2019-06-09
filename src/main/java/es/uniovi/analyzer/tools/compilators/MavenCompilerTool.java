@@ -35,8 +35,7 @@ public class MavenCompilerTool implements CompilerTool {
 
 	private static final List<String> PUBLISH_GOALS = Arrays.asList( "compile" );
 	 
-	public void compileFolder(String basePath, String extraClassPath, String extraArgs) throws CompilerException {
-		
+	public void compileFolder(String basePath, String extraArgs) throws CompilerException {
 	    //Configure model
 	    try {
 			configurePOMFIle(new File(basePath + "pom.xml"), basePath, extraArgs);
@@ -144,8 +143,10 @@ public class MavenCompilerTool implements CompilerTool {
 		}
 		//Change plugin configuration
 		Xpp3Dom configuration = (Xpp3Dom) plugin.getConfiguration();
-		if (configuration == null)
-			throw new CompilerException("error.compiler.maven.pomCompilerPluginConfig");
+		if (configuration == null) {
+			configuration = new Xpp3Dom("configuration");
+			plugin.setConfiguration(configuration);
+		}
 		Xpp3Dom compArgs = configuration.getChild("compilerArgs");
 		if (compArgs == null) {
 			compArgs = new Xpp3Dom("compilerArgs");
