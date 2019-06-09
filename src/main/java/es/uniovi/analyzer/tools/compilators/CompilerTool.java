@@ -5,13 +5,12 @@ import es.uniovi.analyzer.exceptions.CompilerException;
 public interface CompilerTool {
 
 	/**
-	 * 
-	 * @param basePath
-	 * @param extraClassPath
-	 * @param arguments
-	 * @return if it has compiled everything ok
+	 * Compiles a project inside the folder
+	 * @param basePath path the the folder
+	 * @param arguments extra arguments for javac
+	 *
 	 * @throws CompilerException 
 	 */
-	public void compileFolder(String basePath, String extraClassPath, String arguments) throws CompilerException;
+	public void compileFolder(String basePath, String arguments) throws CompilerException;
 	
 }
