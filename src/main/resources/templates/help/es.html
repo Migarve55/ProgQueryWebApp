@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="fragments/head" />
+<body>
+	<nav th:replace="fragments/nav" />
+	<!-- Options -->
+	<div class="container mt-3">
+		<h2>FAQ</h2>
+		<section>
+			<h3>¿Cómo funciona este analizador?</h3>
+			<p>
+			   Este analizador crea una base de datos de grafo mientras java compila tu proyecto usando neo4j.
+			   Después, ejecuta una serie de queries definidas por el usuario que buscan por malas prácticas de programación 
+			   que no son detectadas por el compilador.
+			</p>
+		</section>
+		<section>
+			<h3>¿Como creo una consulta?</h3>
+			<p>
+			   Las consultas estan escritas en cipher, que es el lenguage que neo4j usa para las consultas.
+			   La única condición es que devuelva los siguientes campos:
+			</p>
+			<ul>
+				<li>Column</li>
+				<li>Line</li>
+				<li>File: conocido como ECU (enclosing compilation unit)</li>
+			</ul>
+			<p>Esto es necesario para que funcione. Por ejemplo:</p>
+			<span>return retExpr.lineNumber as line, retExpr.column as column , enclosingCU.fileName as file</span>
+		</section>
+		<section>
+			<h3>¿Como arreglo un error?</h3>
+			<p>La definición del error debería ser suficiente para arreglarlo.</p>
+		</section>
+		<section>
+			<h3>¿Porque no puedo crear una consulta con el nombre que quiero?</h3>
+			<p>Si tienes problemas al crear una query es porque seguramente las estés nombrando incorrectamente.</p>
+			<p>Su convenio de nombrado es como los paquetes de java, excepto que no admite guiones bajos. Por ejemplo "es.uniovi.myQuery" es válido.</p>
+		</section>
+	</div>
+	<footer th:replace="fragments/footer" />
+</body>
+</html>

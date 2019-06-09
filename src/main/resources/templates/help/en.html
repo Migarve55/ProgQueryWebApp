@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="fragments/head" />
+<body>
+	<nav th:replace="fragments/nav" />
+	<!-- Options -->
+	<div class="container mt-3">
+		<h2>FAQ</h2>
+		<section>
+			<h3>How does this analyzer work?</h3>
+			<p>
+			   This analyzer creates a graph database while java compiles your project using neo4j. After this, it runs a set of user 
+			   defined queries that search for common programming mispractices that are not detected by the java compiler.
+			</p>
+		</section>
+		<section>
+			<h3>How do I create a query?</h3>
+			<p>
+			   The queries are written in cipher, which is the language that neo4j uses for its queries. 
+			   The only condition is that the query returns this three fields: 
+			</p>
+			<ul>
+				<li>Column</li>
+				<li>Line</li>
+				<li>File: the ECU (enclosing compilation unit)</li>
+			</ul>
+			<p>This is necesary for the report to be correct. Any query that does not meet this criteria will not work. Use this as an example:</p>
+			<span>return retExpr.lineNumber as line, retExpr.column as column , enclosingCU.fileName as file</span>
+		</section>
+		<section>
+			<h3>How do I fix an error?</h3>
+			<p>The definition of the query should give enough info to fix the problem.</p>
+		</section>
+		<section>
+			<h3>Why I can't name my query?</h3>
+			<p>If you have problems adding a query because the name is not correct, this must be because you are not following the naming standarts.</p>
+			<p>A query is named the same a java package is, except underscores are not accepted. For example "es.uniovi.myQuery" is valid.</p>
+		</section>
+	</div>
+	<footer th:replace="fragments/footer" />
+</body>
+</html>

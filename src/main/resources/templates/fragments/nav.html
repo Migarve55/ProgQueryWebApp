@@ -36,19 +36,24 @@
 			</div>
 		</li>
 		<!-- User options -->
-		<li class="nav-item active" sec:authorize="!isAuthenticated()">
-			<a class="nav-link" href="/signup" th:text="#{signup.message}">
-				<span class="fas fa-user-plus"></span> Registrate
+		<li class="nav-item active">
+			<a class="nav-link" href="/help">
+				<i class="fa fa-question-circle"></i> <span th:text="#{nav.help}">Help</span>
 			</a>
 		</li>
 		<li class="nav-item active" sec:authorize="!isAuthenticated()">
-			<a class="nav-link" href="/login" th:text="#{login.message}">
-				<span class="fas fa-sign-in-alt"></span> Identifícate
+			<a class="nav-link" href="/signup">
+				<i class="fa fa-user-plus"></i> <span th:text="#{signup.message}">Registrate</span> 
+			</a>
+		</li>
+		<li class="nav-item active" sec:authorize="!isAuthenticated()">
+			<a class="nav-link" href="/login">
+				<i class="fa fa-sign-in"></i> <span th:text="#{login.message}">Identifícate</span>  
 			</a>
 		</li>
 		<li class="nav-item active" sec:authorize="isAuthenticated()">
-			<a class="nav-link" href="/logout" th:text="#{logout.message}"> 
-				<span class="fas fa-sign-out-alt"></span> Desconectar
+			<a class="nav-link" href="/logout"> 
+				<i class="fa fa-sign-out"></i> <span th:text="#{logout.message}">Desconectar</span>
 			</a>
 		</li>
 	</ul>
