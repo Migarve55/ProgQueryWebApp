@@ -21,10 +21,10 @@
 						<td th:text="${result.timestamp}"></td>
 						<td th:text="${result.problems.size()}"></td>
 						<td>
-							<a class="btn btn-primary" th:href="${'/result/' + result.id}">Detalles</a>
+							<a class="btn btn-primary" th:href="${'/result/' + result.id}" th:text="#{detail}">Detalles</a>
 						</td>
 						<td>
-							<a class="btn btn-danger" th:href="${'/result/delete/' + result.id}">Eliminar</a>
+							<a class="btn btn-danger" th:href="${'/result/delete/' + result.id}" th:text="#{delete}">Eliminar</a>
 						</td>
 					</tr>
 				</tbody>

@@ -5,21 +5,21 @@
 	<!-- Barra de Navegación superior -->
 	<nav th:replace="fragments/nav" />
 	<div class="container">
-		<h2>Detalle de la consulta</h2>
+		<h2 th:text="#{query.detail.title}">Detalle de la consulta</h2>
 		<h3 th:text="${query.name}"></h3>
-		<h4>Descripción:</h4>
+		<h4 th:text="#{description}">Descripción:</h4>
 		<section th:text="${query.description}"></section>
-		<h4>Consulta cipher:</h4>
+		<h4 th:text="#{query}">Consulta cipher:</h4>
 		<pre th:text="${query.queryText}"></pre>
-		<h4>Privacidad:</h4>
+		<h4 th:text="#{visibility}">Privacidad:</h4>
 		<span th:if="${query.publicForAll}"  th:text="#{public}">Pública</span>
 		<span th:if="${!query.publicForAll}" th:text="#{private}">Privada</span>
 		<ul th:if="${!query.publicForAll}" th:each="user : ${query.publicTo}">
 			<li th:text="${user.name}"></li>
 		</ul>
 		<h3>Opciones</h3>
-		<a class="btn btn-primary" th:href="${'/query/edit/' + query.id}">Editar</a>
-		<a class="btn btn-danger" th:href="${'/query/delete/' + query.id}">Eliminar</a>
+		<a class="btn btn-primary" th:href="${'/query/edit/' + query.id}" th:text="#{edit}">Editar</a>
+		<a class="btn btn-danger" th:href="${'/query/delete/' + query.id}" th:text="#{delete}">Eliminar</a>
 	</div>
 	<footer th:replace="fragments/footer" />
 </body>

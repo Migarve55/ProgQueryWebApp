@@ -6,17 +6,17 @@
 	<!-- Options -->
 	<div class="container">
 		<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-  			<h1 class="display-4">Report</h1>
+  			<h1 class="display-4" th:text="#{result.detail.title}">Report</h1>
 		</div>
 		<!-- Report -->
 		<div class="table-responsive">
 			<table class="table table-hover" id="tableMarks">
 				<thead>
 					<tr>
-						<th>File</th>
-						<th>Line</th>
-						<th>Column</th>
-						<th>Description</th>
+						<th th:text="#{result.detail.file}">File</th>
+						<th th:text="#{result.detail.line}">Line</th>
+						<th th:text="#{result.detail.column}">Column</th>
+						<th th:text="#{result.detail.description}">Description</th>
 					</tr>
 				</thead>
 				<tbody>

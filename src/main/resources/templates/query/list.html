@@ -17,11 +17,10 @@
 			<table class="table table-hover tableQueries" th:fragment="tableQueries" id="tableQueries">
 				<thead>
 					<tr>
-						<th th:text="#{query.list.name}">Nombre</th>
-						<th th:text="#{query.list.description}">Descripción</th>
-						<th th:text="#{query.list.query}">Consulta Cipher</th>
-						<th th:text="#{query.list.privacity}">Privacidad</th>
-						
+						<th th:text="#{name}">Nombre</th>
+						<th th:text="#{description}">Descripción</th>
+						<th th:text="#{query}">Consulta Cipher</th>
+						<th th:text="#{visibility}">Privacidad</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -34,10 +33,10 @@
 							<span th:if="${!query.publicForAll}" th:text="#{private}">Privada</span>
 						</td>
 						<td>
-							<a class="btn btn-primary" th:href="${'/query/detail/' + query.id}">Detalles</a>
+							<a class="btn btn-primary" th:href="${'/query/detail/' + query.id}" th:text="#{detail}">Detalles</a>
 						</td>
 						<td>
-							<a class="btn btn-danger" th:href="${'/query/delete/' + query.id}">Eliminar</a>
+							<a class="btn btn-danger" th:href="${'/query/delete/' + query.id}" th:text="#{delete}">Eliminar</a>
 						</td>
 					</tr>
 				</tbody>
