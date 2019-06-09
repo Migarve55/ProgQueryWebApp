@@ -8,7 +8,7 @@
 	<div class="container">
 		<br>
 		<div class="d-flex justify-content-center align-items-center">
-		  <h2 class="mr-3">Loading...</h2>
+		  <h2 class="mr-3" th:text="#{loading.title}">Loading...</h2>
 		  <div class="spinner-border" role="status">
 		    <span class="sr-only"></span>
 		  </div>
@@ -16,11 +16,11 @@
 		<br>
 		<!-- Report -->
 		<div class="container">
-			<span id="msg">Doing stuff...</span>
+			<span id="msg" th:text="#{loading.msg}">Doing stuff...</span>
 			<div class="progress">
 			  	<div id="progressBar" class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar"></div>
 			</div>
-			<a class="btn btn-danger mt-3" href="/cancel">Cancel task</a>
+			<a class="btn btn-danger mt-3" href="/cancel" th:text="#{loading.cancelTask}">Cancel task</a>
 		</div>
 	</div>
 	<footer th:replace="fragments/footer" />

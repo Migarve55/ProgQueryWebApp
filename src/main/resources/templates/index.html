@@ -6,8 +6,8 @@
 	<!-- Options -->
 	<div class="container">
 		<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-  			<h1 class="display-4">Options</h1>
- 			 <p class="lead">Choose an option</p>
+  			<h1 class="display-4" th:text="#{index.title}">Options</h1>
+ 			<p class="lead" th:text="#{index.title.msg}">Choose an option</p>
 		</div>
 		<!-- Error -->
 		<div class="alert alert-danger" role="alert" th:if=${error} th:text=#{${error}}>
@@ -15,32 +15,32 @@
 		<div class="card-deck mb-3 text-center">
 			<div class="card mb-4 shadow-sm">
 				<div class="card-header">
-					<h4 class="my-0 font-weight-normal">Single File</h4>
+					<h4 class="my-0 font-weight-normal" th:text="#{index.file.title}">Single File</h4>
 				</div>
 				<div class="card-body">
 					<i class="fa fa-file-o bigIcon"></i>
-					<p>Upload a Single File</p>
-					<a type="button" class="btn btn-block btn-primary" href="/analyzer/file/">Go</a>
+					<p th:text="#{index.file.msg}">Upload a Single File</p>
+					<a type="button" class="btn btn-block btn-primary" href="/analyzer/file/" th:text="#{index.go}">Go</a>
 				</div>
 			</div>
 			<div class="card mb-4 shadow-sm">
 				<div class="card-header">
-					<h4 class="my-0 font-weight-normal">Zip File</h4>
+					<h4 class="my-0 font-weight-normal" th:text="#{index.zip.title}">Zip File</h4>
 				</div>
 				<div class="card-body">
 					<i class="fa fa-file-archive-o bigIcon"></i>
-					<p>Upload a Zip File</p>
-					<a type="button" class="btn btn-block btn-primary" href="/analyzer/zip/">Go</a>
+					<p th:text="#{index.zip.msg}">Upload a Zip File</p>
+					<a type="button" class="btn btn-block btn-primary" href="/analyzer/zip/" th:text="#{index.go}">Go</a>
 				</div>
 			</div>
 			<div class="card mb-4 shadow-sm">
 				<div class="card-header">
-					<h4 class="my-0 font-weight-normal">From GitHub URL</h4>
+					<h4 class="my-0 font-weight-normal" th:text="#{index.gh.title}">From GitHub URL</h4>
 				</div>
 				<div class="card-body">
 					<i class="fa fa-github bigIcon"></i>
-					<p>Upload from a GitHub repository URL</p>
-					<a type="button" class="btn btn-block btn-primary" href="/analyzer/git/">Go</a>
+					<p th:text="#{index.gh.msg}">Upload from a GitHub repository URL</p>
+					<a type="button" class="btn btn-block btn-primary" href="/analyzer/git/" th:text="#{index.go}">Go</a>
 				</div>
 			</div>
 		</div>

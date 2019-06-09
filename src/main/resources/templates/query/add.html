@@ -5,10 +5,10 @@
 	<!-- Barra de Navegación superior -->
 	<nav th:replace="fragments/nav" />
 	<div class="container">
-		<h2>Agregar consulta</h2>
+		<h2 th:text="#{query.add.title}">Agregar consulta</h2>
 		<form class="form-horizontal" method="post" action="/query/add" th:object="${query}">
 			<div class="form-group">
-				<label class="control-label col-sm-2" for="name">Nombre:</label>
+				<label class="control-label col-sm-2" for="name" th:text="#{name}">Nombre:</label>
 				<div class="col-sm-10">
 					<input type="text" class="form-control" name="name"
 						placeholder="..." required="true" /> <span
@@ -17,7 +17,7 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="control-label col-sm-2" for="description">Descripción:</label>
+				<label class="control-label col-sm-2" for="description" th:text="#{description}">Descripción:</label>
 				<div class="col-sm-10">
 					<input type="text" class="form-control" name="description"
 						placeholder="..." required="true" /> <span
@@ -26,20 +26,20 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="control-label col-sm-2" for="queryText">Query:</label>
+				<label class="control-label col-sm-2" for="queryText" th:text="#{query}">Query:</label>
 				<div class="col-sm-10">
 					<textarea class="form-control" name="queryText" rows="10" spellcheck="false"></textarea>
 					<span class="text-danger" th:if="${#fields.hasErrors('queryText')}" th:errors="*{queryText}" />
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="control-label col-sm-2" for="publicForAll">Visibilidad:</label>
+				<label class="control-label col-sm-2" for="publicForAll" th:text="#{visibility}">Visibilidad:</label>
 				<div class="col-sm-1">
 					<input type="checkbox" class="form-control" name="publicForAll" data-toggle="toggle" th:data-on="#{public}" th:data-off="#{private}">
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="control-label col-sm-2" for="publicTo">Visible para:</label>
+				<label class="control-label col-sm-2" for="publicTo" th:text="#{query.add.visibleTo}">Visible para:</label>
 				<div class="col-sm-10">
 					<select multiple class="form-control" name="publicTo">
 						<option th:each="user : ${usersList}" 
@@ -51,7 +51,7 @@
 			</div>
 			<div class="form-group">
 				<div class="col-sm-offset-2 col-sm-10">
-					<button type="submit" class="btn btn-primary">Enviar</button>
+					<button type="submit" class="btn btn-primary" th:text="#{send}">Enviar</button>
 				</div>
 			</div>
 		</form>

@@ -6,29 +6,29 @@
 	<!-- Options -->
 	<div class="container">
 		<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-  			<h1 class="display-4">Upload</h1>
- 			 <p class="lead">Please select a GitHub repo</p>
+  			<h1 class="display-4" th:text="#{analyzer.git.title}">Upload</h1>
+ 			 <p class="lead" th:text="#{analyzer.git.title.msg}">Please select a GitHub repo</p>
 		</div>
 		<form method="POST" action="/analyzer/git">
 			<div class="form-group">
-				<label for="url">GitHub repository URL:</label>
+				<label for="url" th:text="#{analyzer.git.msg}">GitHub repository URL:</label>
 				<input class="form-control" name="url" required/>
 			</div>
 			<div class="form-group">
-				<label for="compOpt">Compilation option:</label>
+				<label for="compOpt" th:text="#{analyzer.compOpt.title}">Compilation option:</label>
 				<select class="form-control" name="compOpt">
-					<option value="java">Java compilation</option>
-					<option value="maven">Maven compilation</option>
+					<option value="java" th:text="#{analyzer.compOpt.java}">Java compilation</option>
+					<option value="maven" th:text="#{analyzer.compOpt.maven}">Maven compilation</option>
 				</select>
 			</div>
 			<div class="form-group">
-				<label for="args">Java compilation arguments:</label>
+				<label for="args" th:text="#{analyzer.javaCompOpt}">Java compilation arguments:</label>
 				<input class="form-control" name="args"/>
-				<small class="form-text text-muted">This is optional</small>
+				<small class="form-text text-muted" th:text="#{analyzer.optional}">This is optional</small>
 			</div>
 			<div th:replace="analyzer/queries"/>
 			<div class="form-group">
-				<input class="form-control btn btn-primary" type="submit" value="Upload"/>
+				<input class="form-control btn btn-primary" type="submit" value="Upload" th:value="#{analyzer.submit}"/>
 			</div>
 		</form>
 	</div>
