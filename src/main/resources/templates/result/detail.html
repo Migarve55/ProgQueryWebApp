@@ -4,7 +4,7 @@
 <body>
 	<nav th:replace="fragments/nav" />
 	<!-- Options -->
-	<div class="container">
+	<div class="container" th:if="${errorList.size() > 0}">
 		<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
   			<h1 class="display-4" th:text="#{result.detail.title}">Report</h1>
 		</div>
@@ -30,6 +30,8 @@
 			</table>
 		</div>
 	</div>
+	<div class="container" th:if="${errorList.size() <= 0}">
+		<h2 class="text-center mt-5" th:text="#{result.detail.empty}">No errors to show</h2>
 	</div>
 	<footer th:replace="fragments/footer" />
 </body>
