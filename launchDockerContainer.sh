@@ -1,6 +1,6 @@
 #!/bin/sh
-APP_NAME = proqQueryWebApp
-IMG_NAME = uo257431/prog_query_web_app
+APP_NAME=proqQueryWebApp
+IMG_NAME=uo257431/prog_query_web_app
 
 echo "Stoping current instance"
 docker stop $APP_NAME
