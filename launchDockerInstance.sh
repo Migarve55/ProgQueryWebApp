@@ -7,4 +7,4 @@ docker stop $APP_NAME
 echo "Launching instance"
 docker pull $IMG_NAME
 docker create --name $APP_NAME $IMG_NAME
-docker start --attach miHelloWorld $APP_NAME
+docker start --attach $APP_NAME
