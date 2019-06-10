@@ -126,7 +126,7 @@ public class AnalyzerService {
 			    regex = String.format("^%s[^\\.]*", regex);
 				result.addAll(queriesRepository.findAllByFamily(regex, user));
 			} else {
-				Query query = queriesRepository.findByNameFromUser(queryId, user);
+				Query query = queriesRepository.findByNameAndUser(queryId, user);
 				if (query != null)
 					result.add(query);
 			}

@@ -18,10 +18,14 @@ import es.uniovi.analyzer.exceptions.CompilerException;
 
 public class JavaCompilerTool implements CompilerTool {
 
-	private final static String PLUGIN_CLASSPATH = "./src/main/resources/plugin/ProgQuery.jar;./src/main/resources/plugin/neo4jLibs/*;";
+	private final static String PLUGIN_CLASSPATH_WINDOWS = "./src/main/resources/plugin/ProgQuery.jar;./src/main/resources/plugin/neo4jLibs/*;";
+	private final static String PLUGIN_CLASSPATH_LINUX = ".:./src/main/resources/plugin/ProgQuery.jar:./src/main/resources/plugin/neo4jLibs/*:";
 	private final static String ENCODING = "ISO-8859-1";
 	private final static String PLUGIN_ARG = "-Xplugin:ProgQueryPlugin %s";
+	
 	public final static String DB_PATH = "neo4j/data/ProgQuery.db";
+	
+	private static String OS = System.getProperty("os.name").toLowerCase();
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -69,8 +73,9 @@ public class JavaCompilerTool implements CompilerTool {
 	}
 
 	private List<String> basicArgs(String basePath) {
+		String pluginClasspath = OS.equals("win") ? PLUGIN_CLASSPATH_WINDOWS : PLUGIN_CLASSPATH_LINUX;
 		return new ArrayList<>(
-				Arrays.asList("-cp", PLUGIN_CLASSPATH, 
+				Arrays.asList("-cp", pluginClasspath, 
 						"-encoding", ENCODING,
 						String.format(PLUGIN_ARG, basePath + DB_PATH), 
 						"-d", basePath, "-nowarn", "-g:none", 
