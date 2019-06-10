@@ -41,7 +41,7 @@
 			<artifactId>neo4j</artifactId>
 			<version>3.5.4</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -81,13 +81,13 @@
 			<artifactId>maven-model</artifactId>
 			<version>3.3.9</version>
 		</dependency>
-		
+
 		<dependency>
-		    <groupId>com.googlecode.json-simple</groupId>
-		    <artifactId>json-simple</artifactId>
-		    <version>1.1</version>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1</version>
 		</dependency>
-		
+
 	</dependencies>
 
 	<build>
@@ -95,6 +95,14 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>1.4.8</version>
+				<configuration>
+					<repository>uo257431/prog_query_web_app</repository>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
