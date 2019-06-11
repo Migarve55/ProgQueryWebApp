@@ -6,13 +6,13 @@ USER progQueryWebApp
 COPY target/*.jar /opt/webApp/app.jar
 COPY launchDockerContainer.sh launchDockerContainer.sh
 COPY installMvnPlugin.sh installMvnPlugin.sh
-COPY src/main/resurces/plugin/ProgQuery.jar ProgQuery.jar
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf 
+COPY src/main/resources/plugin/ProgQuery.jar ProgQuery.jar
+COPY supervisord.conf /etc/supervisor/supervisord.conf 
 ADD http://central.maven.org/maven2/org/hsqldb/hsqldb/2.4.0/hsqldb-2.4.0.jar /opt/hsqldb/hsqldb.jar
 
-RUN apt-get update -y && apt-get install maven -y && apt-get install -y supervisor
+RUN apk update && apk add maven supervisor
 RUN ./installMvnPlugin.sh
 RUN rm plugin.jar && rm installMvnPlugin.sh
 ENV MAVEN_HOME /etc/maven
 
-ENTRYPOINT ["/usr/bin/supervisord"]
+ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
