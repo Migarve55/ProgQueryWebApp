@@ -1,6 +1,6 @@
 #!/bin/sh
 
-IMAGE_NAME=pqWebApp
+IMAGE_NAME=pq_web_app
 
 echo "Building and pushing"
 mvn -Dmaven.test.skip=true package
