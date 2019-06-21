@@ -11,10 +11,9 @@ EXPOSE 80/tcp
 # Install progQuery webApp
 
 COPY . build/
-RUN cd build/
-RUN mvn -Dmaven.test.skip=true package
-RUN cd ..
-COPY build/target/*.jar /opt/webApp/app.jar
+RUN mvn -f build/pom.xml -Dmaven.test.skip=true package
+RUN mkdir -p /opt/webApp
+RUN cp build/target/*.jar /opt/webApp/app.jar
 RUN rm -r -f build/
 
 # Install the plugin
