@@ -23,7 +23,7 @@ public interface QueriesRepository extends CrudRepository<Query, Long> {
 	@org.springframework.data.jpa.repository.Query("select q from Query q where user = ?1 and name like ?2 order by name")
 	Page<Query> findAllByUserAndNameLike(Pageable pageable, User user, String name);
 	
-	@org.springframework.data.jpa.repository.Query("select q from Query q where publicForAll = true or (user = ?1 or ?1 in publicTo)")
+	@org.springframework.data.jpa.repository.Query(value = "select q.* from Query q where q.public_for_all = true or q.user_id = ?1 or q.id in (select c.query_id from can_edit c where c.user_id = ?1)", nativeQuery = true)
 	List<Query> findAvailableQueriesForUser(User user);
 	
 }
