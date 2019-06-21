@@ -14,6 +14,7 @@ import javax.annotation.PreDestroy;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import es.uniovi.analyzer.tasks.AbstractAnalyzerCallable;
@@ -100,6 +101,7 @@ public class AnalyzerService {
 		}
 	}
 	
+	@Transactional
 	private void createReport(User user, String name, List<ProblemDto> problems) {
 		Result result = new Result();
 		result.setUser(user);
