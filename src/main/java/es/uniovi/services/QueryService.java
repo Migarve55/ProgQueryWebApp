@@ -31,7 +31,7 @@ public class QueryService {
 	
 	public Page<Query> getQueriesFromUser(Pageable pageable, User user, String searchText) {
 		searchText = "%" + searchText + "%";
-		return queriesRepository.findAllByUserAndName(pageable, user, searchText);
+		return queriesRepository.findAllByUserAndNameLike(pageable, user, searchText);
 	}
 	
 	public List<Query> getAvailableQueriesForUser(User user) {
@@ -44,6 +44,19 @@ public class QueryService {
 	
 	public void deleteQuery(Query query) {
 		queriesRepository.delete(query);
+	}
+	
+	public boolean canSeeQuery(User user, Query query) {
+		if (!query.isPublicForAll()) {
+			if (!(query.getPublicTo().contains(user) || query.getUser().equals(user))) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public boolean canModifyQuery(User user, Query query) {
+		return query.getUser().equals(user);
 	}
 	
 }
