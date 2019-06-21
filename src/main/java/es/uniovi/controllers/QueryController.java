@@ -84,7 +84,7 @@ public class QueryController {
 		if (query == null) {
 			return "redirect:/";
 		}
-		if (!canSeeQuery(user, query)) {
+		if (!queryService.canSeeQuery(user, query)) {
 			return "redirect:/";
 		}
 		//Display the query
@@ -100,7 +100,7 @@ public class QueryController {
 		if (query == null) {
 			return "redirect:/";
 		}
-		if (!canModifyQuery(user, query)) {
+		if (!queryService.canModifyQuery(user, query)) {
 			return "redirect:/";
 		}
 		model.addAttribute("query", query);
@@ -119,7 +119,7 @@ public class QueryController {
 		if (original == null) {
 			return "redirect:/";
 		}
-		if (!canModifyQuery(user, original)) {
+		if (!queryService.canModifyQuery(user, original)) {
 			return "redirect:/";
 		}
 		//Finally save
@@ -138,31 +138,12 @@ public class QueryController {
 		if (query == null) {
 			return "redirect:/query/list";
 		}
-		if (!canModifyQuery(user, query)) {
+		if (!queryService.canModifyQuery(user, query)) {
 			return "redirect:/query/list";
 		}
 		//Finally delete
 		queryService.deleteQuery(query);
 		return "redirect:/query/list";
-	}
-	
-	private boolean canSeeQuery(User user, Query query) {
-		if (!query.isPublicForAll()) {
-			if (!(query.getPublicTo().contains(user) || query.getUser().equals(user))) {
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	private boolean canModifyQuery(User user, Query query) {
-		if (!canSeeQuery(user, query)) {
-			return false;
-		}
-		if (!query.getUser().equals(user)) {
-			return false;
-		}
-		return true;
 	}
 	
 }
