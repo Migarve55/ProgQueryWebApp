@@ -42,7 +42,7 @@ public class AnalyzerController {
 		if (!isTaskDone(user))
 			return "redirect:/loading";
 		model.addAttribute("queriesList", queryService.getAvailableQueriesForUser(user));
-		return "/analyzer/file";
+		return "analyzer/file";
 	}
 
 	@RequestMapping(path = "/analyzer/file", method = RequestMethod.POST, consumes = { "multipart/form-data" })
@@ -68,7 +68,7 @@ public class AnalyzerController {
 		if (!isTaskDone(user))
 			return "redirect:/loading";
 		model.addAttribute("queriesList", queryService.getAvailableQueriesForUser(user));
-		return "/analyzer/zip";
+		return "analyzer/zip";
 	}
 
 	@RequestMapping(path = "/analyzer/zip", method = RequestMethod.POST, consumes = { "multipart/form-data" })
@@ -94,7 +94,7 @@ public class AnalyzerController {
 		if (!isTaskDone(user))
 			return "redirect:/loading";
 		model.addAttribute("queriesList", queryService.getAvailableQueriesForUser(user));
-		return "/analyzer/git";
+		return "analyzer/git";
 	}
 
 	@RequestMapping(path = "/analyzer/git", method = RequestMethod.POST)
