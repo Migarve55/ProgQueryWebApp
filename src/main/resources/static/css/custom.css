@@ -48,3 +48,12 @@ td.queryText {
 .queryOp:checked::after {
 	content: "<- Selected";
 }
+
+.errorCode {
+	font-weight: bolder;
+	font-size: 5em;
+}
+
+.errorMsg {
+	font-size: xx-large;
+}

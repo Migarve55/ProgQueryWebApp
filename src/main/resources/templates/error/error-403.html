@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="fragments/head" />
+<body>
+	<nav th:replace="fragments/nav" />
+	<main>
+		<div class="container m-4">
+			<span class="errorCode mr-3">403</span>
+			<span class="errorMsg" th:text="#{error.html.403}"></span>
+		</div>
+	</main>
+	<footer th:replace="fragments/footer" />
+</body>
+</html>
