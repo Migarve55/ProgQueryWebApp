@@ -1,7 +1,8 @@
 package es.uniovi.services;
 
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -14,6 +15,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import es.uniovi.entities.Query;
@@ -29,11 +31,11 @@ public class InsertSampleDataService {
 	private QueryService queryService;
 
 	@Value("${spring.jpa.hibernate.ddl-auto}")
-	private String userBucketPath;
+	private String dbInitMode;
 
 	@PostConstruct
 	public void init() {
-		if (!userBucketPath.equals("create"))
+		if (!dbInitMode.equals("create"))
 			return;
 		User user1 = new User("miguel@email.com", "Miguel", "Garnacho Vélez");
 		user1.setPassword("123456");
@@ -90,8 +92,8 @@ public class InsertSampleDataService {
 	}
 
 	private void loadQueriesFromFile(User user) {
-		try {
-			Object obj = new JSONParser().parse(new FileReader("src/main/resources/queries.json"));
+		try (InputStream resource = new ClassPathResource("static/queries.json").getInputStream();) {
+			Object obj = new JSONParser().parse(new InputStreamReader(resource));
 			JSONObject jo = (JSONObject) obj;
 			JSONArray ja = (JSONArray) jo.get("queries");
 			@SuppressWarnings("unchecked")

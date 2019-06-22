@@ -45,7 +45,7 @@ public class QueryController {
 		users.remove(user);
 		model.addAttribute("usersList", users);
 		model.addAttribute("query", new Query());
-		return "/query/add";
+		return "query/add";
 	}
 	
 	@RequestMapping(value = "/query/add", method = RequestMethod.POST)
@@ -73,7 +73,7 @@ public class QueryController {
 			queries = queryService.getQueriesFromUser(pageable, user);
 		model.addAttribute("queriesList", queries.getContent());
 		model.addAttribute("page", queries);
-		return "/query/list";
+		return "query/list";
 	}
 	
 	@RequestMapping("/query/detail/{id}")
@@ -89,7 +89,7 @@ public class QueryController {
 		}
 		//Display the query
 		model.addAttribute("query", query);
-		return "/query/detail";
+		return "query/detail";
 	}
 	
 	@RequestMapping(value = "/query/edit/{id}", method = RequestMethod.GET)
@@ -104,7 +104,7 @@ public class QueryController {
 			return "redirect:/";
 		}
 		model.addAttribute("query", query);
-		return "/query/edit";
+		return "query/edit";
 	}
 	
 	@RequestMapping(value = "/query/edit/{id}", method = RequestMethod.POST)
