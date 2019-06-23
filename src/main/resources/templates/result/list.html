@@ -7,7 +7,7 @@
 	<div class="container" th:if="${resultsList.size() > 0}">
 		<h2 th:text="#{result.list.title}">Resultados</h2>
 		<div class="table-responsive">
-			<table class="table table-hover tableQueries" th:fragment="tableQueries" id="tableQueries">
+			<table class="table table-hover tableQueries" th:fragment="tableResults" id="tableResults">
 				<thead>
 					<tr>
 						<th th:text="#{result.list.name}">Nombre</th>
@@ -17,7 +17,7 @@
 				</thead>
 				<tbody>
 					<tr th:each="result : ${resultsList}">
-						<td th:text="${result.name}"></td>
+						<td th:text="${result.program.name}"></td>
 						<td th:text="${result.timestamp}"></td>
 						<td th:text="${result.problems.size()}"></td>
 						<td>

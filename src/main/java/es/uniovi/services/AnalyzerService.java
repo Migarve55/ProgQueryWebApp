@@ -104,9 +104,7 @@ public class AnalyzerService {
 	@Transactional
 	private void createReport(User user, String name, List<ProblemDto> problems) {
 		Result result = new Result();
-		result.setUser(user);
 		result.setTimestamp(new Date());
-		result.setName(name);
 		result = resultsRepository.save(result);
 		for (ProblemDto problemDto : problems) {
 			Problem problem = new Problem();

@@ -21,7 +21,7 @@ public class User {
 	private Set<Query> queries;
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-	private Set<Result> results;
+	private Set<Program> programs;
 	
 	@ManyToMany(cascade = {CascadeType.MERGE})
 	@JoinTable(
@@ -97,12 +97,12 @@ public class User {
 		this.queries = queries;
 	}
 
-	public Set<Result> getResults() {
-		return results;
+	public Set<Program> getPrograms() {
+		return programs;
 	}
 
-	public void setResults(Set<Result> results) {
-		this.results = results;
+	public void setPrograms(Set<Program> programs) {
+		this.programs = programs;
 	}
 
 	public Set<Query> getCanModify() {

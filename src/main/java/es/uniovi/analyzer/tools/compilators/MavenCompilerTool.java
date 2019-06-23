@@ -68,7 +68,6 @@ public class MavenCompilerTool implements CompilerTool {
 	private void compileUsingMavenAPI(String basePath) throws CompilerException {
 		File folder = new File(basePath);
 		Invoker newInvoker = new DefaultInvoker();
-		newInvoker.setMavenHome(new File(System.getenv("MAVEN_HOME")));
 		//newInvoker.setOutputHandler(null);
 		//Configure request 
 		InvocationRequest request = new DefaultInvocationRequest();

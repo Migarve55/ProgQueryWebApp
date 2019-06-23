@@ -1,8 +1,9 @@
 #!/bin/sh
-APP_NAME=proqQueryWebApp
-IMG_NAME=pq_web_app
+APP_NAME=webApp
+IMG_NAME=uo257431/prog_query_web_app
 
-echo "Launching instance"
-docker pull $IMG_NAME
-docker create --name $APP_NAME --publish 8080:80 $IMG_NAME
+echo "Creating container"
+docker create --name=$APP_NAME --publish=80:80 $IMG_NAME
+
+echo "Launching container"
 docker start $APP_NAME

@@ -76,7 +76,7 @@ public class ResultController {
 			redirect.addFlashAttribute("error", "error.noReport");
 			return "redirect:/";
 		}
-		if (!result.getUser().equals(user)) {
+		if (!result.getProgram().getUser().equals(user)) {
 			return "redirect:/";
 		}
 		model.addAttribute("errorList", result.getProblems());
@@ -91,7 +91,7 @@ public class ResultController {
 		if (result == null) {
 			return "redirect:/result/list";
 		}
-		if (!result.getUser().equals(user)) {
+		if (!result.getProgram().getUser().equals(user)) {
 			return "redirect:/result/list";
 		}
 		resultService.deleteResult(result);
