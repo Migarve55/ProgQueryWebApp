@@ -6,15 +6,21 @@
 			<span th:text="#{nav.title}">Home</span>
 		</a>
 		<!-- Queries -->
-		<li id="queries-menu" class="nav-item dropdown" sec:authorize="isAuthenticated()" ><a class="nav-link dropdown-toggle" 
+		<li id="queries-menu" class="dropdown" sec:authorize="isAuthenticated()" ><a class="nav-link dropdown-toggle" 
 			th:text="#{nav.query.title}" data-toggle="dropdown" href="#"> Gestión de consultas</a>
 			<div class="dropdown-menu">
 				<a class="dropdown-item" href="/query/add" th:text="#{nav.query.add}">Crear consulta</a>
 				<a class="dropdown-item" href="/query/list" th:text="#{nav.query.list}">Mis consultas</a>
 			</div>
 		</li>
+		<!-- Programs --> 
+		<li id="programs-menu" class="active" sec:authorize="isAuthenticated()">
+			<a  class="nav-link" href="/program/list" th:text="#{nav.program}">
+				Programs
+			</a>
+		</li>
 		<!-- Results -->
-		<li id="results-menu" class="nav-item dropdown" sec:authorize="isAuthenticated()" ><a class="nav-link dropdown-toggle" 
+		<li id="results-menu" class="dropdown" sec:authorize="isAuthenticated()" ><a class="nav-link dropdown-toggle" 
 			th:text="#{nav.result.title}" data-toggle="dropdown" href="#"> Gestión de resultados</a>
 			<div class="dropdown-menu">
 				<a class="dropdown-item" href="/analyzer/loading" th:text="#{nav.result.progress}">En curso</a>
@@ -24,9 +30,9 @@
 	</ul>
 	<ul class="nav">
 		<!-- Language -->
-		<li class="nav-item dropdown"><a class="nav-link dropdown-toggle"
+		<li class="dropdown"><a class="nav-link dropdown-toggle"
 			data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
-			aria-expanded="false" th:text="#{language.change}">Dropdown</a>
+			aria-expanded="false" th:text="#{language.change}"></a>
 			<div class="dropdown-menu" id="languageDropdownMenuButton">
 				<a class="dropdown-item" id="btnEnglish" value="EN"> <img
 					th:src="@{/img/if_uk_flag.png}"
@@ -40,24 +46,24 @@
 			</div>
 		</li>
 		<!-- User options -->
-		<li class="nav-item active">
+		<li class="active">
 			<a class="nav-link" href="/help">
 				<i class="fa fa-question-circle"></i> <span th:text="#{nav.help}">Help</span>
 			</a>
 		</li>
-		<li class="nav-item active" sec:authorize="!isAuthenticated()">
+		<li class="active" sec:authorize="!isAuthenticated()">
 			<a class="nav-link" href="/signup">
-				<i class="fa fa-user-plus"></i> <span th:text="#{signup.message}">Registrate</span> 
+				<i class="fa fa-user-plus"></i> <span th:text="#{signup.message}">Sing up</span> 
 			</a>
 		</li>
-		<li class="nav-item active" sec:authorize="!isAuthenticated()">
+		<li class="active" sec:authorize="!isAuthenticated()">
 			<a class="nav-link" href="/login">
-				<i class="fa fa-sign-in"></i> <span th:text="#{login.message}">Identifícate</span>  
+				<i class="fa fa-sign-in"></i> <span th:text="#{login.message}">Login</span>  
 			</a>
 		</li>
-		<li class="nav-item active" sec:authorize="isAuthenticated()">
+		<li class="active" sec:authorize="isAuthenticated()">
 			<a class="nav-link" href="/logout"> 
-				<i class="fa fa-sign-out"></i> <span th:text="#{logout.message}">Desconectar</span>
+				<i class="fa fa-sign-out"></i> <span th:text="#{logout.message}">Logout</span>
 			</a>
 		</li>
 	</ul>

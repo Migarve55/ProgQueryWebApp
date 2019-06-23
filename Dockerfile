@@ -5,7 +5,7 @@ VOLUME /tmp
 # Install the basics
 
 RUN apk update && apk add maven supervisor
-ENV MAVEN_HOME /etc/maven
+ENV M2_HOME /usr/bin/
 EXPOSE 80/tcp
 
 # Install progQuery webApp

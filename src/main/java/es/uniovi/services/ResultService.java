@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import es.uniovi.entities.Program;
 import es.uniovi.entities.Result;
 import es.uniovi.entities.User;
 import es.uniovi.repositories.ResultsRepository;
@@ -32,6 +33,10 @@ public class ResultService {
 	
 	public void deleteResult(Result result) {
 		resultsRepository.delete(result);
+	}
+
+	public Page<Result> listByProgram(Pageable pageable, Program program) {
+		return resultsRepository.findAllByProgram(pageable, program);
 	}
 	
 }

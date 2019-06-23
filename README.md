@@ -12,10 +12,17 @@
  - Docker
  - Neo4j
  
+ ## Features
+ 
+ - Java code analysys and problem detection
+ - Query creating and sharing
+ - Persistent program analysis storage: analyze your programs again and again without needing to upload them.
+ 
  ## Instalation
  
  This is prepared to run in a linux based docker container.
+ This is the docker hub [repo](https://hub.docker.com/r/uo257431/prog_query_web_app).
  
- Execute the `createDockerImage.sh` to launch it to your repo, then run `launchDockerContainer` inside the container to make it run.
+ You can use `launchDockerContainer.sh` to launch it quickly.
  
  

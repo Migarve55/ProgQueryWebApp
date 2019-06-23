@@ -20,8 +20,6 @@ public class Result {
 	@GeneratedValue
 	private long id;
 	
-	private String name;
-	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date timestamp;
 	
@@ -29,8 +27,8 @@ public class Result {
 	private Set<Problem> problems;
 	
 	@ManyToOne
-	@JoinColumn(name = "user_id")
-	private User user;
+	@JoinColumn(name = "program_id")
+	private Program program;
 	
 	public Result() {
 		
@@ -42,14 +40,6 @@ public class Result {
 
 	public void setId(long id) {
 		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public Date getTimestamp() {
@@ -68,12 +58,12 @@ public class Result {
 		this.problems = problems;
 	}
 
-	public User getUser() {
-		return user;
+	public Program getProgram() {
+		return program;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setProgram(Program program) {
+		this.program = program;
 	}
 	
 }
