@@ -16,9 +16,7 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
 			HttpServletRequest request, 
 			HttpServletResponse response, 
 			AuthenticationException exception) throws IOException, ServletException {
-		// Set error code depending on the response
 		getRedirectStrategy().sendRedirect(request, response, "/login?error");
-		//request.getRequestDispatcher("/login?error=" + errorMsg).forward(request, response);
 	}
 
 }
