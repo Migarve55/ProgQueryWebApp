@@ -4,7 +4,7 @@
 <body>
 	<!-- Barra de Navegación superior -->
 	<nav th:replace="fragments/nav" />
-	<div class="container" th:if="${queriesList.size() > 0}">
+	<div class="container">
 		<h2 th:text="#{query.list.title}">Consultas</h2>
 		<form class="navbar-form" action="/query/list">
 			 <div class="form-group">
@@ -13,7 +13,7 @@
 		 	<button type="submit" class="btn btn-primary" th:text="#{query.list.search}">Buscar por nombre</button>
 		</form>
 		<h2 th:text="#{query.list.text}">Lista de tus consultas:</h2>
-		<div class="table-responsive">
+		<div class="table-responsive" th:if="${queriesList.size() > 0}">
 			<table class="table table-hover tableQueries" th:fragment="tableQueries" id="tableQueries">
 				<thead>
 					<tr>
@@ -41,11 +41,11 @@
 					</tr>
 				</tbody>
 			</table>
+			<footer th:replace="fragments/pagination"/>
 		</div>
-		<footer th:replace="fragments/pagination"/>
-	</div>
-	<div class="container" th:if="${queriesList.size() <= 0}">
-		<h2 class="text-center mt-5" th:text="#{query.list.empty}">No queries to show</h2>
+		<div class="container" th:if="${queriesList.size() <= 0}">
+			<h2 class="text-center mt-5" th:text="#{query.list.empty}">No queries to show</h2>
+		</div>
 	</div>
 	<footer th:replace="fragments/footer" />
 </body>

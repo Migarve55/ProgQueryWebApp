@@ -6,9 +6,6 @@ import java.util.Set; //A collection that contains no duplicate elements
 @Entity
 public class User {
 	
-	public static final String ADMIN_ROLE = "ADMIN";
-	public static final String USER_ROLE = "USER";
-	
 	@Id
 	@GeneratedValue
 	private long id;
@@ -19,7 +16,6 @@ public class User {
 	private String password;
 	@Transient 
 	private String passwordConfirm;
-	private String role;
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Query> queries;
@@ -91,14 +87,6 @@ public class User {
 
 	public void setPasswordConfirm(String passwordConfirm) {
 		this.passwordConfirm = passwordConfirm;
-	}
-
-	public String getRole() {
-		return role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
 	}
 
 	public Set<Query> getQueries() {

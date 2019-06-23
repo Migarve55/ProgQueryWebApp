@@ -39,30 +39,20 @@ public class InsertSampleDataService {
 			return;
 		User user1 = new User("miguel@email.com", "Miguel", "Garnacho Vélez");
 		user1.setPassword("123456");
-		user1.setRole(User.USER_ROLE);
 		User user2 = new User("oscar@email.com", "Oscar", "Prieto");
 		user2.setPassword("123456");
-		user2.setRole(User.USER_ROLE);
 		User user3 = new User("paco@email.com", "Paco", "Salvador Vega");
 		user3.setPassword("123456");
-		user3.setRole(User.USER_ROLE);
 		User user4 = new User("maria@hotmail.es", "Maria Luisa", "Jorganes Hernandez");
 		user4.setPassword("123456");
-		user4.setRole(User.USER_ROLE);
 		User user5 = new User("alvaro@email.com", "Álvaro", "Sanchez Dragó");
 		user5.setPassword("123456");
-		user5.setRole(User.USER_ROLE);
-		// Admin
-		User admin = new User("admin@email.com", "admin", "");
-		admin.setPassword("admin");
-		admin.setRole(User.ADMIN_ROLE);
 
 		usersService.addUser(user1);
 		usersService.addUser(user2);
 		usersService.addUser(user3);
 		usersService.addUser(user4);
 		usersService.addUser(user5);
-		usersService.addUser(admin);
 
 		loadQueriesFromFile(user1);
 
@@ -92,7 +82,7 @@ public class InsertSampleDataService {
 	}
 
 	private void loadQueriesFromFile(User user) {
-		try (InputStream resource = new ClassPathResource("static/queries.json").getInputStream();) {
+		try (InputStream resource = new ClassPathResource("queries.json").getInputStream();) {
 			Object obj = new JSONParser().parse(new InputStreamReader(resource));
 			JSONObject jo = (JSONObject) obj;
 			JSONArray ja = (JSONArray) jo.get("queries");
