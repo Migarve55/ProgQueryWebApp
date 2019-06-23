@@ -28,7 +28,6 @@ ADD http://central.maven.org/maven2/org/hsqldb/hsqldb/2.4.0/hsqldb-2.4.0.jar /op
 
 # Install Supervisord
 
-RUN mkdir -p /var/log/supervisord/
 COPY supervisord.conf /etc/supervisor/supervisord.conf 
 
 # Run
