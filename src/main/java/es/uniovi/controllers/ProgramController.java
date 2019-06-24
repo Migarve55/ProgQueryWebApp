@@ -10,10 +10,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import es.uniovi.entities.Program;
 import es.uniovi.entities.Result;
 import es.uniovi.entities.User;
+import es.uniovi.services.AnalyzerService;
 import es.uniovi.services.ProgramService;
 import es.uniovi.services.QueryService;
 import es.uniovi.services.ResultService;
@@ -30,6 +32,9 @@ public class ProgramController {
 	
 	@Autowired
 	private QueryService queryService;
+	
+	@Autowired
+	private AnalyzerService analyzerService;
 	
 	@Autowired
 	private UsersService usersService;
@@ -51,18 +56,24 @@ public class ProgramController {
 			return "redirect:/program/list";
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
+		if (!program.getUser().equals(user))
+			return "redirect:/program/list";
 		model.addAttribute("program", program);
 		model.addAttribute("queriesList", queryService.getAvailableQueriesForUser(user));
 		return "program/analyze";
 	}
 	
 	@RequestMapping(path = "/program/analyze/{id}", method = RequestMethod.POST)
-	public String postAnalyze(@PathVariable Long id) {
+	public String postAnalyze(Principal principal, @PathVariable Long id, @RequestParam("queries") String[] queries) {
+		String email = principal.getName();
+		User user = usersService.getUserByEmail(email);
 		Program program = programService.getProgram(id);
 		if (program == null)
 			return "redirect:/program/list";
-		
-		return "program/analyze";
+		if (!program.getUser().equals(user))
+			return "redirect:/program/list";
+		analyzerService.analyzeProgram(user, program, queries);
+		return "redirect:/analyzer/loading";
 	}
 	
 	@RequestMapping("/program/detail/{id}")
@@ -82,8 +93,10 @@ public class ProgramController {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		Program program = programService.getProgram(id);
+		if (program == null)
+			return "redirect:/program/list";
 		if (!program.getUser().equals(user))
-			return "redirect:program/list";
+			return "redirect:/program/list";
 		programService.deleteProgram(id);
 		return "redirect:program/list";
 	}

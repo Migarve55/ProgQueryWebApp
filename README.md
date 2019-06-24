@@ -7,10 +7,13 @@
  
  ## Technologies
  
- - Spring Boot
- - HSQLDB
- - Docker
- - Neo4j
+ - Spring Boot 2.1.4
+ - Thymeleaf 3.0.3
+ - HSQLDB 2.4.0
+ - Docker 18.09
+ - Neo4j 3.5.4
+ - Bootstrap 4.3.1
+ - jQuery 3.2.0
  
  ## Features
  
