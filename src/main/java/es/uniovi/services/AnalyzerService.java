@@ -27,6 +27,7 @@ import es.uniovi.analyzer.tools.compilators.CompilerTool;
 import es.uniovi.analyzer.tools.reporter.dto.ProblemDto;
 import es.uniovi.analyzer.tools.reporter.dto.QueryDto;
 import es.uniovi.entities.Problem;
+import es.uniovi.entities.Program;
 import es.uniovi.entities.Query;
 import es.uniovi.entities.Result;
 import es.uniovi.entities.User;
@@ -71,6 +72,10 @@ public class AnalyzerService {
 
 	public void analyzeGitRepo(User user, String repoUrl, String compOp, String args, String[] queries) {
 		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(repoUrl, args), queries);
+	}
+	
+	public void analyzeProgram(User user, Program program, String[] queries) {
+		
 	}
 	
 	private void launchAnalyzerTask(User user, String name, String compOp, AbstractAnalyzerCallable callable, String[] queries) {
