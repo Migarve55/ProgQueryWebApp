@@ -36,5 +36,4 @@ COPY supervisord.conf /etc/supervisor/supervisord.conf
 
 # Run
 
-USER app:app
 ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
