@@ -12,7 +12,7 @@ import es.uniovi.analyzer.exceptions.EnviromentException;
 
 public class EnviromentManagerTool {
 	
-	private final static String PATH = "src/main/resources/uploads/";
+	private final static String PATH = "uploads/";
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -40,7 +40,7 @@ public class EnviromentManagerTool {
 		} catch (IllegalArgumentException e) {
 			logger.info("Enviroment in {} was already deleted", basePath);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Could not delete enviroment in {}, error: {}", basePath, e.getMessage());
 			throw new EnviromentException("error.enviroment.delete");
 		}
 	}

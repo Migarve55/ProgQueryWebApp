@@ -1,5 +1,6 @@
 package es.uniovi.analyzer.tools.reporter;
 
+import java.io.Closeable;
 import java.io.File;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -7,7 +8,7 @@ import java.util.stream.Stream;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
-public class Neo4jQueryRunner {
+public class Neo4jQueryRunner implements Closeable {
 
 	GraphDatabaseService graphDb; 
 

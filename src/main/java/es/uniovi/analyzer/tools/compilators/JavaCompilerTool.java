@@ -18,7 +18,9 @@ import es.uniovi.analyzer.exceptions.CompilerException;
 
 public class JavaCompilerTool implements CompilerTool {
 
-	private final static String PLUGIN_CLASSPATH = ".:plugin/ProgQuery.jar:plugin/neo4jLibs/*:";
+	private final static String PLUGIN_CLASSPATH_UNIX = ".:plugin/ProgQuery.jar:plugin/neo4jLibs/*:";
+	private final static String PLUGIN_CLASSPATH_WIN = "./plugin/ProgQuery.jar;./plugin/neo4jLibs/*;";
+	
 	private final static String ENCODING = "ISO-8859-1";
 	private final static String PLUGIN_ARG = "-Xplugin:ProgQueryPlugin %s";
 	
@@ -51,13 +53,29 @@ public class JavaCompilerTool implements CompilerTool {
 		compile(compiler, args);
 	}
 	
+	/**
+	 * Launch the compiler
+	 * @param compiler
+	 * @param args
+	 * @throws CompilerException
+	 */
 	private void compile(JavaCompiler compiler,List<String> args) throws CompilerException {
+		sanitizeArguments(args);
 		String argsArray[] = new String[args.size()];
 		args.toArray(argsArray);
 		logger.info("Executing compilation command: javac {}", String.join(" ", args));
 		if(compiler.run(null, null, null, argsArray) != 0) {
 			throw new CompilerException();
 		}
+	}
+	
+	/**
+	 * Removes from the list anything that can cause a command injection
+	 * @param args the list of arguments
+	 */
+	private void sanitizeArguments(List<String> args) {
+		args.remove(";");
+		args.remove("&&");
 	}
 
 	private JavaCompiler getCompiler() {
@@ -70,8 +88,12 @@ public class JavaCompilerTool implements CompilerTool {
 	}
 
 	private List<String> basicArgs(String basePath) {
+		String pluginClasspath = 
+				System.getProperty("os.name").matches("Win.*") ? 
+						PLUGIN_CLASSPATH_WIN : 
+						PLUGIN_CLASSPATH_UNIX;
 		return new ArrayList<>(
-				Arrays.asList("-cp", PLUGIN_CLASSPATH, 
+				Arrays.asList("-cp", pluginClasspath, 
 						"-encoding", ENCODING,
 						String.format(PLUGIN_ARG, basePath + DB_PATH), 
 						"-d", basePath, "-nowarn", "-g:none", 
@@ -85,6 +107,10 @@ public class JavaCompilerTool implements CompilerTool {
 			.forEach((arg) -> args.add(arg));
 	}
 
+	/**
+	 * Generates a java source file for the project
+	 * @param folder
+	 */
 	private void generateSourcesFile(String folder) {
 		File baseFolder = new File(folder);
 		List<String> files = new ArrayList<String>();

@@ -32,7 +32,6 @@ public class GithubCodeAnalyzerCallable extends AbstractAnalyzerCallable {
 		} catch (GitAPIException e) {
 			throw new EnviromentException("error.enviroment.create.github");
 		} finally {
-			result.getRepository().close();
 			result.close();
 		}
 	}

@@ -13,13 +13,14 @@ EXPOSE 80/tcp
 COPY . build/
 RUN mvn -f build/pom.xml -Dmaven.test.skip=true package
 RUN mkdir -p /opt/webApp
+RUN mkdir /opt/webApp/uploads
 RUN cp build/target/*.jar /opt/webApp/app.jar
 RUN rm -r -f build/
 
 # Install the plugin
 
-COPY src/main/resources/plugin/ProgQuery.jar ProgQuery.jar
-RUN mvn install:install-file -DcreateChecksum=true -Dpackaging=jar -Dfile=ProgQuery.jar -DgroupId=es.uniovi.progQuery -DartifactId=progQuery -Dversion=0.0.1-SNAPSHOT -DgeneratePom=true
+COPY plugin/ProgQuery.jar plugin/ProgQuery.jar
+RUN mvn install:install-file -DcreateChecksum=true -Dpackaging=jar -Dfile=plugin/ProgQuery.jar -DgroupId=es.uniovi.progQuery -DartifactId=progQuery -Dversion=0.0.1-SNAPSHOT -DgeneratePom=true
 RUN rm ProgQuery.jar
 
 # Install HSQLDB
