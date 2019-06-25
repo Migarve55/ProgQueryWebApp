@@ -18,7 +18,7 @@ public interface ResultsRepository extends CrudRepository<Result, Long> {
 
 	Page<Result> findAllByProgram(Pageable pageable, Program program);
 	
-	@Query("select r from Result r where user = ?1 order by timestamp desc")
+	@Query("select r from Result r where r.program.user = ?1 order by timestamp desc")
 	List<Result> findLastByUser(User user);
 	
 }

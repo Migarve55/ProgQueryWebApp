@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.neo4j.graphdb.QueryExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.uniovi.analyzer.tools.reporter.dto.ProblemDto;
 import es.uniovi.analyzer.tools.reporter.dto.QueryDto;
@@ -13,6 +15,8 @@ public class ReportTool {
 	
 	private String dbPath;
 	private List<QueryDto> queries = new ArrayList<QueryDto>();
+	
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	public ReportTool(String dbPath) {
 		this.dbPath = dbPath;
@@ -24,8 +28,8 @@ public class ReportTool {
 
 	public List<ProblemDto> generateReport() {
 		List<ProblemDto> errors = new ArrayList<ProblemDto>();
-		Neo4jQueryRunner queryRunner = new Neo4jQueryRunner(dbPath);
-		try {
+		logger.info("Creating report...");
+		try (Neo4jQueryRunner queryRunner = new Neo4jQueryRunner(dbPath)) {
 			for (QueryDto query : queries) {
 				try {
 					queryRunner.runQuery(query.getQueryText()).forEach((result) -> {
@@ -34,14 +38,12 @@ public class ReportTool {
 						errors.add(problem);
 					});
 				} catch (QueryExecutionException qee) {
-					System.err.print(qee.getMessage());
+					logger.error("Could not compile query {}, error: {}", query.getName(), qee.getMessage());
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			queryRunner.close();
-		}
+		} 
 		return errors;
 	}
 	
