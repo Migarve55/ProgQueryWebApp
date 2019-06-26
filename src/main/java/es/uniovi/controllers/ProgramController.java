@@ -98,7 +98,7 @@ public class ProgramController {
 		if (!program.getUser().equals(user))
 			return "redirect:/program/list";
 		programService.deleteProgram(id);
-		return "redirect:program/list";
+		return "redirect:/program/list";
 	}
 	
 }

@@ -10,6 +10,14 @@ form {
 	border-radius: 1em;
 }
 
+p {
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}
+
 table {
 	background: white;
 	padding: 0.2em;
@@ -24,6 +32,12 @@ footer {
 
 .title {
 	overflow-wrap: break-word;
+}
+
+.codeSegment {
+	background: #00000012;
+    display: block;
+    padding: 0.4em;
 }
 
 .bigIcon {

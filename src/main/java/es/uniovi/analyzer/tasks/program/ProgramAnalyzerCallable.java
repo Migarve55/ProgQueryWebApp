@@ -26,8 +26,8 @@ public class ProgramAnalyzerCallable extends AbstractAnalyzerCallable {
 
 	protected List<ProblemDto> createReport() throws ReportException {
 		nextStep("Creating report", 50);
-		String dbPath = basePath + "/neo4j/data/ProgQuery.db";
-		return ToolFactory.getReportTool(dbPath, programID, queries).generateReport();
+		String dbConn = "";
+		return ToolFactory.getReportTool(dbConn, programID, queries).generateReport();
 	}
 
 	protected void cleanEnviroment() throws EnviromentException {

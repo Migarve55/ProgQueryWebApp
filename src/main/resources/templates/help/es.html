@@ -18,19 +18,27 @@
 			<h3>¿Como creo una consulta?</h3>
 			<p>
 			   Las consultas estan escritas en cipher, que es el lenguage que neo4j usa para las consultas.
-			   La única condición es que devuelva los siguientes campos:
+			   El modelo de datos que genera no es definitivo, por lo tanto este documento aún no lo incluye.
+			   En el futuro habrá un enlace al modelo para que se puedan diseñar consultas más facilmente.
+			</p>
+			<p>
+			   Para que las queries detecten errores correctamente tiene que seguir unos criterios contretos.
+			   Las únicas condiciones es que devuelva los siguientes campos:
 			</p>
 			<ul>
-				<li>Column</li>
-				<li>Line</li>
+				<li>Column: la columna donde se encuentra el error</li>
+				<li>Line: la linea donde se encuantra el error</li>
 				<li>File: conocido como ECU (enclosing compilation unit)</li>
 			</ul>
 			<p>Esto es necesario para que funcione. Por ejemplo:</p>
-			<span>return retExpr.lineNumber as line, retExpr.column as column , enclosingCU.fileName as file</span>
+			<span class="codeSegment">return retExpr.lineNumber as line, retExpr.column as column , enclosingCU.fileName as file</span>
+			<p>Y además, este match tiene que estar presente:</p> 
+			<span class="codeSegment">MATCH (enclosingCU)<-[:PROGRAM_DECLARES_PACKAGE]-()<-[:PROGRAM_DECLARES_PACKAGE]-(program) WHERE program.ID=$programID</span>
+			<p>De esta manera los errores son buscados dentro del programa actual. Si esto se omite, va a buscar en TODOS los programas en la base de datos.</p>
 		</section>
 		<section>
-			<h3>¿Como arreglo un error?</h3>
-			<p>La definición del error debería ser suficiente para arreglarlo.</p>
+			<h3>¿Como arreglo detectado en mi código un error?</h3>
+			<p>La definición del error debería ser suficiente para arreglarlo. Si no lo es, eso es problema de creador de la consultar original.</p>
 		</section>
 		<section>
 			<h3>¿Porque no puedo crear una consulta con el nombre que quiero?</h3>

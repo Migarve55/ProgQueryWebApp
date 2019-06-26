@@ -3,6 +3,7 @@ package es.uniovi.entities;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -19,6 +20,7 @@ public class Program {
 	
 	private String name;
 	
+	@Column(unique = true)
 	private String programIdentifier;
 	
 	@ManyToOne

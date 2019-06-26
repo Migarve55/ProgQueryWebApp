@@ -19,7 +19,6 @@
 						<td th:text="${program.name}"></td>
 						<td th:text="${program.results.size()}"></td>
 						<td>
-<<<<<<< HEAD
 							<a class="btn btn-primary" th:href="${'/program/analyze/' + program.id}" th:text="#{analyze}">Analyze</a>
 						</td>
 						<td>
@@ -27,15 +26,6 @@
 						</td>
 						<td>
 							<a class="btn btn-danger" th:href="${'/program/delete/' + program.id}" th:text="#{delete}">Delete</a>
-=======
-							<a class="btn btn-primary" th:href="${'/program/analyze/' + result.program.id}" th:text="#{analyze}">Analyze</a>
-						</td>
-						<td>
-							<a class="btn btn-primary" th:href="${'/program/detail/' + result.id}" th:text="#{detail}">Detail</a>
-						</td>
-						<td>
-							<a class="btn btn-danger" th:href="${'/program/delete/' + result.id}" th:text="#{delete}">Delete</a>
->>>>>>> branch 'master' of https://github.com/Migarve55/ProgQueryWebApp.git
 						</td>
 					</tr>
 				</tbody>
