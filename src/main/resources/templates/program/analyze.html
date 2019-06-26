@@ -6,9 +6,15 @@
 	<!-- Options -->
 	<div class="container">
 		<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+<<<<<<< HEAD
   			<h1 class="display-4 title" th:text="${program.name}">...</h1>
 		</div>
 		<form method="POST" th:action="${'/program/analyze/' + program.id}">
+=======
+  			<h1 class="display-4" th:text="${program.name}">...</h1>
+		</div>
+		<form method="POST" th:action="${'/program/analyze' + program.id}">
+>>>>>>> branch 'master' of https://github.com/Migarve55/ProgQueryWebApp.git
 			<div th:replace="analyzer/queries"/>
 			<div class="form-group">
 				<input class="form-control btn btn-primary" type="submit" value="Upload" th:value="#{analyzer.submit}"/>

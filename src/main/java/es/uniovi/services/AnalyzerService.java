@@ -192,6 +192,23 @@ public class AnalyzerService {
 		}
 	}
 	
+	
+	@Transactional
+	private void createReport(User user, String name, List<ProblemDto> problems) {
+		Result result = new Result();
+		result.setTimestamp(new Date());
+		result = resultsRepository.save(result);
+		for (ProblemDto problemDto : problems) {
+			Problem problem = new Problem();
+			problem.setResult(result);
+			problem.setQuery(queriesRepository.findByName(problemDto.getQueryName()));
+			problem.setLine((int) problemDto.getLine());
+			problem.setColumn((int) problemDto.getColumn());
+			problem.setCompilationUnit(problemDto.getFile());
+			problemsRepository.save(problem);
+		}
+	}
+	
 	/**
 	 * Extracts all the necesary queries.
 	 * If a query ends in '*' it gets all the 'family' of queries.
