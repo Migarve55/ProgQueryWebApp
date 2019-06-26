@@ -19,6 +19,8 @@ public class Program {
 	
 	private String name;
 	
+	private String programIdentifier;
+	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
@@ -44,6 +46,14 @@ public class Program {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String getProgramIdentifier() {
+		return programIdentifier;
+	}
+
+	public void setProgramIdentifier(String programIdentifier) {
+		this.programIdentifier = programIdentifier;
 	}
 
 	public User getUser() {

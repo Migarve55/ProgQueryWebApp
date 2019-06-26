@@ -2,6 +2,7 @@ package es.uniovi.analyzer.tools.reporter;
 
 import java.io.Closeable;
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -17,8 +18,10 @@ public class Neo4jQueryRunner implements Closeable {
     	graphDb = graphDbFactory.newEmbeddedDatabase(new File(path));
     }
 
-    public Stream<Map<String, Object>> runQuery(String query) {
-    	return graphDb.execute(query).stream();
+    public Stream<Map<String, Object>> runQuery(String query, String programID) {
+    	Map<String, Object> params = new HashMap<String, Object>();
+    	params.put("programID", programID);
+		return graphDb.execute(query, params).stream();
     }
     
     public void close() {

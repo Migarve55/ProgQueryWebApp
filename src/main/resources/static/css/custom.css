@@ -22,6 +22,10 @@ footer {
     height: 2em;
 }
 
+.title {
+	overflow-wrap: break-word;
+}
+
 .bigIcon {
 	font-size: 9em;
 }

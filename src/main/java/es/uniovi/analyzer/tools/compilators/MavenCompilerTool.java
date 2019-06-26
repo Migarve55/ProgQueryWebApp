@@ -11,7 +11,6 @@ import java.util.List;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
-import org.apache.maven.model.Repository;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
@@ -27,43 +26,24 @@ import es.uniovi.analyzer.exceptions.CompilerException;
 
 public class MavenCompilerTool implements CompilerTool {
 	
-	private final static boolean USE_MAVEN_INVOKER_API = true;
-	
 	private final static String PLUGIN_VERSION = "0.0.1-SNAPSHOT";
-	private final static String PLUGIN_ARG = "-Xplugin:ProgQueryPlugin %s";
+	private final static String PLUGIN_ARG = "-Xplugin:ProgQueryPlugin %s %s";
 	private final static String DB_PATH = "neo4j/data/ProgQuery.db";
 
 	private static final List<String> PUBLISH_GOALS = Arrays.asList( "compile" );
 	 
-	public void compileFolder(String basePath, String extraArgs) throws CompilerException {
+	public void compileFolder(String basePath, String programID, String extraArgs) throws CompilerException {
 	    //Configure model
 	    try {
-			configurePOMFIle(new File(basePath + "pom.xml"), basePath, extraArgs);
+			configurePOMFIle(new File(basePath + "pom.xml"), basePath, programID, extraArgs);
 		} catch (CompilerException e) {
 			e.printStackTrace();
 			throw e;
 		}
 	    //Execute
-	    if (USE_MAVEN_INVOKER_API)
-	    	compileUsingMavenAPI(basePath);
-	    else
-	    	compileUsingCommandInterface(basePath);
+	    compileUsingMavenAPI(basePath);
 	}
 	
-	private void compileUsingCommandInterface(String basePath) throws CompilerException {
-		File folder = new File(System.getProperty("user.dir"), basePath);
-		try {
-			Process process=Runtime.getRuntime().exec(
-					"mvn " + String.join(" ", PUBLISH_GOALS),
-			        null, 
-			        folder);
-			if (process.waitFor() != 0)
-				throw new CompilerException("error.compiler.maven.execution");
-		} catch (IOException | InterruptedException e) {
-			e.printStackTrace();
-			throw new CompilerException("error.compiler.maven.invocation");
-		}
-	}
 	
 	private void compileUsingMavenAPI(String basePath) throws CompilerException {
 		File folder = new File(basePath);
@@ -86,13 +66,13 @@ public class MavenCompilerTool implements CompilerTool {
 	    }
 	}
 	
-	private void configurePOMFIle(File pom, String basepath, String extraArgs) throws CompilerException {
+	private void configurePOMFIle(File pom, String basepath, String programID, String extraArgs) throws CompilerException {
 		Model model = null;
 		//Read model
 		try (FileReader fr = new FileReader(pom)) {
 			MavenXpp3Reader reader = new MavenXpp3Reader();
 			model = reader.read(fr);
-			modifyCompilerArgs(model, basepath, extraArgs);
+			modifyCompilerArgs(model, basepath, programID, extraArgs);
 			addDependencies(model);
 			//addRepo(model);
 		} catch (FileNotFoundException e) {
@@ -114,14 +94,6 @@ public class MavenCompilerTool implements CompilerTool {
 		}
 	}
 	
-	@SuppressWarnings("unused")
-	private void addRepo(Model model) {
-		Repository repository = new Repository();
-		repository.setId("repo");
-		repository.setUrl("file://${project.basedir}/../../repo");
-		model.addPluginRepository(repository);
-	}
-	
 	private void addDependencies(Model model) {
 		Dependency pluginDependency = new Dependency();
 		pluginDependency.setGroupId("es.uniovi.progQuery");
@@ -131,7 +103,7 @@ public class MavenCompilerTool implements CompilerTool {
 		//Add neo4j plugins used by the compilator plugin
 	}
 	
-	private void modifyCompilerArgs(Model model, String basepath, String extraArgs) throws CompilerException {
+	private void modifyCompilerArgs(Model model, String basepath, String programID, String extraArgs) throws CompilerException {
 		Plugin plugin = model.getBuild().getPluginsAsMap()
 			.get("org.apache.maven.plugins:maven-compiler-plugin");
 		if (plugin == null) {
@@ -152,7 +124,7 @@ public class MavenCompilerTool implements CompilerTool {
 			configuration.addChild(compArgs);
 		}
 		//Xplugin argument
-		addArg(compArgs, String.format(PLUGIN_ARG, basepath + DB_PATH));
+		addArg(compArgs, String.format(PLUGIN_ARG, programID, basepath + DB_PATH));
 		plugin.setConfiguration(configuration);
 		//Extra arguments
 		if (!extraArgs.trim().isEmpty()) {

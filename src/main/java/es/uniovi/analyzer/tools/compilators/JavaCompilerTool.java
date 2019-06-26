@@ -18,11 +18,11 @@ import es.uniovi.analyzer.exceptions.CompilerException;
 
 public class JavaCompilerTool implements CompilerTool {
 
-	private final static String PLUGIN_CLASSPATH_UNIX = ".:plugin/ProgQuery.jar:plugin/neo4jLibs/*:";
-	private final static String PLUGIN_CLASSPATH_WIN = "./plugin/ProgQuery.jar;./plugin/neo4jLibs/*;";
+	private final static String PLUGIN_CLASSPATH_UNIX = ".:plugin/ProgQuery.jar";
+	private final static String PLUGIN_CLASSPATH_WIN = "./plugin/ProgQuery.jar";
 	
 	private final static String ENCODING = "ISO-8859-1";
-	private final static String PLUGIN_ARG = "-Xplugin:ProgQueryPlugin %s";
+	private final static String PLUGIN_ARG = "-Xplugin:ProgQueryPlugin %s %s";
 	
 	public final static String DB_PATH = "neo4j/data/ProgQuery.db";
 	
@@ -31,7 +31,7 @@ public class JavaCompilerTool implements CompilerTool {
 	public void compileFile(String basePath, String filename, String arguments) throws CompilerException {
 		JavaCompiler compiler = getCompiler();
 		// Basic config
-		List<String> args = basicArgs(basePath);
+		List<String> args = basicArgs(basePath, "test");
 		// Extra arguments
 		addArgumentsFromString(args, arguments);
 		// All files
@@ -40,10 +40,10 @@ public class JavaCompilerTool implements CompilerTool {
 		compile(compiler, args);
 	}
 
-	public void compileFolder(String basePath, String arguments) throws CompilerException {
+	public void compileFolder(String basePath, String programID, String arguments) throws CompilerException {
 		JavaCompiler compiler = getCompiler();
 		// Basic config
-		List<String> args = basicArgs(basePath);
+		List<String> args = basicArgs(basePath, programID);
 		// Extra arguments
 		if (arguments != null)
 			addArgumentsFromString(args, arguments);
@@ -87,7 +87,7 @@ public class JavaCompilerTool implements CompilerTool {
 		return compiler;
 	}
 
-	private List<String> basicArgs(String basePath) {
+	private List<String> basicArgs(String basePath, String programID) {
 		String pluginClasspath = 
 				System.getProperty("os.name").matches("Win.*") ? 
 						PLUGIN_CLASSPATH_WIN : 
@@ -95,7 +95,7 @@ public class JavaCompilerTool implements CompilerTool {
 		return new ArrayList<>(
 				Arrays.asList("-cp", pluginClasspath, 
 						"-encoding", ENCODING,
-						String.format(PLUGIN_ARG, basePath + DB_PATH), 
+						String.format(PLUGIN_ARG, programID, basePath + DB_PATH), 
 						"-d", basePath, "-nowarn", "-g:none", 
 						"-Xlint:none", "@" + basePath + "sources.txt"));
 	}

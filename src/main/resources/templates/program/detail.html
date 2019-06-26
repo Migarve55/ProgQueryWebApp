@@ -5,11 +5,11 @@
 	<!-- Barra de Navegación superior -->
 	<nav th:replace="fragments/nav" />
 	<div class="container mt-2">
-		<h1 th:text="${program.name}"></h1>
+		<h1 class="title" th:text="${program.name}"></h1>
 		
 		<table th:replace="result/list :: tableResults"></table>
 		
-		<a class="btn" th:href="${'/program/analyze/' + program.id}" th:text="#{analyze}">Analyze</a>
+		<a class="btn btn-primary" th:href="${'/program/analyze/' + program.id}" th:text="#{analyze}">Analyze</a>
 		<a class="btn btn-danger" th:href="${'/program/delete/' + program.id}" th:text="#{delete}">Delete</a>
 	</div>
 	<footer th:replace="fragments/footer" />

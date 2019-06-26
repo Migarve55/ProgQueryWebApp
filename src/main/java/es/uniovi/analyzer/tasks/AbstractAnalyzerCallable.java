@@ -1,6 +1,7 @@
 package es.uniovi.analyzer.tasks;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
@@ -16,17 +17,19 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 
 	protected String args;
 	protected String basePath;
+	protected String programID;
 	protected AnalyzerTask task;
 	protected CompilerTool compiler;
+	protected List<QueryDto> queries;
 	
 	private Consumer<List<ProblemDto>> callback;
-	private List<QueryDto> queries;
 
 	public AbstractAnalyzerCallable(String args) {
 		this.args = args;
+		this.programID = UUID.randomUUID().toString();
 	}
 	
-	public AbstractAnalyzerCallable(String args, Consumer<List<ProblemDto>> callback) {
+	public AbstractAnalyzerCallable(String args, String programID, Consumer<List<ProblemDto>> callback) {
 		this(args);
 		this.callback = callback;
 	}
@@ -65,7 +68,7 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 	protected List<ProblemDto> createReport() throws ReportException {
 		nextStep("Creating report", 25);
 		String dbPath = basePath + "/neo4j/data/ProgQuery.db";
-		return ToolFactory.getReportTool(dbPath, queries).generateReport();
+		return ToolFactory.getReportTool(dbPath, programID, queries).generateReport();
 	}
 
 	protected void cleanEnviroment() throws EnviromentException {
@@ -91,4 +94,10 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 		this.compiler = compiler;
 	}
 
+	// Getters
+
+	public String getProgramID() {
+		return programID;
+	}
+	
 }

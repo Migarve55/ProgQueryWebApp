@@ -23,6 +23,7 @@ RUN chown app:app /opt/webApp/app.jar
 # Install the plugin
 
 COPY plugin/ProgQuery.jar plugin/ProgQuery.jar
+COPY plugin/neo4jLibs/ plugin/neo4jLibs/
 RUN mvn install:install-file -DcreateChecksum=true -Dpackaging=jar -Dfile=plugin/ProgQuery.jar -DgroupId=es.uniovi.progQuery -DartifactId=progQuery -Dversion=0.0.1-SNAPSHOT -DgeneratePom=true
 
 # Install HSQLDB

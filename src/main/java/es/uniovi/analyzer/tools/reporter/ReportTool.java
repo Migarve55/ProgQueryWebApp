@@ -14,12 +14,14 @@ import es.uniovi.analyzer.tools.reporter.dto.QueryDto;
 public class ReportTool {
 	
 	private String dbPath;
+	private String programID;
 	private List<QueryDto> queries = new ArrayList<QueryDto>();
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	public ReportTool(String dbPath) {
+	public ReportTool(String dbPath, String programID) {
 		this.dbPath = dbPath;
+		this.programID = programID;
 	}
 	
 	public void setQueries(List<QueryDto> queries) {
@@ -32,13 +34,13 @@ public class ReportTool {
 		try (Neo4jQueryRunner queryRunner = new Neo4jQueryRunner(dbPath)) {
 			for (QueryDto query : queries) {
 				try {
-					queryRunner.runQuery(query.getQueryText()).forEach((result) -> {
+					queryRunner.runQuery(query.getQueryText(), programID).forEach((result) -> {
 						ProblemDto problem = getProblemDtoFromResult(result);
 						problem.setQueryName(query.getName());
 						errors.add(problem);
 					});
 				} catch (QueryExecutionException qee) {
-					logger.error("Could not compile query {}, error: {}", query.getName(), qee.getMessage());
+					logger.error("Could not launch query {}, error: {}", query.getName(), qee.getMessage());
 				}
 			}
 		} catch (Exception e) {

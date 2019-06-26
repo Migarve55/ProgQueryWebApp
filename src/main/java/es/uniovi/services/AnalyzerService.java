@@ -21,6 +21,7 @@ import es.uniovi.analyzer.tasks.AbstractAnalyzerCallable;
 import es.uniovi.analyzer.tasks.AnalyzerTask;
 import es.uniovi.analyzer.tasks.file.FileAnalyzerCallable;
 import es.uniovi.analyzer.tasks.github.GithubCodeAnalyzerCallable;
+import es.uniovi.analyzer.tasks.program.ProgramAnalyzerCallable;
 import es.uniovi.analyzer.tasks.zip.ZipAnalizerCallable;
 import es.uniovi.analyzer.tools.ToolFactory;
 import es.uniovi.analyzer.tools.compilators.CompilerTool;
@@ -32,6 +33,7 @@ import es.uniovi.entities.Query;
 import es.uniovi.entities.Result;
 import es.uniovi.entities.User;
 import es.uniovi.repositories.ProblemsRepository;
+import es.uniovi.repositories.ProgramRepository;
 import es.uniovi.repositories.QueriesRepository;
 import es.uniovi.repositories.ResultsRepository;
 
@@ -48,6 +50,9 @@ public class AnalyzerService {
 	private ProblemsRepository problemsRepository;
 	
 	@Autowired
+	private ProgramRepository programRepository;
+	
+	@Autowired
 	private QueriesRepository queriesRepository;
 	
 	public AnalyzerTask getCurrentTask(User user) {
@@ -62,26 +67,55 @@ public class AnalyzerService {
 		getCurrentTask(user).cancel(false);
 	}
 	
+	
+	/**
+	 * 
+	 * @param user
+	 * @param file
+	 * @param compOp
+	 * @param args
+	 * @param queries
+	 * @throws IOException if the java file could not be saved
+	 */
 	public void analyzeFile(User user, MultipartFile file, String compOp, String args, String[] queries) throws IOException {
 		launchAnalyzerTask(user, file.getOriginalFilename(), compOp, new FileAnalyzerCallable(args, file.getOriginalFilename(), file.getInputStream()), queries);
 	}
 	
+	/**
+	 * 
+	 * @param user
+	 * @param zip
+	 * @param compOp
+	 * @param args
+	 * @param queries
+	 * @throws IOException if the zip file could not be saved
+	 */
 	public void analyzeZip(User user, MultipartFile zip, String compOp, String args, String[] queries) throws IOException {
 		launchAnalyzerTask(user, zip.getOriginalFilename(), compOp, new ZipAnalizerCallable(args, zip.getInputStream()), queries);
 	}
 
+	/**
+	 * 
+	 * @param user
+	 * @param repoUrl
+	 * @param compOp
+	 * @param args
+	 * @param queries
+	 */
 	public void analyzeGitRepo(User user, String repoUrl, String compOp, String args, String[] queries) {
 		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(repoUrl, args), queries);
 	}
 	
+	/**
+	 * Analyzes a program
+	 * @param user
+	 * @param program
+	 * @param queries
+	 */
 	public void analyzeProgram(User user, Program program, String[] queries) {
-		
-	}
-	
-	private void launchAnalyzerTask(User user, String name, String compOp, AbstractAnalyzerCallable callable, String[] queries) {
+		AbstractAnalyzerCallable callable = new ProgramAnalyzerCallable(program.getProgramIdentifier());
 		List<Query> queriesList = getQueries(queries, user);
 		callable.setQueries(toQueryDto(queriesList));
-		callable.setCompiler(getCompilationTool(compOp));
 		AnalyzerTask oldTask = getCurrentTask(user);
 		if (oldTask != null) {
 			if (!oldTask.isDone())
@@ -89,7 +123,34 @@ public class AnalyzerService {
 		}
 		AnalyzerTask task = new AnalyzerTask(callable);
 		task.setCallback((errors) -> {
-			createReport(user, name, errors);
+			createReport(user, program, errors);
+		});
+		executor.execute(task);
+		setCurrentTask(user, task);
+	}
+	
+	/**
+	 * Auxiliar method for the git,file and zip analyzers
+	 * @param user User that requested the analysis
+	 * @param name Name of the program
+	 * @param compOp What compiler to use
+	 * @param callable what callable to use
+	 * @param queries what queries to use
+	 */
+	private void launchAnalyzerTask(User user, String name, String compOp, AbstractAnalyzerCallable callable, String[] queries) {
+		List<Query> queriesList = getQueries(queries, user);
+		callable.setQueries(toQueryDto(queriesList));
+		callable.setCompiler(getCompilationTool(compOp));
+		
+		AnalyzerTask oldTask = getCurrentTask(user);
+		if (oldTask != null) {
+			if (!oldTask.isDone())
+				oldTask.cancel(false);
+		}
+		AnalyzerTask task = new AnalyzerTask(callable);
+		task.setCallback((errors) -> {
+			Program program = createProgram(user, name, callable.getProgramID());
+			createReport(user, program, errors);
 		});
 		executor.execute(task);
 		setCurrentTask(user, task);
@@ -106,9 +167,18 @@ public class AnalyzerService {
 		}
 	}
 	
+	private Program createProgram(User user, String name, String programID) {
+		Program program = new Program();
+		program.setUser(user);
+		program.setProgramIdentifier(programID);
+		program.setName(name);
+		return programRepository.save(program);
+	}
+	
 	@Transactional
-	private void createReport(User user, String name, List<ProblemDto> problems) {
+	private void createReport(User user, Program program, List<ProblemDto> problems) {
 		Result result = new Result();
+		result.setProgram(program);
 		result.setTimestamp(new Date());
 		result = resultsRepository.save(result);
 		for (ProblemDto problemDto : problems) {
@@ -122,6 +192,13 @@ public class AnalyzerService {
 		}
 	}
 	
+	/**
+	 * Extracts all the necesary queries.
+	 * If a query ends in '*' it gets all the 'family' of queries.
+	 * @param queriesIds
+	 * @param user the user that requested the queries
+	 * @return
+	 */
 	private List<Query> getQueries(String[] queriesIds, User user) {
 		List<Query> result = new ArrayList<Query>();
 		for (String queryId : queriesIds) {
