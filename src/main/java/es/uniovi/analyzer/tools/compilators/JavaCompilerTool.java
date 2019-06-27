@@ -22,9 +22,7 @@ public class JavaCompilerTool implements CompilerTool {
 	private final static String PLUGIN_CLASSPATH_WIN = "./plugin/ProgQuery.jar";
 	
 	private final static String ENCODING = "ISO-8859-1";
-	private final static String PLUGIN_ARG = "-Xplugin:ProgQueryPlugin %s %s";
-	
-	public final static String DB_PATH = "neo4j/data/ProgQuery.db";
+	private final static String PLUGIN_ARG = "-Xplugin:ProgQueryPlugin %s S %s";
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -95,7 +93,7 @@ public class JavaCompilerTool implements CompilerTool {
 		return new ArrayList<>(
 				Arrays.asList("-cp", pluginClasspath, 
 						"-encoding", ENCODING,
-						String.format(PLUGIN_ARG, programID, basePath + DB_PATH), 
+						String.format(PLUGIN_ARG, programID, System.getProperty("neo4j.url")), 
 						"-d", basePath, "-nowarn", "-g:none", 
 						"-Xlint:none", "@" + basePath + "sources.txt"));
 	}

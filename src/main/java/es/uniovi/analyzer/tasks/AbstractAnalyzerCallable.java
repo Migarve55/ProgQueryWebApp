@@ -14,7 +14,7 @@ import es.uniovi.analyzer.tools.reporter.dto.ProblemDto;
 import es.uniovi.analyzer.tools.reporter.dto.QueryDto;
 
 public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemDto>> {
-
+	
 	protected String args;
 	protected String basePath;
 	protected String programID;
@@ -67,8 +67,7 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 
 	protected List<ProblemDto> createReport() throws ReportException {
 		nextStep("Creating report", 25);
-		String dbPath = basePath + "/neo4j/data/ProgQuery.db";
-		return ToolFactory.getReportTool(dbPath, programID, queries).generateReport();
+		return ToolFactory.getReportTool(System.getProperty("neo4j.url"), programID, queries).generateReport();
 	}
 
 	protected void cleanEnviroment() throws EnviromentException {

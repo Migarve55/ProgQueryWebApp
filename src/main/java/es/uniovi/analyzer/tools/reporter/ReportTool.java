@@ -2,8 +2,8 @@ package es.uniovi.analyzer.tools.reporter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import org.neo4j.driver.v1.Record;
 import org.neo4j.graphdb.QueryExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,14 +13,14 @@ import es.uniovi.analyzer.tools.reporter.dto.QueryDto;
 
 public class ReportTool {
 	
-	private String dbPath;
+	private String url;
 	private String programID;
 	private List<QueryDto> queries = new ArrayList<QueryDto>();
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	public ReportTool(String dbPath, String programID) {
-		this.dbPath = dbPath;
+	public ReportTool(String url, String programID) {
+		this.url = url;
 		this.programID = programID;
 	}
 	
@@ -30,17 +30,17 @@ public class ReportTool {
 
 	public List<ProblemDto> generateReport() {
 		List<ProblemDto> errors = new ArrayList<ProblemDto>();
-		logger.info("Creating report...");
-		try (Neo4jQueryRunner queryRunner = new Neo4jQueryRunner(dbPath)) {
+		logger.info("Creating report for program {}", programID);
+		try (Neo4jQueryRunner queryRunner = new Neo4jQueryRunner(url)) {
 			for (QueryDto query : queries) {
 				try {
-					queryRunner.runQuery(query.getQueryText(), programID).forEach((result) -> {
+					queryRunner.runQuery(query.getQueryText(), programID).forEachRemaining((result) -> {
 						ProblemDto problem = getProblemDtoFromResult(result);
 						problem.setQueryName(query.getName());
 						errors.add(problem);
 					});
 				} catch (QueryExecutionException qee) {
-					logger.error("Could not launch query {}, error: {}", query.getName(), qee.getMessage());
+					logger.error("Could not execute query {}, error: {}", query.getName(), qee.getMessage());
 				}
 			}
 		} catch (Exception e) {
@@ -49,16 +49,12 @@ public class ReportTool {
 		return errors;
 	}
 	
-	private ProblemDto getProblemDtoFromResult(Map<String,Object> result) {
+	private ProblemDto getProblemDtoFromResult(Record record) {
 		ProblemDto error = new ProblemDto();
-		Object file = result.get("file");
-		error.setFile(file == null ? "???" : prettifyFilename(file.toString()));
-		Long line = (Long) result.get("line");
-		if (line != null)
-			error.setLine(line);
-		Long column = (Long) result.get("column");
-		if (column != null)
-			error.setColumn(column);
+		String file = record.get("file").asString();
+		error.setFile(file == null ? "???" : prettifyFilename(file));
+		error.setLine(record.get("line", 0));
+		error.setColumn(record.get("column", 0));
 		return error;
 	}
 	

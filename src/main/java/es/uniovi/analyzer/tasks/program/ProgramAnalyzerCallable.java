@@ -6,7 +6,6 @@ import es.uniovi.analyzer.exceptions.CompilerException;
 import es.uniovi.analyzer.exceptions.EnviromentException;
 import es.uniovi.analyzer.exceptions.ReportException;
 import es.uniovi.analyzer.tasks.AbstractAnalyzerCallable;
-import es.uniovi.analyzer.tools.ToolFactory;
 import es.uniovi.analyzer.tools.reporter.dto.ProblemDto;
 
 public class ProgramAnalyzerCallable extends AbstractAnalyzerCallable {
@@ -25,9 +24,8 @@ public class ProgramAnalyzerCallable extends AbstractAnalyzerCallable {
 	}
 
 	protected List<ProblemDto> createReport() throws ReportException {
-		nextStep("Creating report", 50);
-		String dbConn = "";
-		return ToolFactory.getReportTool(dbConn, programID, queries).generateReport();
+		nextStep("Creating report from program " + programID, 25);
+		return super.createReport();
 	}
 
 	protected void cleanEnviroment() throws EnviromentException {

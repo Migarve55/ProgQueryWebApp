@@ -27,8 +27,7 @@ import es.uniovi.analyzer.exceptions.CompilerException;
 public class MavenCompilerTool implements CompilerTool {
 	
 	private final static String PLUGIN_VERSION = "0.0.1-SNAPSHOT";
-	private final static String PLUGIN_ARG = "-Xplugin:ProgQueryPlugin %s %s";
-	private final static String DB_PATH = "neo4j/data/ProgQuery.db";
+	private final static String PLUGIN_ARG = "-Xplugin:ProgQueryPlugin %s S %s";
 
 	private static final List<String> PUBLISH_GOALS = Arrays.asList( "compile" );
 	 
@@ -124,7 +123,7 @@ public class MavenCompilerTool implements CompilerTool {
 			configuration.addChild(compArgs);
 		}
 		//Xplugin argument
-		addArg(compArgs, String.format(PLUGIN_ARG, programID, basepath + DB_PATH));
+		addArg(compArgs, String.format(PLUGIN_ARG, programID, System.getProperty("neo4j.url")));
 		plugin.setConfiguration(configuration);
 		//Extra arguments
 		if (!extraArgs.trim().isEmpty()) {
