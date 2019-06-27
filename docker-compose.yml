@@ -1,0 +1,22 @@
+version: '3.1’
+
+services:
+  
+  webApp:
+    container_name: webApp
+    depends_on:
+      - db 
+      - neo4j
+    image: uo257431/prog_query_web_app
+    ports:
+      - "8080:80"
+    restart: always      
+ 
+  neo4j:
+    image: neo4j:3.5
+    restart: always
+  
+  db:
+    image: blacklabelops/hsqldb
+    restart: always
+    

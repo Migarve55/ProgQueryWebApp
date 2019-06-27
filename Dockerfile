@@ -4,9 +4,9 @@ VOLUME /tmp
 
 # Install the basics
 
-RUN apk update && apk add maven supervisor
+RUN apk update && apk add maven
 ENV M2_HOME /usr/bin/
-EXPOSE 80/tcp
+EXPOSE 8080/tcp
 RUN addgroup -S app 
 RUN adduser -S app -G app --disabled-password --no-create-home
 
@@ -18,22 +18,14 @@ RUN mkdir -p /opt/webApp
 RUN mkdir /opt/webApp/uploads
 RUN cp build/target/*.jar /opt/webApp/app.jar
 RUN rm -r -f build/
-RUN chown app:app /opt/webApp/app.jar
+RUN chown -R app:app /opt/webApp/
 
 # Install the plugin
 
 COPY plugin/ProgQuery.jar plugin/ProgQuery.jar
 RUN mvn install:install-file -DcreateChecksum=true -Dpackaging=jar -Dfile=plugin/ProgQuery.jar -DgroupId=es.uniovi.progQuery -DartifactId=progQuery -Dversion=0.0.1-SNAPSHOT -DgeneratePom=true
 
-# Install HSQLDB
-
-ADD http://central.maven.org/maven2/org/hsqldb/hsqldb/2.4.0/hsqldb-2.4.0.jar /opt/hsqldb/hsqldb.jar
-RUN chown app:app /opt/hsqldb/hsqldb.jar
-
-# Install Supervisord
-
-COPY supervisord.conf /etc/supervisor/supervisord.conf 
-
 # Run
 
-ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+USER app:app
+ENTRYPOINT ["java", " -Djava.security.egd=file:/dev/./urandom", "/opt/webApp/app.jar"]
