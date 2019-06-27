@@ -28,4 +28,4 @@ RUN mvn install:install-file -DcreateChecksum=true -Dpackaging=jar -Dfile=plugin
 # Run
 
 USER app:app
-ENTRYPOINT ["java", " -Djava.security.egd=file:/dev/./urandom", "/opt/webApp/app.jar"]
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/opt/webApp/app.jar"]
