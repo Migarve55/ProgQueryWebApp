@@ -13,6 +13,7 @@ RUN adduser -S app -G app --disabled-password --no-create-home
 # Install progQuery webApp
 
 COPY . build/
+COPY deploy/application-prod.properties build/src/main/resources/application.properties
 RUN mvn -f build/pom.xml -Dmaven.test.skip=true package
 RUN mkdir -p /opt/webApp
 RUN mkdir /opt/webApp/uploads
