@@ -7,23 +7,27 @@ services:
     container_name: webApp
     restart: always
     depends_on:
-      - db
+      - sql
       - neo4j
     ports:
-      - "8080:80"
-    
+      - 8080:80
+
   neo4j:
     image: neo4j:3.5
     container_name: neo4jDB
     restart: always
     environment:
       NEO4J_AUTH: neo4j/s3cr3t0.
-    ports:
-      - "7687:7687"
+    expose:
+      - 7687
 
   sql:
     image: blacklabelops/hsqldb
     container_name: sqlDB
     restart: always
-    ports:
-      - "9001:9001"
+    enviroment:
+      HSQLDB_USER: SA
+      HSQLDB_PASSWORD: dbp4ssw0rd
+      HSQLDB_DATABASE_HOST: '%'
+    expose:
+      - 9001
