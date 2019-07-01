@@ -17,7 +17,7 @@ public interface QueriesRepository extends CrudRepository<Query, Long> {
 	
 	Query findByNameAndUser(String name, User user);
 	
-	@org.springframework.data.jpa.repository.Query(value = "select q.* from Query q where REGEXP_MATCHES(q.name,?1)", nativeQuery = true)
+	@org.springframework.data.jpa.repository.Query(value = "select q.* from Query q where q.name REGEXP ?1 and q.public_for_all = true or q.user_id = ?2 or q.id in (select c.query_id from can_edit c where c.user_id = ?2)", nativeQuery = true)
 	List<Query> findAllByFamily(String family, User user);
 	
 	@org.springframework.data.jpa.repository.Query("select q from Query q where user = ?1 and name like ?2 order by name")

@@ -31,6 +31,9 @@ public class AddQueryValidator implements Validator {
 		if (queryService.findQueryByName(query.getName()) != null) {
 			errors.rejectValue("name", "error.query.name.duplicate");
 		}
+		if (query.getName().length() > 60) {
+			errors.rejectValue("name", "error.query.name.length");
+		}
 		if (!query.getName().matches(NAME_REGEX)) {
 			errors.rejectValue("name", "error.query.name.regex");
 		}

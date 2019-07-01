@@ -10,7 +10,7 @@ public class Query {
 	@GeneratedValue
 	private long id;
 	
-	@Column(unique = true)
+	@Column(unique = true, length = 60)
 	private String name;
 	private String description;
 	@Column(length=4096)

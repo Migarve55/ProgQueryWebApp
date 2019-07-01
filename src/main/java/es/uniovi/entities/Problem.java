@@ -14,7 +14,7 @@ public class Problem {
 	private long id;
 	
 	private int line;
-	private int column;
+	private int col;
 	
 	private String compilationUnit;
 	
@@ -46,12 +46,12 @@ public class Problem {
 		this.line = line;
 	}
 
-	public int getColumn() {
-		return column;
+	public int getCol() {
+		return col;
 	}
 
-	public void setColumn(int column) {
-		this.column = column;
+	public void setCol(int col) {
+		this.col = col;
 	}
 
 	public String getCompilationUnit() {

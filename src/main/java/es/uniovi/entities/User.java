@@ -9,7 +9,7 @@ public class User {
 	@Id
 	@GeneratedValue
 	private long id;
-	@Column(unique = true)
+	@Column(unique = true, length = 50)
 	private String email;
 	private String name;
 	private String lastName;

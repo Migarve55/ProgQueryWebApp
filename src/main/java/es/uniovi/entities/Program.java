@@ -20,7 +20,7 @@ public class Program {
 	
 	private String name;
 	
-	@Column(unique = true)
+	@Column(unique = true, length = 36)
 	private String programIdentifier;
 	
 	@ManyToOne

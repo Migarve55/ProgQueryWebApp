@@ -186,7 +186,7 @@ public class AnalyzerService {
 			problem.setResult(result);
 			problem.setQuery(queriesRepository.findByName(problemDto.getQueryName()));
 			problem.setLine((int) problemDto.getLine());
-			problem.setColumn((int) problemDto.getColumn());
+			problem.setCol((int) problemDto.getColumn());
 			problem.setCompilationUnit(problemDto.getFile());
 			problemsRepository.save(problem);
 		}
@@ -203,7 +203,7 @@ public class AnalyzerService {
 			problem.setResult(result);
 			problem.setQuery(queriesRepository.findByName(problemDto.getQueryName()));
 			problem.setLine((int) problemDto.getLine());
-			problem.setColumn((int) problemDto.getColumn());
+			problem.setCol((int) problemDto.getColumn());
 			problem.setCompilationUnit(problemDto.getFile());
 			problemsRepository.save(problem);
 		}
