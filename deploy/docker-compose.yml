@@ -10,7 +10,7 @@ services:
       - sql
       - neo4j
     ports:
-      - 8080:80
+      - 80:8080
 
   neo4j:
     image: neo4j:3.5
@@ -22,7 +22,7 @@ services:
       - 7687
 
   sql:
-    image: mysql/mysql-server:5.7
+    image: mysql/mysql-server:8.0
     container_name: sqlDB
     restart: always
     environment:
