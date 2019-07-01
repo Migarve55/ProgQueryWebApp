@@ -22,12 +22,12 @@ services:
       - 7687
 
   sql:
-    image: blacklabelops/hsqldb
+    image: mysql/mysql-server:5.7
     container_name: sqlDB
     restart: always
-    enviroment:
-      HSQLDB_USER: SA
-      HSQLDB_PASSWORD: dbp4ssw0rd
-      HSQLDB_DATABASE_HOST: '%'
+    environment:
+      MYSQL_DATABASE: db
+      MYSQL_ROOT_PASSWORD: dbp4ssw0rd
+      MYSQL_ROOT_HOST: '%'
     expose:
-      - 9001
+      - 3306
