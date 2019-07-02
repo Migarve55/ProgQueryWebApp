@@ -58,4 +58,8 @@ public class QueryService {
 		return query.getUser().equals(user);
 	}
 	
+	public void deleteAll() {
+		queriesRepository.deleteAll();
+	}
+	
 }

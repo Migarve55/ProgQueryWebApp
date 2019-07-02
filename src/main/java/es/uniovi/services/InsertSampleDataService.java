@@ -3,10 +3,7 @@ package es.uniovi.services;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
-
 import javax.annotation.PostConstruct;
 
 import org.json.simple.JSONArray;
@@ -37,48 +34,10 @@ public class InsertSampleDataService {
 	public void init() {
 		if (!dbInitMode.equals("create"))
 			return;
-		User user1 = new User("miguel@email.com", "Miguel", "Garnacho Vélez");
-		user1.setPassword("123456");
-		User user2 = new User("oscar@email.com", "Oscar", "Prieto");
-		user2.setPassword("123456");
-		User user3 = new User("paco@email.com", "Paco", "Salvador Vega");
-		user3.setPassword("123456");
-		User user4 = new User("maria@hotmail.es", "Maria Luisa", "Jorganes Hernandez");
-		user4.setPassword("123456");
-		User user5 = new User("alvaro@email.com", "Álvaro", "Sanchez Dragó");
-		user5.setPassword("123456");
-
-		usersService.addUser(user1);
-		usersService.addUser(user2);
-		usersService.addUser(user3);
-		usersService.addUser(user4);
-		usersService.addUser(user5);
-
-		loadQueriesFromFile(user1);
-
-		Query query2 = new Query("es.uniovi.query1", "Warning [CMU-MET51]", "...");
-		query2.setUser(user1);
-		query2.setPublicForAll(false);
-		Set<User> publicTo = new HashSet<User>();
-		publicTo.add(user2);
-		publicTo.add(user3);
-		publicTo.add(user4);
-		query2.setPublicTo(publicTo);
-
-		Query query3 = new Query("es.uniovi.query2", "Test 2", "...");
-		query3.setUser(user2);
-
-		Query query4 = new Query("es.uniovi.query3", "Test 3", "...");
-		query4.setUser(user3);
-
-		Query query5 = new Query("es.uniovi.query4", "Test 4", "...");
-		query5.setUser(user4);
-		query5.setPublicForAll(true);
-
-		queryService.saveQuery(query2);
-		queryService.saveQuery(query3);
-		queryService.saveQuery(query4);
-		queryService.saveQuery(query5);
+		User user = new User("miguel@email.com", "Miguel", "Garnacho Vélez");
+		user.setPassword("123456");
+		usersService.addUser(user);
+		loadQueriesFromFile(user);
 	}
 
 	private void loadQueriesFromFile(User user) {
