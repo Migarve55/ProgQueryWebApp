@@ -1,4 +1,4 @@
-package es.uniovi;
+package es.uniovi.tests;
 
 import java.util.HashSet;
 import java.util.Set;
