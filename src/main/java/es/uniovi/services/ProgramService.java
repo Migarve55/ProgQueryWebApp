@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import es.uniovi.analyzer.tools.reporter.Neo4jFacade;
 import es.uniovi.entities.Program;
 import es.uniovi.entities.User;
 import es.uniovi.repositories.ProgramRepository;
@@ -27,8 +29,13 @@ public class ProgramService {
 		return programRepository.findAllByUser(pageable, user);
 	}
 	
+	@Transactional
 	public void deleteProgram(Long id) {
-		programRepository.deleteById(id);
+		try (Neo4jFacade neo4jFacade = new Neo4jFacade(System.getProperty("neo4j.url"))) {
+			Program program = programRepository.findById(id).orElse(null);
+			neo4jFacade.removeProgram(program.getProgramIdentifier());
+			programRepository.deleteById(id);
+		}
 	}
 	
 }

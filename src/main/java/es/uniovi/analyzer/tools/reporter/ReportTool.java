@@ -31,7 +31,7 @@ public class ReportTool {
 	public List<ProblemDto> generateReport() {
 		List<ProblemDto> errors = new ArrayList<ProblemDto>();
 		logger.info("Creating report for program {}", programID);
-		try (Neo4jQueryRunner queryRunner = new Neo4jQueryRunner(url)) {
+		try (Neo4jFacade queryRunner = new Neo4jFacade(url)) {
 			for (QueryDto query : queries) {
 				try {
 					queryRunner.runQuery(query.getQueryText(), programID).forEachRemaining((result) -> {
