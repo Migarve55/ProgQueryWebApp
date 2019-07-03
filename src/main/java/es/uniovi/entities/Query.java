@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.util.Set; 
 
 @Entity
+@Table(name = "QUERY")
 public class Query {
 	
 	@Id

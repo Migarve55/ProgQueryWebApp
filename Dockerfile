@@ -9,7 +9,6 @@ ENV M2_HOME /usr/bin/
 EXPOSE 8080/tcp
 RUN addgroup -S app 
 RUN adduser -S app -G app --disabled-password --no-create-home
-COPY deploy/wait-for wait-for
 
 # Install progQuery webApp
 
@@ -20,6 +19,7 @@ RUN mkdir -p /opt/webApp
 RUN mkdir /opt/webApp/uploads
 RUN cp build/target/*.jar /opt/webApp/app.jar
 RUN rm -r -f build/
+COPY deploy/wait-for /opt/webApp/wait-for
 RUN chown -R app:app /opt/webApp/
 
 # Install the plugin
