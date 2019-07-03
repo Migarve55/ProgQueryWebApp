@@ -6,7 +6,7 @@ VOLUME /tmp
 
 RUN apk update && apk add maven
 ENV M2_HOME /usr/bin/
-EXPOSE 80/tcp
+EXPOSE 8080/tcp
 RUN addgroup -S app 
 RUN adduser -S app -G app --disabled-password --no-create-home
 

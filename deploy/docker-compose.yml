@@ -10,7 +10,7 @@ services:
       - sql
       - neo4j
     ports:
-      - 80:80
+      - 8080:8080
 
   neo4j:
     image: neo4j:3.5
