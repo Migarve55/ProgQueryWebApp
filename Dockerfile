@@ -4,7 +4,7 @@ VOLUME /tmp
 
 # Install the basics
 
-RUN apk update && apk add maven netcat
+RUN apk update && apk add maven netcat-openbsd
 ENV M2_HOME /usr/bin/
 EXPOSE 8080/tcp
 RUN addgroup -S app 

@@ -10,7 +10,7 @@ services:
       - sql
       - neo4j
     ports:
-      - 8080:8080
+      - "80:8080"
     entrypoint: sh -c './wait-for sql:3306 -- java -Djava.security.egd=file:/dev/./urandom -jar /opt/webApp/app.jar'
 
   neo4j:
