@@ -1,5 +1,7 @@
 package es.uniovi.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +16,8 @@ import es.uniovi.repositories.ProgramRepository;
 @Service
 public class ProgramService {
 
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	
 	@Autowired
 	private ProgramRepository programRepository;
 	
@@ -35,6 +39,7 @@ public class ProgramService {
 			Program program = programRepository.findById(id).orElse(null);
 			neo4jFacade.removeProgram(program.getProgramIdentifier());
 			programRepository.deleteById(id);
+			logger.info("Program {} was deleted", program.getProgramIdentifier());
 		}
 	}
 	

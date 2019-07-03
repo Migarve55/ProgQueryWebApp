@@ -2,6 +2,8 @@ package es.uniovi.services;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +17,8 @@ import es.uniovi.repositories.ResultsRepository;
 @Service
 public class ResultService {
 
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	
 	@Autowired
 	private ResultsRepository resultsRepository;
 	
@@ -33,6 +37,7 @@ public class ResultService {
 	
 	public void deleteResult(Result result) {
 		resultsRepository.delete(result);
+		logger.info("Result for program {} was deleted", result.getProgram());
 	}
 
 	public Page<Result> listByProgram(Pageable pageable, Program program) {

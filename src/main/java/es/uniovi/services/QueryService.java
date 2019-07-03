@@ -2,6 +2,8 @@ package es.uniovi.services;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +14,8 @@ import es.uniovi.repositories.QueriesRepository;
 
 @Service
 public class QueryService {
+	
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired
 	private QueriesRepository queriesRepository;
@@ -43,6 +47,7 @@ public class QueryService {
 	
 	public void deleteQuery(Query query) {
 		queriesRepository.delete(query);
+		logger.info("Query {} was deleted", query.getName());
 	}
 	
 	public boolean canSeeQuery(User user, Query query) {

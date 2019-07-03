@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PreDestroy;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +45,8 @@ public class AnalyzerService {
 	private Map<User,AnalyzerTask> usersTasks = new ConcurrentHashMap<User,AnalyzerTask>();
 	private ExecutorService executor = Executors.newFixedThreadPool(4); 
 	
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	
 	@Autowired 
 	private ResultsRepository resultsRepository;
 	
@@ -60,6 +64,7 @@ public class AnalyzerService {
 	}
 	
 	private void setCurrentTask(User user, AnalyzerTask task) {
+		logger.info("User {} was assigned a new task {}", user.getEmail(), task);
 		usersTasks.put(user, task);
 	}
 	
@@ -127,6 +132,7 @@ public class AnalyzerService {
 		});
 		executor.execute(task);
 		setCurrentTask(user, task);
+		logger.info("User {} started program {} analysis", user.getEmail(), program.getProgramIdentifier());
 	}
 	
 	/**
@@ -154,6 +160,7 @@ public class AnalyzerService {
 		});
 		executor.execute(task);
 		setCurrentTask(user, task);
+		logger.info("User {} started analysis of new program of {}", user.getEmail(), name);
 	}
 	
 	private CompilerTool getCompilationTool(String compilator) {
@@ -179,23 +186,6 @@ public class AnalyzerService {
 	private void createReport(User user, Program program, List<ProblemDto> problems) {
 		Result result = new Result();
 		result.setProgram(program);
-		result.setTimestamp(new Date());
-		result = resultsRepository.save(result);
-		for (ProblemDto problemDto : problems) {
-			Problem problem = new Problem();
-			problem.setResult(result);
-			problem.setQuery(queriesRepository.findByName(problemDto.getQueryName()));
-			problem.setLine((int) problemDto.getLine());
-			problem.setCol((int) problemDto.getColumn());
-			problem.setCompilationUnit(problemDto.getFile());
-			problemsRepository.save(problem);
-		}
-	}
-	
-	
-	@Transactional
-	private void createReport(User user, String name, List<ProblemDto> problems) {
-		Result result = new Result();
 		result.setTimestamp(new Date());
 		result = resultsRepository.save(result);
 		for (ProblemDto problemDto : problems) {
