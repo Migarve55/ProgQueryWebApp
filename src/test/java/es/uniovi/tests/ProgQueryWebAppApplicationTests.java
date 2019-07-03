@@ -20,6 +20,9 @@ import es.uniovi.entities.Query;
 import es.uniovi.entities.User;
 import es.uniovi.services.QueryService;
 import es.uniovi.services.UsersService;
+import es.uniovi.tests.pageobjects.PO_LoginView;
+import es.uniovi.tests.pageobjects.PO_Properties;
+import es.uniovi.tests.pageobjects.PO_RegisterView;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(SpringRunner.class)
@@ -110,7 +113,9 @@ public class ProgQueryWebAppApplicationTests {
 	 */
 	@Test
 	public void testCase01() {
-		
+		PO_LoginView.goToPage(driver);
+		PO_LoginView.fillForm(driver, "miguel@email.com", "123456");
+		PO_LoginView.checkIsLogged(driver);
 	}
 	
 	/**
@@ -118,7 +123,11 @@ public class ProgQueryWebAppApplicationTests {
 	 */
 	@Test
 	public void testCase02() {
-		
+		PO_LoginView.goToPage(driver);
+		PO_LoginView.fillForm(driver, "miguel@email.com", "123457");
+		PO_LoginView.checkKey(driver, "error.login", PO_Properties.getSPANISH());
+		PO_LoginView.fillForm(driver, "alfredo@email.com", "123456");
+		PO_LoginView.checkKey(driver, "error.login", PO_Properties.getSPANISH());
 	}
 	
 	/**
@@ -126,7 +135,9 @@ public class ProgQueryWebAppApplicationTests {
 	 */
 	@Test
 	public void testCase03() {
-		
+		PO_RegisterView.goToPage(driver);
+		PO_RegisterView.fillForm(driver, "test@email.com", "test_", "test_", "123456", "123456");
+		PO_RegisterView.checkIsLogged(driver);
 	}
 	
 	/**
@@ -134,7 +145,36 @@ public class ProgQueryWebAppApplicationTests {
 	 */
 	@Test
 	public void testCase04() {
-		
+		PO_RegisterView.goToPage(driver);
+		//Empty errors
+		PO_RegisterView.fillForm(driver, " ", "test_", "test_", "123456", "123456");
+		PO_RegisterView.checkKey(driver, "error.empty", PO_Properties.getSPANISH());
+		PO_RegisterView.fillForm(driver, "test@email.com", "  ", "test_", "123456", "123456");
+		PO_RegisterView.checkKey(driver, "error.empty", PO_Properties.getSPANISH());
+		PO_RegisterView.fillForm(driver, "test@email.com", "test_", "   ", "123456", "123456");
+		PO_RegisterView.checkKey(driver, "error.empty", PO_Properties.getSPANISH());
+		PO_RegisterView.fillForm(driver, "test@email.com", "test_", "test_", "  ", "123456");
+		PO_RegisterView.checkKey(driver, "error.empty", PO_Properties.getSPANISH());
+		PO_RegisterView.fillForm(driver, "test@email.com", "test_", "test_", "123456", "  ");
+		PO_RegisterView.checkKey(driver, "error.empty", PO_Properties.getSPANISH());
+		//Field errors
+		PO_RegisterView.fillForm(driver, "test@email", "test_", "test_", "123456", "123456");
+		PO_RegisterView.checkKey(driver, "error.signup.email.regex", PO_Properties.getSPANISH());
+		PO_RegisterView.fillForm(driver, "miguel@email.com", "test_", "test_", "123456", "123456");
+		PO_RegisterView.checkKey(driver, "error.signup.email.duplicate", PO_Properties.getSPANISH());
+		StringBuilder longEmail = new StringBuilder();
+		for (int i = 0;i < 60;i++)
+			longEmail.append(' ');
+		PO_RegisterView.fillForm(driver, longEmail.toString(), "test_", "test_", "123456", "123456");
+		PO_RegisterView.checkKey(driver, "error.signup.email.length", PO_Properties.getSPANISH());
+		PO_RegisterView.fillForm(driver, "test@email.com", "test", "test_", "123456", "123456");
+		PO_RegisterView.checkKey(driver, "error.signup.name.length", PO_Properties.getSPANISH());
+		PO_RegisterView.fillForm(driver, "test@email.com", "test_", "test", "123456", "123456");
+		PO_RegisterView.checkKey(driver, "error.signup.lastName.length", PO_Properties.getSPANISH());
+		PO_RegisterView.fillForm(driver, "test@email.com", "test_", "test_", "1234", "1234");
+		PO_RegisterView.checkKey(driver, "error.signup.password.length", PO_Properties.getSPANISH());
+		PO_RegisterView.fillForm(driver, "test@email.com", "test_", "test_", "123456", "123457");
+		PO_RegisterView.checkKey(driver, "error.signup.passwordConfirm.coincidence", PO_Properties.getSPANISH());
 	}
 	
 	/**

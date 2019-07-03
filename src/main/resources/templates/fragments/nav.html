@@ -34,14 +34,13 @@
 			data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
 			aria-expanded="false" th:text="#{language.change}"></a>
 			<div class="dropdown-menu" id="languageDropdownMenuButton">
-				<a class="dropdown-item" id="btnEnglish" value="EN"> <img
-					th:src="@{/img/if_uk_flag.png}"
-					style="border: 0; float: left; margin-right: 15px" /> <span
-					th:text="#{language.en}">Inglés</span>
-				</a> <a class="dropdown-item" id="btnSpanish" value="ES"> <img
-					th:src="@{/img/if_spain_flag.png}"
-					style="border: 0; float: left; margin-right: 15px" /> <span
-					th:text="#{language.es}">Español</span>
+				<a class="dropdown-item" id="btnEnglish" value="EN"> 
+					<img th:src="@{/img/if_uk_flag.png}"/> 
+					<span th:text="#{language.en}">Inglés</span>
+				</a> 
+				<a class="dropdown-item" id="btnSpanish" value="ES">
+				    <img th:src="@{/img/if_spain_flag.png}"/> 
+				    <span th:text="#{language.es}">Español</span>
 				</a>
 			</div>
 		</li>
@@ -51,12 +50,12 @@
 				<i class="fa fa-question-circle"></i> <span th:text="#{nav.help}">Help</span>
 			</a>
 		</li>
-		<li class="active" sec:authorize="!isAuthenticated()">
+		<li id="singup" class="active" sec:authorize="!isAuthenticated()">
 			<a class="nav-link" href="/signup">
 				<i class="fa fa-user-plus"></i> <span th:text="#{signup.message}">Sing up</span> 
 			</a>
 		</li>
-		<li class="active" sec:authorize="!isAuthenticated()">
+		<li id="login" class="active" sec:authorize="!isAuthenticated()">
 			<a class="nav-link" href="/login">
 				<i class="fa fa-sign-in"></i> <span th:text="#{login.message}">Login</span>  
 			</a>

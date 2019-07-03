@@ -17,16 +17,11 @@ public class PO_NavView extends PO_View {
 	}
 
 	public static void changeLanguage(WebDriver driver, String textLanguage) {
-		// clickamos la opción Idioma.
 		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "id", "btnLanguage", getTimeout());
 		elementos.get(0).click();
-		// Esperamos a que aparezca el menú de opciones.
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "id", "languageDropdownMenuButton", getTimeout());
-		// SeleniumUtils.esperarSegundos(driver, 2);
-		// CLickamos la opción Inglés partiendo de la opción Español
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "id", textLanguage, getTimeout());
 		elementos.get(0).click();
 	}
-	
 
 }

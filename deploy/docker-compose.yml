@@ -7,10 +7,8 @@ services:
     container_name: webApp
     restart: always
     depends_on:
-      sql:
-        condition: service_healthy
-      neo4j:
-        condition: service_healthy
+      - sql
+      - neo4j
     ports:
       - 80:80
 
