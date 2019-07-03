@@ -32,12 +32,21 @@ public class InsertSampleDataService {
 
 	@PostConstruct
 	public void init() {
-		if (!dbInitMode.equals("create"))
-			return;
+		if (dbInitMode.equals("validate"))
+			resetAllData();
+		createAllData();
+	}
+	
+	private void createAllData() {
 		User user = new User("miguel@email.com", "Miguel", "Garnacho Vélez");
 		user.setPassword("123456");
 		usersService.addUser(user);
 		loadQueriesFromFile(user);
+	}
+	
+	private void resetAllData() {
+		usersService.deleteAll();
+		queryService.deleteAll();
 	}
 
 	private void loadQueriesFromFile(User user) {

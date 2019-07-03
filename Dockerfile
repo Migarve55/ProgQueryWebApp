@@ -4,11 +4,12 @@ VOLUME /tmp
 
 # Install the basics
 
-RUN apk update && apk add maven
+RUN apk update && apk add maven netcat
 ENV M2_HOME /usr/bin/
 EXPOSE 8080/tcp
 RUN addgroup -S app 
 RUN adduser -S app -G app --disabled-password --no-create-home
+COPY deploy/wait-for wait-for
 
 # Install progQuery webApp
 
