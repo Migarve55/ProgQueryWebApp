@@ -68,10 +68,16 @@ public class AnalyzerService {
 		usersTasks.put(user, task);
 	}
 	
-	public void cancelCurrentTask(User user) {
-		getCurrentTask(user).cancel(false);
+	private void finalizeUserTask(User user, AnalyzerTask task) {
+		logger.info("Task {} of user {} has ended", user.getEmail(), task);
+		usersTasks.remove(user);
 	}
 	
+	public void cancelCurrentTask(User user) {
+		AnalyzerTask task = getCurrentTask(user);
+		logger.info("User {} cancelled his/her task {}", user.getEmail(), task);
+		finalizeUserTask(user, task);
+	}
 	
 	/**
 	 * 
@@ -129,6 +135,7 @@ public class AnalyzerService {
 		AnalyzerTask task = new AnalyzerTask(callable);
 		task.setCallback((errors) -> {
 			createReport(user, program, errors);
+			finalizeUserTask(user, task);
 		});
 		executor.execute(task);
 		setCurrentTask(user, task);
@@ -157,10 +164,11 @@ public class AnalyzerService {
 		task.setCallback((errors) -> {
 			Program program = createProgram(user, name, callable.getProgramID());
 			createReport(user, program, errors);
+			finalizeUserTask(user, task);
 		});
 		executor.execute(task);
 		setCurrentTask(user, task);
-		logger.info("User {} started analysis of new program of {}", user.getEmail(), name);
+		logger.info("User {} started analysis of new program from {} using {}", user.getEmail(), name, compOp);
 	}
 	
 	private CompilerTool getCompilationTool(String compilator) {

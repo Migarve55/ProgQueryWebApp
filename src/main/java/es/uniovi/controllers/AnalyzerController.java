@@ -118,8 +118,7 @@ public class AnalyzerController {
 			redirect.addFlashAttribute("error", "error.taskCancelled");
 			return "redirect:/";
 		} else if (task.isDone()) {
-			redirect.addFlashAttribute("error", "error.noTask");
-			return "redirect:/";
+			return "redirect:/result/last";
 		}
 		return "loading";
 	}
