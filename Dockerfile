@@ -6,9 +6,10 @@ VOLUME /tmp
 
 RUN apk update && apk add maven netcat-openbsd
 ENV M2_HOME /usr/
+ENV CLASSPATH /opt/webApp/plugin/ProgQuery.jar
 EXPOSE 8080/tcp
 RUN addgroup -S app 
-RUN adduser -S app -G app --disabled-password --no-create-home
+RUN adduser -S app -G app --disabled-password
 
 # Install progQuery webApp
 

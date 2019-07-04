@@ -53,8 +53,7 @@ public class ResultController {
 		try {
 			task.get();
 		} catch (Exception e) {
-			Throwable cause = e.getCause();
-			redirect.addFlashAttribute("error", cause == null ? e.getLocalizedMessage() : cause.getLocalizedMessage());
+			redirect.addFlashAttribute("error", getRootCause(e).getLocalizedMessage());
 			return "redirect:/";
 		} 
 		if (result == null) {
@@ -64,6 +63,10 @@ public class ResultController {
 		return "redirect:/result/" + result.getId();
 	}
 	
+	private Throwable getRootCause(Throwable t) {
+		return t.getCause() == null ? t : getRootCause(t.getCause());
+	}
+ 	
 	@RequestMapping("/result/{id}")
 	public String detail(Model model, @PathVariable Long id, Principal principal, RedirectAttributes redirect) {
 		String email = principal.getName();

@@ -17,9 +17,6 @@ import org.slf4j.LoggerFactory;
 import es.uniovi.analyzer.exceptions.CompilerException;
 
 public class JavaCompilerTool implements CompilerTool {
-
-	private final static String PLUGIN_CLASSPATH_UNIX = ".:plugin/ProgQuery.jar";
-	private final static String PLUGIN_CLASSPATH_WIN = "./plugin/ProgQuery.jar";
 	
 	private final static String ENCODING = "ISO-8859-1";
 	private final static String PLUGIN_ARG = "-Xplugin:ProgQueryPlugin %s S %s";
@@ -86,12 +83,8 @@ public class JavaCompilerTool implements CompilerTool {
 	}
 
 	private List<String> basicArgs(String basePath, String programID) {
-		String pluginClasspath = 
-				System.getProperty("os.name").matches("Win.*") ? 
-						PLUGIN_CLASSPATH_WIN : 
-						PLUGIN_CLASSPATH_UNIX;
 		return new ArrayList<>(
-				Arrays.asList("-cp", pluginClasspath, 
+				Arrays.asList(
 						"-encoding", ENCODING,
 						String.format(PLUGIN_ARG, programID, System.getProperty("neo4j.url")), 
 						"-d", basePath, "-nowarn", "-g:none", 
