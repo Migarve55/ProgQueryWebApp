@@ -4,7 +4,7 @@ VOLUME /tmp
 
 # Install the basics
 
-RUN apk update && apk add maven netcat-openbsd
+RUN apk update && apk add maven netcat-openbsd openjfx 
 ENV M2_HOME /usr/
 ENV CLASSPATH /opt/webApp/plugin/ProgQuery.jar
 EXPOSE 8080/tcp
@@ -22,15 +22,15 @@ RUN cp build/target/*.jar /opt/webApp/app.jar
 RUN rm -r -f build/
 COPY deploy/wait-for /opt/webApp/wait-for
 RUN chmod +x /opt/webApp/wait-for
-WORKDIR /opt/webApp/
+RUN chown -R app:app /opt/webApp/
 
 # Install the plugin
 
+WORKDIR /opt/webApp/
+USER app:app
 COPY plugin/ProgQuery.jar plugin/ProgQuery.jar
 RUN mvn install:install-file -DcreateChecksum=true -Dpackaging=jar -Dfile=plugin/ProgQuery.jar -DgroupId=es.uniovi.progQuery -DartifactId=progQuery -Dversion=0.0.1-SNAPSHOT -DgeneratePom=true
-RUN chown -R app:app /opt/webApp/
 
 # Run
 
-USER app:app
 ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]

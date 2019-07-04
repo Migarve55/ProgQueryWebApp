@@ -35,7 +35,7 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 	}
 
 	@Override
-	public final List<ProblemDto> call() throws EnviromentException, ReportException, CompilerException, Exception {
+	public final List<ProblemDto> call() throws EnviromentException, ReportException, CompilerException {
 		List<ProblemDto> result = null;
 		try {
 			prepareEnviroment();
@@ -43,9 +43,6 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 			result = createReport();
 			if (callback != null)
 				callback.accept(result);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new Exception(e);
 		} finally {
 			cleanEnviroment();
 		}
