@@ -37,7 +37,7 @@ public class ResultService {
 	
 	public void deleteResult(Result result) {
 		resultsRepository.delete(result);
-		logger.info("Result for program {} was deleted", result.getProgram());
+		logger.info("Result for program {} was deleted", result.getProgram().getProgramIdentifier());
 	}
 
 	public Page<Result> listByProgram(Pageable pageable, Program program) {

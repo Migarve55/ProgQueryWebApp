@@ -33,6 +33,7 @@ RUN chown -R app:app /opt/webApp/
 WORKDIR /opt/webApp/
 USER app:app
 COPY plugin/ProgQuery.jar plugin/ProgQuery.jar
+RUN chown -R app:app plugin
 RUN mvn install:install-file -DcreateChecksum=true -Dpackaging=jar -Dfile=plugin/ProgQuery.jar -DgroupId=es.uniovi.progQuery -DartifactId=progQuery -Dversion=0.0.1-SNAPSHOT -DgeneratePom=true
 
 # Run

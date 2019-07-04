@@ -2,6 +2,7 @@ package es.uniovi.analyzer.tools.compilators;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -59,7 +60,13 @@ public class JavaCompilerTool implements CompilerTool {
 		String argsArray[] = new String[args.size()];
 		args.toArray(argsArray);
 		logger.info("Executing compilation command: javac {}", String.join(" ", args));
-		if(compiler.run(null, null, null, argsArray) != 0) {
+		OutputStream dummyStream = new OutputStream() {
+			@Override
+			public void write(int b) throws IOException {
+				//Do nothing
+			}
+		};
+		if(compiler.run(null, dummyStream, dummyStream, argsArray) != 0) {
 			throw new CompilerException();
 		}
 	}
