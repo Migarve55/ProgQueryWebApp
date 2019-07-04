@@ -5,7 +5,7 @@ VOLUME /tmp
 # Install the basics
 
 RUN apk update && apk add maven netcat-openbsd
-ENV M2_HOME /usr/bin/
+ENV M2_HOME /usr/
 EXPOSE 8080/tcp
 RUN addgroup -S app 
 RUN adduser -S app -G app --disabled-password --no-create-home
@@ -20,13 +20,14 @@ RUN mkdir /opt/webApp/uploads
 RUN cp build/target/*.jar /opt/webApp/app.jar
 RUN rm -r -f build/
 COPY deploy/wait-for /opt/webApp/wait-for
-RUN chown -R app:app /opt/webApp/
+RUN chmod +x /opt/webApp/wait-for
 WORKDIR /opt/webApp/
 
 # Install the plugin
 
 COPY plugin/ProgQuery.jar plugin/ProgQuery.jar
 RUN mvn install:install-file -DcreateChecksum=true -Dpackaging=jar -Dfile=plugin/ProgQuery.jar -DgroupId=es.uniovi.progQuery -DartifactId=progQuery -Dversion=0.0.1-SNAPSHOT -DgeneratePom=true
+RUN chown -R app:app /opt/webApp/
 
 # Run
 

@@ -4,9 +4,6 @@ import java.util.List;
 import java.util.concurrent.FutureTask;
 import java.util.function.Consumer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import es.uniovi.analyzer.exceptions.EnviromentException;
 import es.uniovi.analyzer.tools.reporter.dto.ProblemDto;
 
@@ -17,8 +14,6 @@ public class AnalyzerTask extends FutureTask<List<ProblemDto>> {
 
 	private AbstractAnalyzerCallable callable;
 	
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
-	
 	public AnalyzerTask(AbstractAnalyzerCallable callable) {
 		super(callable);
 		callable.setTask(this);
@@ -28,7 +23,6 @@ public class AnalyzerTask extends FutureTask<List<ProblemDto>> {
 	@Override
 	protected void done() {
 		super.done();
-		logger.info("Task is done");
 		progress = 100;
 		status = "Done";
 	}

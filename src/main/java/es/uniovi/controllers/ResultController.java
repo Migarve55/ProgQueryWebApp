@@ -1,7 +1,6 @@
 package es.uniovi.controllers;
 
 import java.security.Principal;
-import java.util.concurrent.ExecutionException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -53,10 +52,9 @@ public class ResultController {
 		}
 		try {
 			task.get();
-		} catch (ExecutionException e) {
-			redirect.addFlashAttribute("error", e.getCause().getLocalizedMessage());
-			return "redirect:/";
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
+			Throwable cause = e.getCause();
+			redirect.addFlashAttribute("error", cause == null ? e.getLocalizedMessage() : cause.getLocalizedMessage());
 			return "redirect:/";
 		} 
 		if (result == null) {

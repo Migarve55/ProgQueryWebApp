@@ -5,9 +5,6 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import es.uniovi.analyzer.exceptions.CompilerException;
 import es.uniovi.analyzer.exceptions.EnviromentException;
 import es.uniovi.analyzer.exceptions.ReportException;
@@ -26,8 +23,6 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 	protected List<QueryDto> queries;
 	
 	private Consumer<List<ProblemDto>> callback;
-	
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public AbstractAnalyzerCallable(String args) {
 		this.args = args;
@@ -42,7 +37,6 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 	@Override
 	public final List<ProblemDto> call() throws EnviromentException, ReportException, CompilerException, Exception {
 		List<ProblemDto> result = null;
-		logger.info("Task started");
 		try {
 			prepareEnviroment();
 			compile();
