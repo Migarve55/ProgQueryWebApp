@@ -21,6 +21,7 @@ RUN cp build/target/*.jar /opt/webApp/app.jar
 RUN rm -r -f build/
 COPY deploy/wait-for /opt/webApp/wait-for
 RUN chown -R app:app /opt/webApp/
+WORKDIR /opt/webApp/
 
 # Install the plugin
 
@@ -30,4 +31,4 @@ RUN mvn install:install-file -DcreateChecksum=true -Dpackaging=jar -Dfile=plugin
 # Run
 
 USER app:app
-ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/opt/webApp/app.jar"]
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]

@@ -11,7 +11,7 @@ services:
       - neo4j
     ports:
       - "80:8080"
-    entrypoint: sh -c '/opt/webApp/wait-for sql:3306 -- java -Djava.security.egd=file:/dev/./urandom -jar /opt/webApp/app.jar'
+    entrypoint: wait-for sql:3306 -- java -Djava.security.egd=file:/dev/./urandom -jar app.jar
 
   neo4j:
     image: neo4j:3.5

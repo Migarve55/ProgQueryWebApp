@@ -70,12 +70,15 @@ public class AnalyzerService {
 	
 	private void finalizeUserTask(User user, AnalyzerTask task) {
 		logger.info("Task {} of user {} has ended", user.getEmail(), task);
-		usersTasks.remove(user);
+		//usersTasks.remove(user);
 	}
 	
 	public void cancelCurrentTask(User user) {
 		AnalyzerTask task = getCurrentTask(user);
-		logger.info("User {} cancelled his/her task {}", user.getEmail(), task);
+		if (task.cancel(false))
+			logger.info("User {} cancelled his/her task {} succesfully", user.getEmail(), task);
+		else
+			logger.info("User {} could not cancel his/her task {}", user.getEmail(), task);
 		finalizeUserTask(user, task);
 	}
 	
