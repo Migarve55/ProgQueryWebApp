@@ -26,16 +26,15 @@ RUN cp build/target/*.jar /opt/webApp/app.jar
 RUN rm -r -f build/
 COPY deploy/wait-for /opt/webApp/wait-for
 RUN chmod +x /opt/webApp/wait-for
-RUN chown -R app:app /opt/webApp/
 
 # Install the plugin
 
-WORKDIR /opt/webApp/
+COPY plugin/ProgQuery.jar /opt/webApp/plugin/ProgQuery.jar
+RUN chown -R app:app /opt/webApp/
 USER app:app
-COPY plugin/ProgQuery.jar plugin/ProgQuery.jar
-RUN chown -R app:app plugin
 RUN mvn install:install-file -DcreateChecksum=true -Dpackaging=jar -Dfile=plugin/ProgQuery.jar -DgroupId=es.uniovi.progQuery -DartifactId=progQuery -Dversion=0.0.1-SNAPSHOT -DgeneratePom=true
 
 # Run
 
+WORKDIR /opt/webApp/
 ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]
