@@ -25,7 +25,7 @@ RUN mkdir /opt/webApp/uploads
 RUN cp build/target/*.jar /opt/webApp/app.jar
 RUN rm -r -f build/
 COPY deploy/wait-for /opt/webApp/wait-for
-RUN dos2unix wait-for
+RUN dos2unix /opt/webApp/wait-for
 RUN chmod +x /opt/webApp/wait-for
 
 # Install the plugin

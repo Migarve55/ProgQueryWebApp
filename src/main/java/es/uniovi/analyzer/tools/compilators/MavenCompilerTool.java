@@ -21,6 +21,8 @@ import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.uniovi.analyzer.exceptions.CompilerException;
 
@@ -30,6 +32,8 @@ public class MavenCompilerTool implements CompilerTool {
 	private final static String PLUGIN_ARG = "-Xplugin:ProgQueryPlugin %s S %s";
 
 	private static final List<String> PUBLISH_GOALS = Arrays.asList( "compile" );
+	
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	 
 	public void compileFolder(String basePath, String programID, String extraArgs) throws CompilerException {
 	    //Configure model
@@ -40,6 +44,7 @@ public class MavenCompilerTool implements CompilerTool {
 			throw e;
 		}
 	    //Execute
+	    logger.info("Compiling program {} using maven", programID);
 	    compileUsingMavenAPI(basePath);
 	}
 	
@@ -47,7 +52,11 @@ public class MavenCompilerTool implements CompilerTool {
 	private void compileUsingMavenAPI(String basePath) throws CompilerException {
 		File folder = new File(basePath);
 		Invoker newInvoker = new DefaultInvoker();
-		newInvoker.setOutputHandler(null);
+		if (System.getenv("SHOW_COMPILE_OUTPUT") != null) 
+			if (!System.getenv("SHOW_COMPILE_OUTPUT").toLowerCase().equals("yes"))
+				newInvoker.setOutputHandler(null);
+		else
+			newInvoker.setOutputHandler(null);
 		//Configure request 
 		InvocationRequest request = new DefaultInvocationRequest();
 	    request.setBaseDirectory(folder);

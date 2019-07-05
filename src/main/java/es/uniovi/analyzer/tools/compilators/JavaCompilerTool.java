@@ -46,6 +46,7 @@ public class JavaCompilerTool implements CompilerTool {
 		// All files
 		generateSourcesFile(basePath);
 		// Compilation
+		logger.info("Compiling program {} using java", programID);
 		compile(compiler, args);
 	}
 	
@@ -59,13 +60,16 @@ public class JavaCompilerTool implements CompilerTool {
 		sanitizeArguments(args);
 		String argsArray[] = new String[args.size()];
 		args.toArray(argsArray);
-		logger.info("Executing compilation command: javac {}", String.join(" ", args));
 		OutputStream dummyStream = new OutputStream() {
 			@Override
 			public void write(int b) throws IOException {
 				//Do nothing
 			}
 		};
+		if (System.getenv("SHOW_COMPILE_OUTPUT") != null)
+			if (System.getenv("SHOW_COMPILE_OUTPUT").toLowerCase().equals("yes"))
+				dummyStream = null;
+		logger.info("Executing compilation command: javac {}", String.join(" ", args));
 		if(compiler.run(null, dummyStream, dummyStream, argsArray) != 0) {
 			throw new CompilerException();
 		}
