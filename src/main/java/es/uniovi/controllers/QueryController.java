@@ -55,7 +55,7 @@ public class QueryController {
 		query.setUser(user);
 		addQueryValidator.validate(query, result);
 		if (result.hasErrors()) {
-			return "/query/add";
+			return "query/add";
 		}
 		//Add it
 		queryService.saveQuery(query);
