@@ -4,9 +4,14 @@
 <body>
 	<!-- Barra de Navegación superior -->
 	<nav th:replace="fragments/nav" />
-	<div class="container mt-2">
+	<div class="container mt-2" >
 		<h1 class="title" th:text="${program.name}"></h1>
-		<table th:replace="result/list :: tableResults"></table>
+		<div class="table-responsive" th:if="${resultsList.size() > 0}">
+			<table th:replace="result/list :: tableResults"></table>
+		</div>
+		<div class="container" th:if="${resultsList.size() <= 0}">
+			<h2 class="text-center mt-5" th:text="#{result.list.empty}">No results to show</h2>
+		</div>
 		<a class="btn btn-primary" th:href="${'/program/analyze/' + program.id}" th:text="#{analyze}">Analyze</a>
 		<a class="btn btn-danger" th:href="${'/program/delete/' + program.id}" th:text="#{delete}">Delete</a>
 	</div>
