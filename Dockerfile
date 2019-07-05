@@ -29,7 +29,7 @@ RUN chmod +x /opt/webApp/wait-for
 
 # Install the plugin
 
-COPY plugin/ProgQuery.jar /opt/webApp/plugin/ProgQuery.jar
+ADD plugin/ProgQuery.zip /opt/webApp/plugin/ProgQuery.jar
 RUN chown -R app:app /opt/webApp/
 USER app:app
 RUN mvn install:install-file -DcreateChecksum=true -Dpackaging=jar -Dfile=/opt/webApp/plugin/ProgQuery.jar -DgroupId=es.uniovi.progQuery -DartifactId=progQuery -Dversion=0.0.1-SNAPSHOT -DgeneratePom=true
