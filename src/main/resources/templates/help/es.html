@@ -33,7 +33,7 @@
 			<p>Esto es necesario para que funcione. Por ejemplo:</p>
 			<span class="codeSegment">RETURN retExpr.lineNumber as line, retExpr.column as column , enclosingCU.fileName as file</span>
 			<p>Y además, este match tiene que estar presente:</p> 
-			<span class="codeSegment">MATCH (enclosingCU)<-[:PACKAGE_HAS_COMPILATION_UNIT]-()<-[:PROGRAM_DECLARES_PACKAGE]-(program) WHERE program.ID=$programID</span>
+			<span class="codeSegment">MATCH (enclosingCU)&lt;-[:PACKAGE_HAS_COMPILATION_UNIT]-()&lt;-[:PROGRAM_DECLARES_PACKAGE]-(program) WHERE program.ID=$programID</span>
 			<p>De esta manera los errores son buscados dentro del programa actual. Si esto se omite, va a buscar en TODOS los programas en la base de datos.</p>
 		</section>
 		<section>
@@ -43,7 +43,7 @@
 		<section>
 			<h3>¿Porque no puedo crear una consulta con el nombre que quiero?</h3>
 			<p>Si tienes problemas al crear una query es porque seguramente las estés nombrando incorrectamente.</p>
-			<p>Su convenio de nombrado es como los paquetes de java, excepto que no admite guiones bajos. Por ejemplo "es.uniovi.myQuery" es válido.</p>
+			<p>Su convenio de nombrado es como los paquetes de java. Por ejemplo "es.uniovi.myQuery" es válido, mientras que "es.test-1" o "es..test" no lo son.</p>
 		</section>
 	</div>
 	<footer th:replace="fragments/footer" />
