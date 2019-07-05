@@ -52,10 +52,10 @@ public class MavenCompilerTool implements CompilerTool {
 	private void compileUsingMavenAPI(String basePath) throws CompilerException {
 		File folder = new File(basePath);
 		Invoker newInvoker = new DefaultInvoker();
-		if (System.getenv("SHOW_COMPILE_OUTPUT") != null) 
+		if (System.getenv("SHOW_COMPILE_OUTPUT") != null) {
 			if (!System.getenv("SHOW_COMPILE_OUTPUT").toLowerCase().equals("yes"))
 				newInvoker.setOutputHandler(null);
-		else
+		} else
 			newInvoker.setOutputHandler(null);
 		//Configure request 
 		InvocationRequest request = new DefaultInvocationRequest();
