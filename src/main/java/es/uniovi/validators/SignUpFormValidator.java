@@ -45,7 +45,7 @@ public class SignUpFormValidator implements Validator {
 		if (user.getLastName().length() < 5 || user.getLastName().length() > 24) {
 			errors.rejectValue("lastName", "error.signup.lastName.length");
 		}
-		if (user.getPassword().length() < 5 || user.getPassword().length() > 24) {
+		if (usersService.validateUserPassword(user.getPassword())) {
 			errors.rejectValue("password", "error.signup.password.length");
 		}
 		if (!user.getPasswordConfirm().equals(user.getPassword())) {

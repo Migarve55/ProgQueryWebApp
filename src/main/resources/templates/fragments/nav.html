@@ -50,6 +50,11 @@
 				<i class="fa fa-question-circle"></i> <span th:text="#{nav.help}">Help</span>
 			</a>
 		</li>
+		<li class="active" sec:authorize="isAuthenticated()">
+			<a class="nav-link" href="/settings"> 
+				<i class="fa fa-sliders"></i> <span th:text="#{nav.settings}">Settings</span>
+			</a>
+		</li>
 		<li id="singup" class="active" sec:authorize="!isAuthenticated()">
 			<a class="nav-link" href="/signup">
 				<i class="fa fa-user-plus"></i> <span th:text="#{signup.message}">Sing up</span> 

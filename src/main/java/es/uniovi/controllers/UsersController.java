@@ -7,6 +7,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
 import es.uniovi.entities.User;
 import es.uniovi.services.SecurityService;
 import es.uniovi.services.UsersService;

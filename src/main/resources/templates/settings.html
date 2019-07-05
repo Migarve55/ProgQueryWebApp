@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="fragments/head" />
+<body>
+	<nav th:replace="fragments/nav" />
+	<header class="container mt-2">
+		<h1 th:text="#{settings.title}"></h1>
+		<h2 th:text="${user.name + ' ' + user.lastName}"></h2>
+	</header>
+	<main class="container">
+		<section class="mt-1">
+			<h2 th:text="#{settings.changePassword}">Change password</h2>
+			<form class="form-horizontal" method="post" action="/settings/changePassword">
+				<div class="alert alert-danger" role="alert" th:if="${passChangeError}">
+ 					<span th:text="#{${passChangeError}}"></span>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-6" for="actualPass" th:text="#{settings.currentPassword}">Current password:</label>
+					<div class="col-sm-12">
+						<input type="password" class="form-control" name="actualPass"
+							placeholder="..." required="true" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-6" for="newPass" th:text="#{settings.newPassword}">Actual password:</label>
+					<div class="col-sm-12">
+						<input type="password" class="form-control" name="newPass"
+							placeholder="..." required="true" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-6" for="newPassConf" th:text="#{settings.confirmNewPassword}">Repeate new password:</label>
+					<div class="col-sm-12">
+						<input type="password" class="form-control" name="newPassConf"
+							placeholder="..." required="true" />
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+						<button type="submit" class="btn btn-primary" th:text="#{settings.changePassword}">Change password</button>
+					</div>
+				</div>
+			</form>
+		</section>
+		<section class="mt-1">
+			<h2 th:text="#{settings.deleteProfile}">Delete profile</h2>
+			<form class="form-horizontal" method="post" action="/settings/deleteProfile">
+				<div class="alert alert-danger" role="alert" th:if="${profileDelError}">
+ 					<span th:text="#{${profileDelError}}"></span>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-6" for="email" th:text="#{settings.confirmEmail}">Enter email to confirm:</label>
+					<div class="col-sm-12">
+						<input class="form-control" name="email" placeholder="..." required="true" />
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-12">
+						<button type="submit" class="btn btn-danger" th:text="#{settings.deleteProfile}">Delete profile</button>
+					</div>
+				</div>
+			</form>
+		</section>
+	</main>
+	<footer th:replace="fragments/footer" />
+</body>
+</html>
