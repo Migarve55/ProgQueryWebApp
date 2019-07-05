@@ -15,6 +15,8 @@ import es.uniovi.repositories.QueriesRepository;
 @Service
 public class QueryService {
 	
+	private final static String NAME_REGEX = "((([a-zA-Z0-9_]+)\\.)+(\\*|[a-zA-Z0-9_]+))|[a-zA-Z0-9_]+";
+	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired
@@ -65,6 +67,10 @@ public class QueryService {
 	
 	public void deleteAll() {
 		queriesRepository.deleteAll();
+	}
+	
+	public boolean validateQueryName(String name) {
+		return name.matches(NAME_REGEX);
 	}
 	
 }

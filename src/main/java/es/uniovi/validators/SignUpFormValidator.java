@@ -46,10 +46,10 @@ public class SignUpFormValidator implements Validator {
 			errors.rejectValue("lastName", "error.signup.lastName.length");
 		}
 		if (usersService.validateUserPassword(user.getPassword())) {
-			errors.rejectValue("password", "error.signup.password.length");
+			errors.rejectValue("password", "error.password");
 		}
 		if (!user.getPasswordConfirm().equals(user.getPassword())) {
-			errors.rejectValue("passwordConfirm", "error.signup.passwordConfirm.coincidence");
+			errors.rejectValue("passwordConfirm", "error.password.coincidence");
 		}
 	}
 

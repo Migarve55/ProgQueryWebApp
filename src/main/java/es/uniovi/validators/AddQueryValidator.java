@@ -12,8 +12,6 @@ import es.uniovi.services.QueryService;
 @Component
 public class AddQueryValidator implements Validator {
 	
-	public final static String NAME_REGEX = "((([a-zA-Z0-9]+)\\.)+(\\*|[a-zA-Z0-9]+))|[a-zA-Z0-9]+";
-	
 	@Autowired
 	private QueryService queryService;
 
@@ -34,7 +32,7 @@ public class AddQueryValidator implements Validator {
 		if (query.getName().length() > 60) {
 			errors.rejectValue("name", "error.query.name.length");
 		}
-		if (!query.getName().matches(NAME_REGEX)) {
+		if (!queryService.validateQueryName(query.getName())) {
 			errors.rejectValue("name", "error.query.name.regex");
 		}
 	}
