@@ -33,7 +33,7 @@
  Three enviroment variables need to be set:
  
  - M2_HOME: to the maven folder
- - CLASSPATH: to the plugin location
+ - PLUGIN_CLASSPATH: path the plugin path
  - SHOW_COMPILE_OUTPUT: this is optional, if set to 'yes' all the compilers will show their output, only for debbuging purposes
  
  The first two are already set in the docker image, so you do not have to worry about them.

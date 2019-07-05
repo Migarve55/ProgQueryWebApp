@@ -10,7 +10,7 @@ RUN wget --quiet --output-document=/etc/apk/keys/sgerrand.rsa.pub https://alpine
 RUN wget https://github.com/sgerrand/alpine-pkg-java-openjfx/releases/download/8.151.12-r0/java-openjfx-8.151.12-r0.apk
 RUN apk add --no-cache java-openjfx-8.151.12-r0.apk
 ENV M2_HOME /usr/
-ENV CLASSPATH /opt/webApp/plugin/ProgQuery.jar
+ENV PLUGIN_CLASSPATH /opt/webApp/plugin/ProgQuery.jar
 EXPOSE 8080/tcp
 RUN addgroup -S app 
 RUN adduser -S app -G app --disabled-password

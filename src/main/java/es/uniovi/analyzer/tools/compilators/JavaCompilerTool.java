@@ -96,6 +96,7 @@ public class JavaCompilerTool implements CompilerTool {
 	private List<String> basicArgs(String basePath, String programID) {
 		return new ArrayList<>(
 				Arrays.asList(
+						"-cp", System.getenv("PLUGIN_CLASSPATH"),
 						"-encoding", ENCODING,
 						String.format(PLUGIN_ARG, programID, System.getProperty("neo4j.url")), 
 						"-d", basePath, "-nowarn", "-g:none", 

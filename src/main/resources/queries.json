@@ -7,7 +7,7 @@
 		},
 		{
 			"name": "es.uniovi.test2",
-			"description": "Warning [CMU-MET52] You must not use the clone method to copy unstrasted parameters",
+			"description": "Warning [CMU-MET52], You must not use the clone method to copy untrusted parameters",
 			"query": "MATCH (enclosingCU)-[:HAS_TYPE_DEC |:HAS_INDIRECT_TYPE_DEC]->(typeDec{accessLevel:'public'})-[:DECLARES_METHOD]->(method{accessLevel:'public'})-[:HAS_METHODDECL_PARAMETERS]->(param)-[:USED_BY]->(id), (mInv:METHOD_INVOCATION)-[:METHODINVOCATION_METHOD_SELECT]->(mSelect:MEMBER_SELECTION{memberName:'clone'})-[:MEMBER_SELECT_EXPR]->(id), (mInv)-[:HAS_DEC]->(dec), (param)-[:HAS_VARIABLEDECL_TYPE]->()-[:PARAMETERIZEDTYPE_TYPE*0..1]->()-[:ITS_TYPE_IS]->(pType) WHERE dec.fullyQualifiedName CONTAINS '()' AND NOT pType.isFinal AND (NOT pType.isDeclared OR pType.accessLevel='public') MATCH (enclosingCU)<-[:PACKAGE_HAS_COMPILATION_UNIT]-()<-[:PROGRAM_DECLARES_PACKAGE]-(program) WHERE program.ID=$programID RETURN mInv.lineNumber as line, mInv.column as column , enclosingCU.fileName as file"
 		},
 		{
