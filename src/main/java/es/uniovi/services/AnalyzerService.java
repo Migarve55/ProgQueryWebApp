@@ -185,14 +185,6 @@ public class AnalyzerService {
 		}
 	}
 	
-	private Program createProgram(User user, String name, String programID) {
-		Program program = new Program();
-		program.setUser(user);
-		program.setProgramIdentifier(programID);
-		program.setName(name);
-		return programRepository.save(program);
-	}
-	
 	@Transactional
 	private void createReport(User user, Program program, List<ProblemDto> problems) {
 		Result result = new Result();
@@ -208,6 +200,14 @@ public class AnalyzerService {
 			problem.setCompilationUnit(problemDto.getFile());
 			problemsRepository.save(problem);
 		}
+	}
+	
+	private Program createProgram(User user, String name, String programID) {
+		Program program = new Program();
+		program.setUser(user);
+		program.setProgramIdentifier(programID);
+		program.setName(name);
+		return programRepository.save(program);
 	}
 	
 	/**
@@ -231,7 +231,10 @@ public class AnalyzerService {
 					result.add(query);
 			}
 		}
-		return result;
+		//Return only  the distinct queries
+		return result.stream()
+				.distinct()
+				.collect(Collectors.toList());
 	}
 	
 	private List<QueryDto> toQueryDto(List<Query> queries) {

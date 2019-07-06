@@ -213,7 +213,7 @@ public class ProgQueryWebAppApplicationTests {
 	}
 	
 	/**
-	 * Analyze a zip file
+	 * User changes the password succesfully
 	 */
 	@Test
 	public void testCase09() {
@@ -221,7 +221,7 @@ public class ProgQueryWebAppApplicationTests {
 	}
 	
 	/**
-	 * Analyze a git repo
+	 * User tries to change the password with invalid data
 	 */
 	@Test
 	public void testCase10() {
@@ -229,7 +229,7 @@ public class ProgQueryWebAppApplicationTests {
 	}
 	
 	/**
-	 * Analyze a program
+	 * User deletes the profile
 	 */
 	@Test
 	public void testCase11() {
@@ -279,6 +279,5 @@ public class ProgQueryWebAppApplicationTests {
 	public void testCase16() {
 		
 	}
-
 
 }

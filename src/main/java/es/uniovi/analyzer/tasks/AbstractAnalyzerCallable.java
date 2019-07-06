@@ -41,12 +41,20 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 			prepareEnviroment();
 			compile();
 			result = createReport();
-			if (callback != null)
-				callback.accept(result);
+			executeCallback(result);
 		} finally {
 			cleanEnviroment();
 		}
 		return result;
+	}
+	
+	private void executeCallback(List<ProblemDto> result) throws ReportException {
+		try {
+			if (callback != null)
+				callback.accept(result);
+		} catch (Exception e) {
+			throw new ReportException();
+		}
 	}
 	
 	public void nextStep(String step, int increment) {

@@ -1,6 +1,8 @@
 package es.uniovi.controllers;
 
 import java.security.Principal;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -44,18 +46,18 @@ public class ResultController {
 	public String last(Principal principal, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
-		Result result = resultService.getLastFromUser(user);
 		AnalyzerTask task = analyzerService.getCurrentTask(user);
-		if (task.isCancelled()) {
-			redirect.addFlashAttribute("error", "error.taskCancelled");
-			return "redirect:/";
-		}
 		try {
 			task.get();
-		} catch (Exception e) {
+		} catch (CancellationException | InterruptedException e) {
+			redirect.addFlashAttribute("error", "error.taskCancelled");
+			return "redirect:/";
+		} catch (ExecutionException e) {
 			redirect.addFlashAttribute("error", getRootCause(e).getLocalizedMessage());
 			return "redirect:/";
 		} 
+		// Get result
+		Result result = resultService.getLastFromUser(user);
 		if (result == null) {
 			redirect.addFlashAttribute("error", "error.noReport");
 			return "redirect:/";
