@@ -20,8 +20,11 @@ import es.uniovi.entities.Query;
 import es.uniovi.entities.User;
 import es.uniovi.services.QueryService;
 import es.uniovi.services.UsersService;
+import es.uniovi.tests.pageobjects.PO_AddQueryView;
+import es.uniovi.tests.pageobjects.PO_GitAnalyzerView;
 import es.uniovi.tests.pageobjects.PO_LoginView;
 import es.uniovi.tests.pageobjects.PO_Properties;
+import es.uniovi.tests.pageobjects.PO_QueriesListView;
 import es.uniovi.tests.pageobjects.PO_RegisterView;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -172,9 +175,9 @@ public class ProgQueryWebAppApplicationTests {
 		PO_RegisterView.fillForm(driver, "test@email.com", "test_", "test", "123456", "123456");
 		PO_RegisterView.checkKey(driver, "error.signup.lastName.length", PO_Properties.getSPANISH());
 		PO_RegisterView.fillForm(driver, "test@email.com", "test_", "test_", "1234", "1234");
-		PO_RegisterView.checkKey(driver, "error.signup.password.length", PO_Properties.getSPANISH());
+		PO_RegisterView.checkKey(driver, "error.password", PO_Properties.getSPANISH());
 		PO_RegisterView.fillForm(driver, "test@email.com", "test_", "test_", "123456", "123457");
-		PO_RegisterView.checkKey(driver, "error.signup.passwordConfirm.coincidence", PO_Properties.getSPANISH());
+		PO_RegisterView.checkKey(driver, "error.password.coincidence", PO_Properties.getSPANISH());
 	}
 	
 	/**
@@ -182,7 +185,12 @@ public class ProgQueryWebAppApplicationTests {
 	 */
 	@Test
 	public void testCase05() {
-		
+		PO_LoginView.goToPage(driver);
+		PO_LoginView.fillForm(driver, "miguel@email.com", "123456");
+		PO_AddQueryView.goToPage(driver);
+		PO_AddQueryView.fillForm(driver, "es.test", "This is a test", "...", false);
+		PO_QueriesListView.goToPage(driver);
+		PO_QueriesListView.checkExists(driver, "es.test");
 	}
 	
 	/**
@@ -191,7 +199,14 @@ public class ProgQueryWebAppApplicationTests {
 	 */
 	@Test
 	public void testCase06() {
-		
+		PO_LoginView.goToPage(driver);
+		PO_LoginView.fillForm(driver, "miguel@email.com", "123456");
+		PO_AddQueryView.goToPage(driver);
+		PO_AddQueryView.fillForm(driver, "es.test", "This is a test", "...", true);
+		PO_LoginView.goToPage(driver);
+		PO_LoginView.fillForm(driver, "oscar@email.com", "123456");
+		PO_GitAnalyzerView.goToPage(driver);
+		PO_GitAnalyzerView.checkForQuery(driver, "es.test");
 	}
 	
 	/**
@@ -201,7 +216,13 @@ public class ProgQueryWebAppApplicationTests {
 	 */
 	@Test
 	public void testCase07() {
-		
+		PO_LoginView.goToPage(driver);
+		PO_LoginView.fillForm(driver, "miguel@email.com", "123456");
+		PO_AddQueryView.goToPage(driver);
+		PO_AddQueryView.fillForm(driver, "es.test", "This is a test", "...", false, 1);
+		PO_LoginView.fillForm(driver, "oscar@email.com", "123456");
+		PO_GitAnalyzerView.goToPage(driver);
+		PO_GitAnalyzerView.checkForQuery(driver, "es.test");
 	}
 	
 	/**
@@ -209,7 +230,24 @@ public class ProgQueryWebAppApplicationTests {
 	 */
 	@Test
 	public void testCase08() {
-		
+		PO_LoginView.goToPage(driver);
+		PO_LoginView.fillForm(driver, "miguel@email.com", "123456");
+		PO_AddQueryView.goToPage(driver);
+		PO_AddQueryView.fillForm(driver, " ", "This is a test", "...", false);
+		PO_AddQueryView.checkKey(driver, "error.empty", PO_Properties.getSPANISH());
+		PO_AddQueryView.fillForm(driver, "es.test", " ", "...", false);
+		PO_AddQueryView.checkKey(driver, "error.empty", PO_Properties.getSPANISH());
+		PO_AddQueryView.fillForm(driver, "es.test", "This is a test", " ", false);
+		PO_AddQueryView.checkKey(driver, "error.empty", PO_Properties.getSPANISH());
+		PO_AddQueryView.fillForm(driver, "es.uniovi.query1", "This is a test", "...", false);
+		PO_AddQueryView.checkKey(driver, "error.query.name.duplicate", PO_Properties.getSPANISH());
+		StringBuilder longName = new StringBuilder();
+		for (int i = 0;i < 61;i++)
+			longName.append(' ');
+		PO_AddQueryView.fillForm(driver, longName.toString(), "This is a test", "...", false);
+		PO_AddQueryView.checkKey(driver, "error.query.name.length", PO_Properties.getSPANISH());
+		PO_AddQueryView.fillForm(driver, "es..test", "This is a test", "...", false);
+		PO_AddQueryView.checkKey(driver, "error.query.name.regex", PO_Properties.getSPANISH());
 	}
 	
 	/**
@@ -268,6 +306,8 @@ public class ProgQueryWebAppApplicationTests {
 	 */
 	@Test
 	public void testCase15() {
+		PO_LoginView.goToPage(driver);
+		PO_LoginView.fillForm(driver, "miguel@email.com", "123456");
 		
 	}
 
@@ -277,7 +317,8 @@ public class ProgQueryWebAppApplicationTests {
 	 */
 	@Test
 	public void testCase16() {
-		
+		PO_LoginView.goToPage(driver);
+		PO_LoginView.fillForm(driver, "miguel@email.com", "123456");
 	}
 
 }

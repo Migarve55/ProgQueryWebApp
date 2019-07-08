@@ -69,7 +69,7 @@ public class AnalyzerService {
 	}
 	
 	private void finalizeUserTask(User user, AnalyzerTask task) {
-		logger.info("Task {} of user {} has ended", user.getEmail(), task);
+		logger.info("Task {} of user {} has ended", task, user.getEmail());
 		//usersTasks.remove(user);
 	}
 	

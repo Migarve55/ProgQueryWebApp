@@ -63,4 +63,9 @@ public class AnalyzerTask extends FutureTask<List<ProblemDto>> {
 		this.callable.setCallback(callback);
 	}
 
+	@Override
+	public String toString() {
+		return "Task-" + this.hashCode();
+	}
+
 }

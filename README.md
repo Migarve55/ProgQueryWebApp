@@ -1,4 +1,8 @@
 
+[![Docker build](https://img.shields.io/docker/cloud/build/uo257431/prog_query_web_app.svg)](https://cloud.docker.com/u/uo257431/repository/docker/uo257431/prog_query_web_app)
+[![Docker pulls](https://img.shields.io/docker/pulls/uo257431/prog_query_web_app.svg)](https://cloud.docker.com/u/uo257431/repository/docker/uo257431/prog_query_web_app)
+[![Docker layers](https://img.shields.io/microbadger/layers/uo257431/prog_query_web_app.svg)](https://cloud.docker.com/u/uo257431/repository/docker/uo257431/prog_query_web_app)
+
  # ProgQuery Web Application
  
  ## About
