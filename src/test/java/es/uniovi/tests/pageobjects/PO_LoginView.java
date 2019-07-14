@@ -8,10 +8,6 @@ public class PO_LoginView extends PO_NavView {
 
 	public static void goToPage(WebDriver driver) {
 		WebElement loginBtn = driver.findElement(By.id("login"));
-		if (loginBtn == null) {
-			driver.findElement(By.id("logout")).click();
-		}
-		loginBtn = driver.findElement(By.id("login"));
 		loginBtn.click();
 	}
 	
@@ -24,7 +20,6 @@ public class PO_LoginView extends PO_NavView {
 		password.click();
 		password.clear();
 		password.sendKeys(passwordp);
-		// Pulsar el boton de Alta.
 		By boton = By.className("btn");
 		driver.findElement(boton).click();
 	}

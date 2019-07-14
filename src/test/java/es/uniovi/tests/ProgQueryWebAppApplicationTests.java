@@ -220,6 +220,7 @@ public class ProgQueryWebAppApplicationTests {
 		PO_LoginView.fillForm(driver, "miguel@email.com", "123456");
 		PO_AddQueryView.goToPage(driver);
 		PO_AddQueryView.fillForm(driver, "es.test", "This is a test", "...", false, 1);
+		PO_LoginView.logout(driver);
 		PO_LoginView.fillForm(driver, "oscar@email.com", "123456");
 		PO_GitAnalyzerView.goToPage(driver);
 		PO_GitAnalyzerView.checkForQuery(driver, "es.test");
@@ -242,8 +243,8 @@ public class ProgQueryWebAppApplicationTests {
 		PO_AddQueryView.fillForm(driver, "es.uniovi.query1", "This is a test", "...", false);
 		PO_AddQueryView.checkKey(driver, "error.query.name.duplicate", PO_Properties.getSPANISH());
 		StringBuilder longName = new StringBuilder();
-		for (int i = 0;i < 61;i++)
-			longName.append(' ');
+		for (int i = 0;i < 62;i++)
+			longName.append('*');
 		PO_AddQueryView.fillForm(driver, longName.toString(), "This is a test", "...", false);
 		PO_AddQueryView.checkKey(driver, "error.query.name.length", PO_Properties.getSPANISH());
 		PO_AddQueryView.fillForm(driver, "es..test", "This is a test", "...", false);

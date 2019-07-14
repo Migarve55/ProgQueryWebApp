@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -16,6 +17,11 @@ public class PO_NavView extends PO_View {
 		assertTrue(elementos.size() == 1);
 	}
 
+	public static void logout(WebDriver driver) {
+		WebElement loginBtn = driver.findElement(By.id("logout"));
+		loginBtn.click();
+	}
+ 	
 	public static void changeLanguage(WebDriver driver, String textLanguage) {
 		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "id", "btnLanguage", getTimeout());
 		elementos.get(0).click();

@@ -24,7 +24,9 @@
 						<td th:text="${error.compilationUnit}"></td>
 						<td th:text="${error.line}"></td>
 						<td th:text="${error.col}"></td>
-						<td th:if="${error.query}" th:text="${error.query.description}"></td>
+						<td th:if="${error.query}">
+							<a th:text="${error.query.description}" th:href="${'/query/detail/' + error.query.id}"></a>
+						</td>
 						<td th:unless="${error.query}" th:text="#{result.detail.userDeletedQuery}"></td>
 					</tr>
 				</tbody>

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.neo4j.driver.v1.Record;
-import org.neo4j.graphdb.QueryExecutionException;
+import org.neo4j.driver.v1.exceptions.Neo4jException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +39,8 @@ public class ReportTool {
 						problem.setQueryName(query.getName());
 						errors.add(problem);
 					});
-				} catch (QueryExecutionException qee) {
-					logger.error("Could not execute query {}, error: {}", query.getName(), qee.getMessage());
+				} catch (Neo4jException qee) {
+					logger.info("Could not execute query {}, error: {}", query.getName(), qee.getMessage());
 				}
 			}
 		} catch (Exception e) {
@@ -53,14 +53,16 @@ public class ReportTool {
 		ProblemDto error = new ProblemDto();
 		String file = record.get("file").asString();
 		error.setFile(file == null ? "???" : prettifyFilename(file));
-		error.setLine(record.get("line", 0));
-		error.setColumn(record.get("column", 0));
+		error.setLine(record.get("line", -1));
+		error.setColumn(record.get("column", -1));
 		return error;
 	}
 	
 	private String prettifyFilename(String filename) {
 		int i = filename.indexOf("env_");
-		return filename.substring(i + 41, filename.length());
+		if (i >= 0)
+			return filename.substring(i + 41, filename.length());
+		return filename;
 	}
 	
 }
