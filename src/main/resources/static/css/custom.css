@@ -75,3 +75,7 @@ td.queryText {
 .errorMsg {
 	font-size: xx-large;
 }
+
+.mutedCell {
+	background: lightgray;
+}

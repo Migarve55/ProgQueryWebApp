@@ -8,8 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import es.uniovi.entities.Query;
 import es.uniovi.entities.User;
+import es.uniovi.repositories.ProblemsRepository;
 import es.uniovi.repositories.QueriesRepository;
 
 @Service
@@ -21,6 +24,9 @@ public class QueryService {
 	
 	@Autowired
 	private QueriesRepository queriesRepository;
+	
+	@Autowired
+	private ProblemsRepository problemsRepository;
 	
 	public Query findQuery(Long id) {
 		return queriesRepository.findById(id).orElse(null);
@@ -47,8 +53,10 @@ public class QueryService {
 		queriesRepository.save(query);
 	}
 	
+	@Transactional
 	public void deleteQuery(Query query) {
 		queriesRepository.delete(query);
+		problemsRepository.setQueryAsDeleted(query);
 		logger.info("Query {} was deleted", query.getName());
 	}
 	

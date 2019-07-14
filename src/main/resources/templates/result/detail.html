@@ -4,7 +4,7 @@
 <body>
 	<nav th:replace="fragments/nav" />
 	<!-- Options -->
-	<div class="container" th:if="${errorList.size() > 0}">
+	<div class="container" th:if="${not #lists.isEmpty(errorList)}">
 		<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
   			<h1 class="display-4" th:text="#{result.detail.title}">Report</h1>
 		</div>
@@ -21,9 +21,12 @@
 				</thead>
 				<tbody>
 					<tr th:each="error : ${errorList}">
-						<td th:text="${error.compilationUnit}"></td>
-						<td th:text="${error.line}"></td>
-						<td th:text="${error.col}"></td>
+						<td th:if="${error.compilationUnit}" th:text="${error.compilationUnit}"></td>
+						<td th:unless="${error.compilationUnit}" class="mutedCell"></td>
+						<td th:if="${error.line >= 0}" th:text="${error.line}"></td>
+						<td th:unless="${error.line >= 0}" class="mutedCell"></td>
+						<td th:if="${error.col >= 0}" th:text="${error.col}"></td>
+						<td th:unless="${error.col >= 0}" class="mutedCell"></td>
 						<td th:if="${error.query}">
 							<a th:text="${error.query.description}" th:href="${'/query/detail/' + error.query.id}"></a>
 						</td>
@@ -33,7 +36,7 @@
 			</table>
 		</div>
 	</div>
-	<div class="container" th:if="${errorList.size() <= 0}">
+	<div class="container" th:if="${#lists.isEmpty(errorList)}">
 		<h2 class="text-center mt-5" th:text="#{result.detail.empty}">No errors to show</h2>
 	</div>
 	<footer th:replace="fragments/footer" />

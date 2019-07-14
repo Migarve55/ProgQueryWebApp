@@ -4,7 +4,7 @@
 <body>
 	<!-- Barra de Navegación superior -->
 	<nav th:replace="fragments/nav" />
-	<div class="container" th:if="${programsList.size() > 0}">
+	<div class="container" th:if="${not #lists.isEmpty(programsList)}">
 		<h2 th:text="#{program.list.title}">Programs</h2>
 		<div class="table-responsive">
 			<table class="table table-hover" th:fragment="tablePrograms" id="tablePrograms">
@@ -33,7 +33,7 @@
 		</div>
 		<footer th:replace="fragments/pagination"/>
 	</div>
-	<div class="container" th:if="${programsList.size() <= 0}">
+	<div class="container" th:if="${#lists.isEmpty(programsList)}">
 		<h2 class="text-center mt-5" th:text="#{program.list.empty}">No programs to show</h2>
 	</div>
 	<footer th:replace="fragments/footer" />
