@@ -10,7 +10,6 @@ import java.nio.file.StandardCopyOption;
 import es.uniovi.analyzer.exceptions.CompilerException;
 import es.uniovi.analyzer.exceptions.EnviromentException;
 import es.uniovi.analyzer.tasks.AbstractAnalyzerCallable;
-import es.uniovi.analyzer.tools.ToolFactory;
 
 public class FileAnalyzerCallable extends AbstractAnalyzerCallable {
 
@@ -39,7 +38,7 @@ public class FileAnalyzerCallable extends AbstractAnalyzerCallable {
 	@Override
 	protected void compile() throws CompilerException {
 		nextStep(String.format("Compiling %s...", fileName), 25);
-		ToolFactory.getJavaCompilerTool().compileFile(basePath, fileName, args);
+		compiler.compileFile(basePath, programID, fileName, args);
 	}
 
 }

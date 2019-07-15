@@ -86,13 +86,12 @@ public class AnalyzerService {
 	 * 
 	 * @param user
 	 * @param file
-	 * @param compOp
 	 * @param args
 	 * @param queries
 	 * @throws IOException if the java file could not be saved
 	 */
-	public void analyzeFile(User user, MultipartFile file, String compOp, String args, String[] queries) throws IOException {
-		launchAnalyzerTask(user, file.getOriginalFilename(), compOp, new FileAnalyzerCallable(args, file.getOriginalFilename(), file.getInputStream()), queries);
+	public void analyzeFile(User user, MultipartFile file, String args, String[] queries) throws IOException {
+		launchAnalyzerTask(user, file.getOriginalFilename(), "java", new FileAnalyzerCallable(args, file.getOriginalFilename(), file.getInputStream()), queries);
 	}
 	
 	/**

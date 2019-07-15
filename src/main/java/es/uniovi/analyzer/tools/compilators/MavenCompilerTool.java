@@ -34,7 +34,13 @@ public class MavenCompilerTool implements CompilerTool {
 	private static final List<String> PUBLISH_GOALS = Arrays.asList( "compile" );
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	
+	@Override
+	public void compileFile(String basePath, String programID, String filename, String arguments) throws CompilerException {
+		throw new CompilerException();
+	}
 	 
+	@Override
 	public void compileFolder(String basePath, String programID, String extraArgs) throws CompilerException {
 	    //Configure model
 	    try {

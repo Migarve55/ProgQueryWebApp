@@ -46,13 +46,13 @@ public class AnalyzerController {
 	}
 
 	@RequestMapping(path = "/analyzer/file", method = RequestMethod.POST, consumes = { "multipart/form-data" })
-	public String postAnalizeFile(@RequestParam("file") MultipartFile file, @RequestParam("args") String args, 
-			@RequestParam("compOpt") String compOpt, @RequestParam("queries") String[] queries, Principal principal
+	public String postAnalizeFile(@RequestParam("file") MultipartFile file, @RequestParam(value = "args", required = false) String args
+			, @RequestParam("queries") String[] queries, Principal principal
 			, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		try {
-			analyzerService.analyzeFile(user, file, compOpt, args, queries);
+			analyzerService.analyzeFile(user, file, args, queries);
 		} catch (IOException e) {
 			e.printStackTrace();
 			redirect.addFlashAttribute("error", "error.fileError");

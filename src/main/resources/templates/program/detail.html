@@ -6,6 +6,7 @@
 	<nav th:replace="fragments/nav" />
 	<div class="container mt-2" >
 		<h1 class="title" th:text="${program.name}"></h1>
+		<h2 th:text="#{result.list.title}">Resultados</h2>
 		<div class="table-responsive" th:if="${not #lists.isEmpty(resultsList)}">
 			<table th:replace="result/list :: tableResults"></table>
 		</div>

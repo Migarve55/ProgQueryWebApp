@@ -24,18 +24,21 @@ public class JavaCompilerTool implements CompilerTool {
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	public void compileFile(String basePath, String filename, String arguments) throws CompilerException {
+	@Override
+	public void compileFile(String basePath, String programID, String filename, String arguments) throws CompilerException {
 		JavaCompiler compiler = getCompiler();
 		// Basic config
-		List<String> args = basicArgs(basePath, "test");
+		List<String> args = basicArgs(basePath, programID);
 		// Extra arguments
-		addArgumentsFromString(args, arguments);
-		// All files
-		args.add(filename);
+		if (arguments != null)
+			addArgumentsFromString(args, arguments);
+		// Add file
+		args.add(basePath + filename);
 		// Compilation
 		compile(compiler, args);
 	}
 
+	@Override
 	public void compileFolder(String basePath, String programID, String arguments) throws CompilerException {
 		JavaCompiler compiler = getCompiler();
 		// Basic config
@@ -43,8 +46,9 @@ public class JavaCompilerTool implements CompilerTool {
 		// Extra arguments
 		if (arguments != null)
 			addArgumentsFromString(args, arguments);
-		// All files
+		// Add files
 		generateSourcesFile(basePath);
+		args.add("@" + basePath + "sources.txt");
 		// Compilation
 		logger.info("Compiling program {} using java", programID);
 		compile(compiler, args);
@@ -99,8 +103,7 @@ public class JavaCompilerTool implements CompilerTool {
 						"-cp", System.getenv("PLUGIN_CLASSPATH"),
 						"-encoding", ENCODING,
 						String.format(PLUGIN_ARG, programID, System.getProperty("neo4j.url")), 
-						"-d", basePath, "-nowarn", "-g:none", 
-						"-Xlint:none", "@" + basePath + "sources.txt"));
+						"-d", basePath, "-nowarn", "-g:none", "-Xlint:none"));
 	}
 
 	private void addArgumentsFromString(List<String> args, String extraArgs) {

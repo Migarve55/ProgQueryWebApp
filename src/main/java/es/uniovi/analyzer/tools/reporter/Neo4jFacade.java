@@ -16,8 +16,8 @@ public class Neo4jFacade implements AutoCloseable {
 	private final Driver driver;
 	
 	private final static String DELETE_PROGRAM_QUERY = 
-			"MATCH (p:PROGRAM)-[*]-(connected)" + 
-			"WHERE p.ID = $programID" + 
+			"MATCH (p:PROGRAM)-[*]-(connected) " + 
+			"WHERE p.ID = $programID " + 
 			"DETACH DELETE p, connected";
 
     public Neo4jFacade(String url) {

@@ -6,7 +6,7 @@
 	<nav th:replace="fragments/nav" />
 	<div class="container" th:if="not ${#lists.isEmpty(resultsList)}">
 		<h2 th:text="#{result.list.title}">Resultados</h2>
-		<div class="table-responsive">
+		<div class="table-responsive mt-2">
 			<table class="table table-hover tableQueries" th:fragment="tableResults" id="tableResults">
 				<thead>
 					<tr>
@@ -21,10 +21,10 @@
 						<td th:text="${result.timestamp}"></td>
 						<td th:text="${result.problems.size()}"></td>
 						<td>
-							<a class="btn btn-primary" th:href="${'/result/' + result.id}" th:text="#{detail}">Detalles</a>
-						</td>
-						<td>
-							<a class="btn btn-danger" th:href="${'/result/delete/' + result.id}" th:text="#{delete}">Eliminar</a>
+							<div class="text-right pr-3">
+								<a class="btn btn-primary" th:href="${'/result/' + result.id}" th:text="#{detail}">Detalles</a>
+								<a class="btn btn-danger" th:href="${'/result/delete/' + result.id}" th:text="#{delete}">Eliminar</a>
+						 	</div>
 						</td>
 					</tr>
 				</tbody>
