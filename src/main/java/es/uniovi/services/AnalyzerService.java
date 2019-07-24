@@ -225,7 +225,7 @@ public class AnalyzerService {
 			    regex = String.format("^%s[^\\.]*", regex);
 				result.addAll(queriesRepository.findAllByFamily(regex, user));
 			} else {
-				Query query = queriesRepository.findByNameAndUser(queryId, user);
+				Query query = queriesRepository.findAvailableByNameAndUser(queryId, user);
 				if (query != null)
 					result.add(query);
 			}

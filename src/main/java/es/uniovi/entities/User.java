@@ -25,7 +25,7 @@ public class User {
 	
 	@ManyToMany(cascade = {CascadeType.MERGE})
 	@JoinTable(
-			name="CAN_EDIT",
+			name="PUBLIC_TO",
 	        joinColumns={@JoinColumn(name="USER_ID")},
 	        inverseJoinColumns={@JoinColumn(name="QUERY_ID")})
 	private Set<Query> canModify;

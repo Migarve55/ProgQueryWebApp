@@ -34,6 +34,7 @@ public class ReportTool {
 		try (Neo4jFacade queryRunner = new Neo4jFacade(url)) {
 			for (QueryDto query : queries) {
 				try {
+					logger.info("Running query {}", query.getName());
 					queryRunner.runQuery(query.getQueryText(), programID).forEachRemaining((result) -> {
 						ProblemDto problem = getProblemDtoFromResult(result);
 						problem.setQueryName(query.getName());

@@ -23,7 +23,7 @@ public class Query {
 	
 	@ManyToMany(cascade = {CascadeType.MERGE})
 	@JoinTable(
-			name="CAN_EDIT",
+			name="PUBLIC_TO",
 	        joinColumns={@JoinColumn(name="QUERY_ID")},
 	        inverseJoinColumns={@JoinColumn(name="USER_ID")})
 	private Set<User> publicTo;

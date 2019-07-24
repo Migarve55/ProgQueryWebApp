@@ -27,7 +27,6 @@ public class InsertSampleDataService {
 	@Autowired
 	private QueryService queryService;
 
-
 	@PostConstruct
 	public void init() {
 		if (!isDBCreated())
@@ -35,10 +34,16 @@ public class InsertSampleDataService {
 	}
 	
 	private void createAllData() {
-		User user = new User("miguel@email.com", "Miguel", "Garnacho Vélez");
-		user.setPassword("123456");
-		usersService.addUser(user);
+		User user = createUser("miguel@email.com", "Miguel", "Garnacho Vélez", "123456");
+		createUser("oscar@email.com", "Oscar", "Rodrigez Prieto", "123456");
 		loadQueriesFromFile(user);
+	}
+	
+	private User createUser(String email, String name, String surname, String password) {
+		User user = new User(email, name, surname);
+		user.setPassword(password);
+		usersService.addUser(user);
+		return user;
 	}
 	
 	/**
