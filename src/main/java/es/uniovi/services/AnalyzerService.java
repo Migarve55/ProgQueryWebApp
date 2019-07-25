@@ -194,6 +194,7 @@ public class AnalyzerService {
 			Problem problem = new Problem();
 			problem.setResult(result);
 			problem.setQuery(queriesRepository.findByName(problemDto.getQueryName()));
+			problem.setMsg(problemDto.getMsg());
 			problem.setLine((int) problemDto.getLine());
 			problem.setCol((int) problemDto.getColumn());
 			problem.setCompilationUnit(problemDto.getFile());

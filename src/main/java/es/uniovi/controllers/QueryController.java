@@ -101,7 +101,7 @@ public class QueryController {
 			return "redirect:/";
 		}
 		if (!queryService.canModifyQuery(user, query)) {
-			return "redirect:/";
+			return "redirect:/query/detail/" + id;
 		}
 		model.addAttribute("query", query);
 		return "query/edit";
@@ -120,7 +120,7 @@ public class QueryController {
 			return "redirect:/";
 		}
 		if (!queryService.canModifyQuery(user, original)) {
-			return "redirect:/";
+			return "redirect:/query/detail/" + id;
 		}
 		//Finally save
 		original.setDescription(query.getDescription());

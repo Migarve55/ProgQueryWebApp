@@ -13,8 +13,10 @@ public class Problem {
 	@GeneratedValue
 	private long id;
 	
-	private int line;
-	private int col;
+	private String msg;
+	
+	private int line = -1;
+	private int col = -1;
 	
 	private String compilationUnit;
 	
@@ -28,6 +30,24 @@ public class Problem {
 	
 	public Problem() {
 		
+	}
+	
+	public Problem(String msg) {
+		this.msg = msg;
+	}
+
+	public Problem(String file, int line, int col) {
+		this.compilationUnit = file;
+		this.line = line;
+		this.col = col;
+	}
+
+	public String getMsg() {
+		return msg;
+	}
+
+	public void setMsg(String msg) {
+		this.msg = msg;
 	}
 
 	public long getId() {

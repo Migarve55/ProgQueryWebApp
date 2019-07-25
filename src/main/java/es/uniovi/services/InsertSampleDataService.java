@@ -3,8 +3,8 @@ package es.uniovi.services;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Date;
 import java.util.Iterator;
-
 import javax.annotation.PostConstruct;
 
 import org.json.simple.JSONArray;
@@ -15,8 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
+import es.uniovi.entities.Problem;
+import es.uniovi.entities.Program;
 import es.uniovi.entities.Query;
+import es.uniovi.entities.Result;
 import es.uniovi.entities.User;
+import es.uniovi.repositories.ProblemsRepository;
+import es.uniovi.repositories.ProgramRepository;
+import es.uniovi.repositories.ResultsRepository;
 
 @Service
 public class InsertSampleDataService {
@@ -26,6 +32,15 @@ public class InsertSampleDataService {
 
 	@Autowired
 	private QueryService queryService;
+	
+	@Autowired
+	private ResultsRepository resultRepository;
+	
+	@Autowired
+	private ProgramRepository programRepository;
+	
+	@Autowired 
+	private ProblemsRepository problemsRepository;
 
 	@PostConstruct
 	public void init() {
@@ -37,6 +52,18 @@ public class InsertSampleDataService {
 		User user = createUser("miguel@email.com", "Miguel", "Garnacho Vélez", "123456");
 		createUser("oscar@email.com", "Oscar", "Rodrigez Prieto", "123456");
 		loadQueriesFromFile(user);
+		//Add sample error
+		Program program = new Program();
+		program.setName("Test");
+		program.setUser(user);
+		program = programRepository.save(program);
+		Result result = new Result();
+		result.setProgram(program);
+		result.setTimestamp(new Date());
+		resultRepository.save(result);
+		createProblem(result, "Global error");
+		createProblem(result, "file.java", -1, -1);
+		createProblem(result, "file.java", 5, 10);
 	}
 	
 	private User createUser(String email, String name, String surname, String password) {
@@ -44,6 +71,20 @@ public class InsertSampleDataService {
 		user.setPassword(password);
 		usersService.addUser(user);
 		return user;
+	}
+	
+	private Problem createProblem(Result result, String msg) {
+		Problem problem = new Problem(msg);
+		problem.setResult(result);
+		problemsRepository.save(problem);
+		return problem;
+	}
+	
+	private Problem createProblem(Result result, String file, int line, int col) {
+		Problem problem = new Problem(file, line, col);
+		problem.setResult(result);
+		problemsRepository.save(problem);
+		return problem;
 	}
 	
 	/**

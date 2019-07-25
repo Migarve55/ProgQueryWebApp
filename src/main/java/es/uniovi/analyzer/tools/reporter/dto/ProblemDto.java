@@ -2,9 +2,11 @@ package es.uniovi.analyzer.tools.reporter.dto;
 
 public class ProblemDto {
 
+	private String msg;
+	
 	private String file;
-	private long line = 0;
-	private long column = 0;
+	private long line;
+	private long column;
 	
 	private String queryName;
 	
@@ -17,6 +19,14 @@ public class ProblemDto {
 		this.file = file;
 		this.line = line;
 		this.column = column;
+	}
+	
+	public String getMsg() {
+		return msg;
+	}
+
+	public void setMsg(String msg) {
+		this.msg = msg;
 	}
 
 	public String getFile() {

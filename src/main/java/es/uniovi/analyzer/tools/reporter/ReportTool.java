@@ -52,8 +52,14 @@ public class ReportTool {
 	
 	private ProblemDto getProblemDtoFromResult(Record record) {
 		ProblemDto error = new ProblemDto();
-		String file = record.get("file").asString();
-		error.setFile(file == null ? "???" : prettifyFilename(file));
+		String msg = record.get("msg").asString(null);
+		if (msg != null) {
+			error.setMsg(msg);
+			return error;
+		}
+		String file = record.get("file").asString(null);
+		if (file != null)
+			error.setFile(prettifyFilename(file));
 		error.setLine(record.get("line", -1));
 		error.setColumn(record.get("column", -1));
 		return error;
