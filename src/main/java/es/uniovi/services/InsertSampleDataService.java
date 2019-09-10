@@ -105,9 +105,9 @@ public class InsertSampleDataService {
 			while (queryIterator.hasNext()) {
 				JSONObject queryJson = queryIterator.next();
 				Query query = new Query(
-						(String) queryJson.get("name"), 
-						(String) queryJson.get("description"), 
-						(String) queryJson.get("query"));
+					(String) queryJson.get("name"), 
+					(String) queryJson.get("description"), 
+					(String) queryJson.get("query"));
 				query.setUser(user);
 				query.setPublicForAll(true);
 				queryService.saveQuery(query);
