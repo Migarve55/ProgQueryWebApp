@@ -63,7 +63,7 @@ public class QueryController {
 	}
 	
 	@RequestMapping("/query/list")
-	public String list(Model model, Principal principal, Pageable pageable, @RequestParam(value = "", required = false) String searchText) {
+	public String list(Model model, Principal principal, Pageable pageable, @RequestParam(value = "searchText", required = false) String searchText) {
 		Page<Query> queries = null;
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
@@ -88,6 +88,7 @@ public class QueryController {
 			return "redirect:/";
 		}
 		//Display the query
+		model.addAttribute("canModify", queryService.canModifyQuery(user, query));
 		model.addAttribute("query", query);
 		return "query/detail";
 	}

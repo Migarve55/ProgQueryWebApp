@@ -73,7 +73,6 @@ public class ResultController {
 	public String detail(Model model, @PathVariable Long id, Principal principal, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
-		//Is done
 		Result result = resultService.getResult(id);
 		if (result == null) {
 			redirect.addFlashAttribute("error", "error.noReport");
@@ -82,7 +81,8 @@ public class ResultController {
 		if (!result.getProgram().getUser().equals(user)) {
 			return "redirect:/";
 		}
-		model.addAttribute("errorList", result.getProblems());
+		model.addAttribute("problems", result.getProblems());
+		model.addAttribute("timestamp", result.getTimestamp());
 		return "result/detail";
 	}
 	

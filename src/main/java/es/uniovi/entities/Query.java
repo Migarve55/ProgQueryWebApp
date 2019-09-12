@@ -1,6 +1,8 @@
 package es.uniovi.entities;
 
 import javax.persistence.*;
+
+import java.util.Date;
 import java.util.Set; 
 
 @Entity
@@ -13,9 +15,11 @@ public class Query {
 	@Column(unique = true, length = 60)
 	private String name;
 	private String description;
-	@Column(length=4096)
+	@Column(length=16012)
 	private String queryText;
 	private boolean publicForAll;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modified;
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
@@ -29,7 +33,6 @@ public class Query {
 	private Set<User> publicTo;
 
 	public Query() {
-		
 	}
 
 	public Query(String name, String description, String queryText) {
@@ -92,6 +95,14 @@ public class Query {
 
 	public void setPublicTo(Set<User> publicTo) {
 		this.publicTo = publicTo;
+	}
+
+	public Date getModified() {
+		return modified;
+	}
+
+	public void setModified(Date modified) {
+		this.modified = modified;
 	}
 
 	@Override

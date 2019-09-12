@@ -40,6 +40,14 @@ footer {
     padding: 0.4em;
 }
 
+.queryText {
+	word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    font-family: "Courier New", Courier, monospace;
+    font-size: medium;
+}
+
 .bigIcon {
 	font-size: 9em;
 }
@@ -76,6 +84,6 @@ td.queryText {
 	font-size: xx-large;
 }
 
-.mutedCell {
+.outdated {
 	background: lightgray;
 }

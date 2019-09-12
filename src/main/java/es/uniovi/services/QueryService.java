@@ -1,5 +1,6 @@
 package es.uniovi.services;
 
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -50,6 +51,7 @@ public class QueryService {
 	}
 	
 	public void saveQuery(Query query) {
+		query.setModified(new Date());
 		queriesRepository.save(query);
 	}
 	
