@@ -19,7 +19,6 @@
 					<tr>
 						<th th:text="#{name}">Nombre</th>
 						<th th:text="#{description}">Descripción</th>
-						<th th:text="#{query}">Consulta Cipher</th>
 						<th th:text="#{visibility}">Privacidad</th>
 					</tr>
 				</thead>
@@ -27,7 +26,6 @@
 					<tr th:each="query : ${queriesList}">
 						<td th:text="${query.name}"></td>
 						<td class="description tcWrapText" th:text="${query.description}"></td>
-						<td class="queryText tcWrapText" th:text="${query.queryText}"></td>
 						<td>
 							<span th:if="${query.publicForAll}" th:text="#{public}">Pública</span>
 							<span th:if="${!query.publicForAll}" th:text="#{private}">Privada</span>

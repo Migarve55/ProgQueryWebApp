@@ -11,8 +11,11 @@ public class User {
 	private long id;
 	@Column(unique = true, length = 50)
 	private String email;
+	@Column(length = 24)
 	private String name;
+	@Column(length = 50)
 	private String lastName;
+	@Column(length = 20)
 	private String password;
 	@Transient 
 	private String passwordConfirm;

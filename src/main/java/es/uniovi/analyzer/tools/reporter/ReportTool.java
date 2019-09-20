@@ -33,21 +33,39 @@ public class ReportTool {
 		logger.info("Creating report for program {}", programID);
 		try (Neo4jFacade queryRunner = new Neo4jFacade(url)) {
 			for (QueryDto query : queries) {
-				try {
-					logger.info("Running query {}", query.getName());
-					queryRunner.runQuery(query.getQueryText(), programID).forEachRemaining((result) -> {
-						ProblemDto problem = getProblemDtoFromResult(result);
-						problem.setQueryName(query.getName());
-						errors.add(problem);
-					});
-				} catch (Neo4jException qee) {
-					logger.info("Could not execute query {}, error: {}", query.getName(), qee.getMessage());
+				if (isQuerySafe(query.getQueryText())) {
+					try {
+						logger.info("Running query {}", query.getName());
+						queryRunner.runQuery(query.getQueryText(), programID).forEachRemaining((result) -> {
+							ProblemDto problem = getProblemDtoFromResult(result);
+							problem.setQueryName(query.getName());
+							errors.add(problem);
+						});
+					} catch (Neo4jException qee) {
+						logger.info("Could not execute query {}, error: {}", query.getName(), qee.getMessage());
+					}
+				} else {
+					logger.info("Query {} was not safe. Avoiding execution...", query.getName());
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
 		return errors;
+	}
+	
+	/**
+	 * Checks if the query modifies in any way the data base
+	 * Statments that remove, add or modify nodes or relationsa are not allowed
+	 * @param query
+	 * @return
+	 */
+	public static boolean isQuerySafe(String query) {
+		String lcQuery = query.toLowerCase();
+		return !lcQuery.contains("delete") 
+			&& !lcQuery.contains("create") 
+			&& !lcQuery.contains("set") 
+			&& !lcQuery.contains("remove");
 	}
 	
 	private ProblemDto getProblemDtoFromResult(Record record) {

@@ -35,6 +35,9 @@ public class AddQueryValidator implements Validator {
 		if (!queryService.validateQueryName(query.getName())) {
 			errors.rejectValue("name", "error.query.name.regex");
 		}
+		if (!queryService.validateQueryText(query.getQueryText())) {
+			errors.rejectValue("queryText", "error.query.text");
+		}
 	}
 
 }

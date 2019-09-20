@@ -53,7 +53,11 @@ public class UsersService {
 	}
 	
 	public boolean validateUserPassword(String password) {
-		return password.length() < 5 || password.length() > 24;
+		if (password.length() < 8 || password.length() > 20)
+			return false;
+		if (!password.matches(".*[0-9].*"))
+			return false;
+		return true;
 	}
 
 	public User getUserByEmail(String dni) {

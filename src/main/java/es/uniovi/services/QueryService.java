@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.uniovi.analyzer.tools.reporter.ReportTool;
 import es.uniovi.entities.Query;
 import es.uniovi.entities.User;
 import es.uniovi.repositories.ProblemsRepository;
@@ -81,6 +82,10 @@ public class QueryService {
 	
 	public boolean validateQueryName(String name) {
 		return name.matches(NAME_REGEX);
+	}
+	
+	public boolean validateQueryText(String query) {
+		return ReportTool.isQuerySafe(query);
 	}
 	
 }

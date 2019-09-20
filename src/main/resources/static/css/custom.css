@@ -67,10 +67,6 @@ td.description {
     width: 50%;
 }
 
-td.queryText {
-    width: 40%;
-}
-
 .queryOp:checked {
 	font-weight: bolder;
 }
