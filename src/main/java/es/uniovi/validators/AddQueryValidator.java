@@ -29,11 +29,17 @@ public class AddQueryValidator implements Validator {
 		if (queryService.findQueryByName(query.getName()) != null) {
 			errors.rejectValue("name", "error.query.name.duplicate");
 		}
-		if (query.getName().length() > 60) {
+		if (query.getName().length() > Query.NAME_LENGTH) {
 			errors.rejectValue("name", "error.query.name.length");
 		}
 		if (!queryService.validateQueryName(query.getName())) {
 			errors.rejectValue("name", "error.query.name.regex");
+		}
+		if (query.getDescription().length() > Query.DESCRIPTION_LENGTH) {
+			errors.rejectValue("description", "error.query.description.length");
+		}
+		if (query.getQueryText().length() > Query.QUERY_LENGTH) {
+			errors.rejectValue("queryText", "error.query.length");
 		}
 		if (!queryService.validateQueryText(query.getQueryText())) {
 			errors.rejectValue("queryText", "error.query.text");

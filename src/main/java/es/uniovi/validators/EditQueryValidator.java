@@ -28,6 +28,15 @@ public class EditQueryValidator implements Validator {
 		if (!queryService.validateQueryText(query.getQueryText())) {
 			errors.rejectValue("queryText", "error.query.text");
 		}
+		if (query.getDescription().length() > Query.DESCRIPTION_LENGTH) {
+			errors.rejectValue("description", "error.query.description.length");
+		}
+		if (query.getQueryText().length() > Query.QUERY_LENGTH) {
+			errors.rejectValue("queryText", "error.query.length");
+		}
+		if (!queryService.validateQueryText(query.getQueryText())) {
+			errors.rejectValue("queryText", "error.query.text");
+		}
 	}
 
 }

@@ -6,16 +6,22 @@ import java.util.Set; //A collection that contains no duplicate elements
 @Entity
 public class User {
 	
+	public final static int EMAIL_LENGTH = 50;
+	public final static int NAME_LENGTH = 24;
+	public final static int LASTNAME_LENGTH = 50;
+	public final static int PASSWORD_LENGTH = 20;
+	
 	@Id
 	@GeneratedValue
 	private long id;
-	@Column(unique = true, length = 50)
+	@Column(unique = true, length = EMAIL_LENGTH)
 	private String email;
-	@Column(length = 24)
+	@Column(length = NAME_LENGTH)
 	private String name;
-	@Column(length = 50)
+	@Column(length = LASTNAME_LENGTH)
 	private String lastName;
-	@Column(length = 20)
+	//Stores the hash, not the actual password
+	@Column(length = 60)
 	private String password;
 	@Transient 
 	private String passwordConfirm;

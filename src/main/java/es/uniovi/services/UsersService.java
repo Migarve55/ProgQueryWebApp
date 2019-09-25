@@ -53,7 +53,7 @@ public class UsersService {
 	}
 	
 	public boolean validateUserPassword(String password) {
-		if (password.length() < 8 || password.length() > 20)
+		if (password.length() < 8 || password.length() > User.PASSWORD_LENGTH)
 			return false;
 		if (!password.matches(".*[0-9].*"))
 			return false;

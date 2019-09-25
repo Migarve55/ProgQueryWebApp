@@ -65,7 +65,8 @@ public class ReportTool {
 		return !lcQuery.contains("delete") 
 			&& !lcQuery.contains("create") 
 			&& !lcQuery.contains("set") 
-			&& !lcQuery.contains("remove");
+			&& !lcQuery.contains("remove")
+			&& !lcQuery.contains("merge");
 	}
 	
 	private ProblemDto getProblemDtoFromResult(Record record) {

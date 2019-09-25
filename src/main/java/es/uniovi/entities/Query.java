@@ -8,14 +8,19 @@ import java.util.Set;
 @Entity
 public class Query {
 	
+	public final static int NAME_LENGTH = 60;
+	public final static int DESCRIPTION_LENGTH = 300;
+	public final static int QUERY_LENGTH = 16012;
+	
 	@Id
 	@GeneratedValue
 	private long id;
 	
-	@Column(unique = true, length = 60)
+	@Column(unique=true, length=NAME_LENGTH)
 	private String name;
+	@Column(length=DESCRIPTION_LENGTH)
 	private String description;
-	@Column(length=16012)
+	@Column(length=QUERY_LENGTH)
 	private String queryText;
 	private boolean publicForAll;
 	@Temporal(TemporalType.TIMESTAMP)
