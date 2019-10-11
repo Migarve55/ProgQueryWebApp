@@ -48,7 +48,7 @@ public class UsersService {
 		if (validateUserPassword(newPassword)) {
 			user.setPassword(newPassword);
 			usersRepository.save(user);
-			logger.info("User {} has changed his/her password", user.getEmail());
+			logger.info("User {} has changed the password", user.getEmail());
 		}
 	}
 	

@@ -28,16 +28,10 @@ public class CustomConfiguration implements WebMvcConfigurer {
 		localeChangeInterceptor.setParamName("lang");
 		return localeChangeInterceptor;
 	}
-	
-	@Bean 
-	public UserSessionHandler userSessionHandler() {
-		return new UserSessionHandler();
-	}
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(localeChangeInterceptor());
-		registry.addInterceptor(userSessionHandler());
 	}
 
 }

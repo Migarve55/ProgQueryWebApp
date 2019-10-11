@@ -130,7 +130,7 @@ public class AnalyzerController {
 		User user = usersService.getUserByEmail(email);
 		AnalyzerTask task = analyzerService.getCurrentTask(user);
 		if (task == null) {
-			response.setStatus(400);
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		} 
 		//Response

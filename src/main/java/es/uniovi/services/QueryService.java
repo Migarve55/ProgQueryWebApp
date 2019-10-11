@@ -37,6 +37,10 @@ public class QueryService {
 	public Query findQueryByName(String name) {
 		return queriesRepository.findByName(name);
 	}
+	
+	public List<Query> getQueriesFromUser(User user) {
+		return queriesRepository.findAllByUserOrderByName(user);
+	}
 
 	public Page<Query> getQueriesFromUser(Pageable pageable, User user) {
 		return queriesRepository.findAllByUserOrderByName(pageable, user);

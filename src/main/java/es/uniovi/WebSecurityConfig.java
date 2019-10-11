@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
 
 @Configuration
@@ -29,11 +28,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public SpringSecurityDialect securityDialect() {
 		return new SpringSecurityDialect();
 	}
-	
-	@Bean
-	public AuthenticationFailureHandler getAuthenticationFailureHandler() {
-		return new CustomAuthenticationFailureHandler();
-	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -41,15 +35,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.csrf().disable()
 			.authorizeRequests()
 				.antMatchers("/css/**", "/img/**", "/script/**", "/", "/signup", "/login/**", "/help").permitAll()
-				.antMatchers("/query/**", "/analysis/**", "/result/**", "/program/**", "/settings/**").hasAnyAuthority("USER")
+				.antMatchers("/query/**", "/analysis/**", "/result/**", "/program/**", "/settings/**", "/api/**").hasAnyAuthority("USER")
 				.anyRequest().authenticated()
-					.and()
-				.formLogin().loginPage("/login")
-					.failureHandler(getAuthenticationFailureHandler())
-				    .defaultSuccessUrl("/")
-				    .permitAll()
-					.and()
-				.logout().logoutSuccessUrl("/login").permitAll();
+				.and()
+			.formLogin().loginPage("/login")
+				.defaultSuccessUrl("/")
+				.permitAll()
+				.and()
+			.logout().logoutSuccessUrl("/login").permitAll();
 	}
 
 	@Autowired
