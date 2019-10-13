@@ -6,6 +6,7 @@ import static es.uniovi.JWTAuthenticationFilter.TOKEN_BEARER_PREFIX;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -14,6 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -38,9 +42,18 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 			chain.doFilter(req, res);
 			return;
 		}
-		UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
-		SecurityContextHolder.getContext().setAuthentication(authentication);
+		try {
+			UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+		} catch (Exception e) {
+			res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		}
 		chain.doFilter(req, res);
+	}
+	
+	@Override
+	protected void onUnsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
+		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 	}
 
 	private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
@@ -49,7 +62,9 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 			String user = Jwts.parser().setSigningKey(SUPER_SECRET_KEY)
 					.parseClaimsJws(token.replace(TOKEN_BEARER_PREFIX, "")).getBody().getSubject();
 			if (user != null) {
-				return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+				List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+				authorities.add(new SimpleGrantedAuthority("USER"));
+				return new UsernamePasswordAuthenticationToken(user, null, authorities);
 			}
 			return null;
 		}

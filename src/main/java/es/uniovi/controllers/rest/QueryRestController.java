@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,17 +34,17 @@ public class QueryRestController {
 	@GetMapping("/api/query")
 	public List<Map<String, Object>> list(Principal principal) {
 		User user = usersService.getUserByEmail(principal.getName());
-		List<Map<String, Object>> queries = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> responseBody = new ArrayList<Map<String, Object>>();
 		for (Query query : queryService.getQueriesFromUser(user)) {
 			Map<String, Object> qMap = new HashMap<String, Object>();
 			loadQueryIntoMap(query, qMap);
-			queries.add(qMap);
+			responseBody.add(qMap);
 		}
-		return queries;
+		return responseBody;
 	}
 	
 	@GetMapping("/api/query/{id}")
-	public Map<String, Object> get(@PathParam(value = "id") Long id, Principal principal, HttpServletResponse response) {
+	public Map<String, Object> get(@PathVariable(value = "id") Long id, Principal principal, HttpServletResponse response) {
 		Query query = queryService.findQuery(id);
 		User user = usersService.getUserByEmail(principal.getName());
 		Map<String, Object> responseBody = new HashMap<String, Object>();
@@ -70,7 +70,7 @@ public class QueryRestController {
 	}
 	
 	@DeleteMapping("/api/query/{id}")
-	public void delete(@PathParam(value = "id") Long id, Principal principal, HttpServletResponse response) {
+	public void delete(@PathVariable(value = "id") Long id, Principal principal, HttpServletResponse response) {
 		User user = usersService.getUserByEmail(principal.getName());
 		Query query = queryService.findQuery(id);
 		if (query == null) {
@@ -83,6 +83,7 @@ public class QueryRestController {
 	}
 	
 	private void loadQueryIntoMap(Query query, Map<String, Object> map) {
+		map.put("id", query.getId());
 		map.put("name", query.getName());
 		map.put("description", query.getDescription());
 		map.put("query", query.getQueryText());
