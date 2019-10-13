@@ -22,6 +22,10 @@ public class ResultService {
 	@Autowired
 	private ResultsRepository resultsRepository;
 	
+	public List<Result> getResultsByUser(User user) {
+		return resultsRepository.findAllByUser(user);
+	}
+	
 	public Page<Result> getResultsByUser(Pageable pageable, User user) {
 		return resultsRepository.findAllByUser(pageable, user);
 	}

@@ -1,5 +1,7 @@
 package es.uniovi.services;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,7 @@ public class ProgramService {
 	@Autowired
 	private ProgramRepository programRepository;
 	
-	public Program getProgram(Long id) {
+	public Program findProgram(Long id) {
 		return programRepository.findById(id).orElse(null);
 	}
 	
@@ -31,6 +33,10 @@ public class ProgramService {
 	
 	public Page<Program> listByUser(Pageable pageable, User user) {
 		return programRepository.findAllByUser(pageable, user);
+	}
+	
+	public List<Program> listByUser(User user) {
+		return programRepository.findAllByUser(user);
 	}
 	
 	@Transactional

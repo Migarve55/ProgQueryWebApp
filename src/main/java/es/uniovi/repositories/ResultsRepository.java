@@ -14,6 +14,9 @@ import es.uniovi.entities.User;
 public interface ResultsRepository extends CrudRepository<Result, Long> {
 
 	@Query("select r from Result r where r.program.user = ?1")
+	List<Result> findAllByUser(User user);
+	
+	@Query("select r from Result r where r.program.user = ?1")
 	Page<Result> findAllByUser(Pageable pageable, User user);
 
 	Page<Result> findAllByProgram(Pageable pageable, Program program);

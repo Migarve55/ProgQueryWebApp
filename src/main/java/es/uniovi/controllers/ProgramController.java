@@ -51,7 +51,7 @@ public class ProgramController {
 	
 	@RequestMapping(path = "/program/analyze/{id}", method = RequestMethod.GET)
 	public String getAnalyze(Model model, Principal principal, @PathVariable Long id) {
-		Program program = programService.getProgram(id);
+		Program program = programService.findProgram(id);
 		if (program == null)
 			return "redirect:/program/list";
 		String email = principal.getName();
@@ -67,7 +67,7 @@ public class ProgramController {
 	public String postAnalyze(Principal principal, @PathVariable Long id, @RequestParam("queries") String[] queries) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
-		Program program = programService.getProgram(id);
+		Program program = programService.findProgram(id);
 		if (program == null)
 			return "redirect:/program/list";
 		if (!program.getUser().equals(user))
@@ -78,7 +78,7 @@ public class ProgramController {
 	
 	@RequestMapping("/program/detail/{id}")
 	public String detail(Model model, Pageable pageable, @PathVariable Long id) {
-		Program program = programService.getProgram(id);
+		Program program = programService.findProgram(id);
 		if (program == null)
 			return "redirect:/program/list";
 		Page<Result> results = resultService.listByProgram(pageable, program);
@@ -92,7 +92,7 @@ public class ProgramController {
 	public String delete(@PathVariable Long id, Principal principal) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
-		Program program = programService.getProgram(id);
+		Program program = programService.findProgram(id);
 		if (program == null)
 			return "redirect:/program/list";
 		if (!program.getUser().equals(user))
