@@ -1,11 +1,8 @@
 package es.uniovi.controllers.rest;
 
 import java.security.Principal;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,9 +20,10 @@ public class AnalyzerRestController {
 	private AnalyzerService analyzerService;
 
 	@PostMapping("/api/analyze")
-	public void postAnalizeGit(@RequestBody Map<String, Object> payload, Principal principal) {
+	public void postAnalizeGit(@RequestParam("url") String url, @RequestParam("args") String args, 
+			@RequestParam("compOpt") String compOpt, @RequestParam("queries") String[] queries, Principal principal) {
 		User user = usersService.getUserByEmail(principal.getName());
-		//analyzerService.analyzeGitRepo(user, url, compOpt, args, queries);
+		analyzerService.analyzeGitRepo(user, url, compOpt, args, queries);
 	}
 	
 }

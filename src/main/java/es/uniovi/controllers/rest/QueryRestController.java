@@ -9,18 +9,22 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import es.uniovi.entities.Query;
 import es.uniovi.entities.User;
 import es.uniovi.services.QueryService;
 import es.uniovi.services.UsersService;
+import es.uniovi.validators.AddQueryValidator;
+import es.uniovi.validators.EditQueryValidator;
 
 @RestController
 public class QueryRestController {
@@ -30,6 +34,12 @@ public class QueryRestController {
 	
 	@Autowired 
 	private UsersService usersService;
+	
+	@Autowired
+	private AddQueryValidator addQueryValidator;
+	
+	@Autowired
+	private EditQueryValidator editQueryValidator;
 	
 	@GetMapping("/api/query")
 	public List<Map<String, Object>> list(Principal principal) {
@@ -60,13 +70,50 @@ public class QueryRestController {
 	}
 	
 	@PostMapping("/api/query")
-	public void post(@RequestBody Map<String, Object> payload, Principal principal, HttpServletResponse response) {
-		
+	public Map<String, Object> post(@Validated Query query, BindingResult result, Principal principal, HttpServletResponse response) {
+		Map<String, Object> responseBody = new HashMap<String, Object>();
+		String email = principal.getName();
+		User user = usersService.getUserByEmail(email);
+		query.setUser(user);
+		addQueryValidator.validate(query, result);
+		if (result.hasErrors()) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			responseBody.put("errors", errorsToMap(result.getAllErrors()));
+			return responseBody;
+		}
+		//Add it
+		queryService.saveQuery(query);
+		loadQueryIntoMap(query, responseBody);
+		return responseBody;
 	}
-	
+
 	@PutMapping("/api/query")
-	public void put(@RequestBody Map<String, Object> payload, Principal principal, HttpServletResponse response) {
-		
+	public Map<String, Object> edit(@Validated Query query, BindingResult result, Principal principal, HttpServletResponse response) {
+		Map<String, Object> responseBody = new HashMap<String, Object>();
+		String email = principal.getName();
+		User user = usersService.getUserByEmail(email);
+		editQueryValidator.validate(query, result);
+		Query original = queryService.findQuery(query.getId());
+		if (result.hasErrors()) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			responseBody.put("errors", errorsToMap(result.getAllErrors()));
+			return responseBody;
+		}
+		if (original == null) {
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return responseBody;
+		}
+		if (!queryService.canModifyQuery(user, original)) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return responseBody;
+		}
+		//Finally save
+		original.setDescription(query.getDescription());
+		original.setQueryText(query.getQueryText());
+		original.setPublicForAll(query.isPublicForAll());
+		queryService.saveQuery(original);
+		loadQueryIntoMap(original, responseBody);
+		return responseBody;
 	}
 	
 	@DeleteMapping("/api/query/{id}")
@@ -90,6 +137,14 @@ public class QueryRestController {
 		map.put("user", query.getUser().getEmail());
 		map.put("isPublic", query.isPublicForAll());
 		map.put("modified", query.getModified());
+	}
+	
+	private Map<String, Object> errorsToMap(List<ObjectError> errors) {
+		Map<String, Object> eMap = new HashMap<String, Object>();
+		errors.forEach(e -> {
+			eMap.put("", e.getCode());
+		});
+		return eMap;
 	}
 	
 }
