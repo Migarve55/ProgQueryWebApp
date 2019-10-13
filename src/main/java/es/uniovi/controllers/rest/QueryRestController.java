@@ -31,7 +31,7 @@ public class QueryRestController {
 	@Autowired 
 	private UsersService usersService;
 	
-	@GetMapping("/api/query/all")
+	@GetMapping("/api/query")
 	public List<Map<String, Object>> list(Principal principal) {
 		User user = usersService.getUserByEmail(principal.getName());
 		List<Map<String, Object>> queries = new ArrayList<Map<String, Object>>();
@@ -43,7 +43,7 @@ public class QueryRestController {
 		return queries;
 	}
 	
-	@GetMapping("/api/query")
+	@GetMapping("/api/query/{id}")
 	public Map<String, Object> get(@PathParam(value = "id") Long id, Principal principal, HttpServletResponse response) {
 		Query query = queryService.findQuery(id);
 		User user = usersService.getUserByEmail(principal.getName());
@@ -69,7 +69,7 @@ public class QueryRestController {
 		
 	}
 	
-	@DeleteMapping("/api/query")
+	@DeleteMapping("/api/query/{id}")
 	public void delete(@PathParam(value = "id") Long id, Principal principal, HttpServletResponse response) {
 		User user = usersService.getUserByEmail(principal.getName());
 		Query query = queryService.findQuery(id);

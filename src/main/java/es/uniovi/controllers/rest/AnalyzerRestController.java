@@ -22,7 +22,7 @@ public class AnalyzerRestController {
 	@Autowired
 	private AnalyzerService analyzerService;
 
-	@PostMapping("/api/analyzer/git")
+	@PostMapping("/api/analyze")
 	public void postAnalizeGit(@RequestBody Map<String, Object> payload, Principal principal) {
 		User user = usersService.getUserByEmail(principal.getName());
 		//analyzerService.analyzeGitRepo(user, url, compOpt, args, queries);

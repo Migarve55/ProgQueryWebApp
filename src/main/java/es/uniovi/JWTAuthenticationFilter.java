@@ -9,30 +9,33 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-
-	public static final byte[] SUPER_SECRET_KEY = new byte[] {12, 23, 56, 127, 34, 93};
-	public static final String HEADER_AUTHORIZACION_KEY = "token";
-	public static final String TOKEN_BEARER_PREFIX = "test";
+	
+	public static final byte[] SUPER_SECRET_KEY = "H4K3RS3CR3T".getBytes();
+	public static final String HEADER_AUTHORIZACION_KEY = "Authorization";
+	public static final String TOKEN_BEARER_PREFIX = "Bearer";
 	
 	private static final long TOKEN_EXPIRATION_TIME = 1000 * 60 * 30; //30 minutes
 	private static final String ISSUER_INFO = "ProgQuery";
-	
+
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	private AuthenticationManager authenticationManager;
 
 	public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+		setFilterProcessesUrl("/api/login");
 		this.authenticationManager = authenticationManager;
 	}
 
@@ -41,7 +44,6 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			throws AuthenticationException {
 		try {
 			User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
-
 			return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
 					user.getUsername(), user.getPassword(), new ArrayList<>()));
 		} catch (IOException e) {
@@ -52,11 +54,13 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	@Override	
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication auth) throws IOException, ServletException {
-
+		String subject = ((User) auth.getPrincipal()).getUsername();
+		logger.info("Generated API token for user {}", subject);
 		String token = Jwts.builder().setIssuedAt(new Date()).setIssuer(ISSUER_INFO)
-				.setSubject(((User) auth.getPrincipal()).getUsername())
+				.setSubject(subject)
 				.setExpiration(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION_TIME))
 				.signWith(SignatureAlgorithm.HS512, SUPER_SECRET_KEY).compact();
 		response.addHeader(HEADER_AUTHORIZACION_KEY, TOKEN_BEARER_PREFIX + " " + token);
 	}
+	
 }
