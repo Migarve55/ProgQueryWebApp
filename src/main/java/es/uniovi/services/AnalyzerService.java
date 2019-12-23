@@ -69,9 +69,18 @@ public class AnalyzerService {
 		usersTasks.put(user, task);
 	}
 	
+	/**
+	 * This method just logs the event now.
+	 * User "clearUserTask" to remove the task assigned to the user
+	 * @param user
+	 * @param task
+	 */
 	private void finalizeUserTask(User user, AnalyzerTask task) {
 		logger.info("Task {} of user {} has ended", task, user.getEmail());
-		//usersTasks.remove(user);
+	}
+	
+	public void clearUserTask(User user) {
+		usersTasks.remove(user);
 	}
 	
 	public void cancelCurrentTask(User user) {
@@ -124,7 +133,7 @@ public class AnalyzerService {
 	 * Analyzes a program
 	 * @param user
 	 * @param program
-	 * @param queries
+	 * @param queries 
 	 */
 	public void analyzeProgram(User user, Program program, String[] queries) {
 		AbstractAnalyzerCallable callable = new ProgramAnalyzerCallable(program.getProgramIdentifier());
@@ -137,7 +146,8 @@ public class AnalyzerService {
 		}
 		AnalyzerTask task = new AnalyzerTask(callable);
 		task.setCallback((errors) -> {
-			createReport(user, program, errors);
+			if (!errors.isEmpty())
+				createReport(user, program, errors);
 			finalizeUserTask(user, task);
 		});
 		executor.execute(task);
@@ -151,11 +161,13 @@ public class AnalyzerService {
 	 * @param name Name of the program
 	 * @param compOp What compiler to use
 	 * @param callable what callable to use
-	 * @param queries what queries to use
+	 * @param queries what queries to use, can be null. If null, it will not create a report.
 	 */
 	private void launchAnalyzerTask(User user, String name, String compOp, AbstractAnalyzerCallable callable, String[] queries) {
-		List<Query> queriesList = getQueries(queries, user);
-		callable.setQueries(toQueryDto(queriesList));
+		if (queries != null) {
+			List<Query> queriesList = getQueries(queries, user);
+			callable.setQueries(toQueryDto(queriesList));
+		}
 		callable.setCompiler(getCompilationTool(compOp));
 		
 		AnalyzerTask oldTask = getCurrentTask(user);
@@ -166,7 +178,9 @@ public class AnalyzerService {
 		AnalyzerTask task = new AnalyzerTask(callable);
 		task.setCallback((errors) -> {
 			Program program = createProgram(user, name, callable.getProgramID());
-			createReport(user, program, errors);
+			if (!errors.isEmpty()) {
+				createReport(user, program, errors);
+			} 
 			finalizeUserTask(user, task);
 		});
 		executor.execute(task);
@@ -205,6 +219,7 @@ public class AnalyzerService {
 	
 	private Program createProgram(User user, String name, String programID) {
 		Program program = new Program();
+		program.setTimestamp(new Date());
 		program.setUser(user);
 		program.setProgramIdentifier(programID);
 		program.setName(name);

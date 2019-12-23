@@ -1,5 +1,7 @@
 package es.uniovi.analyzer.tasks;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -20,7 +22,7 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 	protected String programID;
 	protected AnalyzerTask task;
 	protected CompilerTool compiler;
-	protected List<QueryDto> queries;
+	protected List<QueryDto> queries = new ArrayList<QueryDto>();
 	
 	private Consumer<List<ProblemDto>> callback;
 
@@ -36,11 +38,11 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 
 	@Override
 	public final List<ProblemDto> call() throws EnviromentException, ReportException, CompilerException {
-		List<ProblemDto> result = null;
+		List<ProblemDto> result = new LinkedList<ProblemDto>();
 		try {
 			prepareEnviroment();
 			compile();
-			result = createReport();
+			createReport(result);
 			executeCallback(result);
 		} finally {
 			cleanEnviroment();
@@ -73,9 +75,18 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 		nextStep("Compiling...", 25);
 	}
 
-	protected List<ProblemDto> createReport() throws ReportException {
-		nextStep("Creating report", 25);
-		return ToolFactory.getReportTool(System.getProperty("neo4j.url"), programID, queries).generateReport();
+	protected void createReport(List<ProblemDto> result) throws ReportException {
+		// If there are 
+		if (!queries.isEmpty()) {
+			nextStep("Creating report", 25);
+			result.addAll(
+				ToolFactory
+				.getReportTool(System.getProperty("neo4j.url"), programID, queries)
+				.generateReport()
+			);
+		} else {
+			nextStep("No report will be created", 25);
+		}
 	}
 
 	protected void cleanEnviroment() throws EnviromentException {

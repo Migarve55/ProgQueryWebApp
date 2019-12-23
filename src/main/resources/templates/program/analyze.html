@@ -9,7 +9,18 @@
   			<h1 class="display-4 title" th:text="${program.name}">...</h1>
 		</div>
 		<form method="POST" th:action="${'/program/analyze/' + program.id}">
-			<div th:replace="analyzer/queries"/>
+			<div class="form-group">
+				<label for="queries"  th:text="#{analyzer.queries.title}">Queries to run:</label>
+				<div class="container mt-1 mb-1">
+					<input id="toAdd" type="text" placeholder="Add manually..."/>
+					<button id="addBtn" type="button" class="btn btn-primary"  th:text="#{analyzer.queries.add}">Add</button>
+					<button id="delBtn" type="button" class="btn btn-danger" th:text="#{delete}">Delete</button>
+				</div>
+				<select id="queriesList" multiple class="form-control" name="queries" required>
+					<option class="queryOp" th:each="query : ${queriesList}" th:value="${query.name}" th:text="${query.name}"></option>
+				</select>
+				<script type="text/javascript" src="/script/queries.js"></script>
+			</div>
 			<div class="form-group">
 				<input class="form-control btn btn-primary" type="submit" value="Upload" th:value="#{analyzer.submit}"/>
 			</div>

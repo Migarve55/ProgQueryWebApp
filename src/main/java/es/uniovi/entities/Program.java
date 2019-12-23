@@ -1,5 +1,6 @@
 package es.uniovi.entities;
 
+import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -10,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 public class Program {
@@ -19,6 +22,9 @@ public class Program {
 	private long id;
 	
 	private String name;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date timestamp;
 	
 	@Column(unique = true, length = 36)
 	private String programIdentifier;
@@ -48,6 +54,14 @@ public class Program {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Date getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(Date timestamp) {
+		this.timestamp = timestamp;
 	}
 
 	public String getProgramIdentifier() {

@@ -38,6 +38,14 @@ public class AnalyzerTask extends FutureTask<List<ProblemDto>> {
 		}
 		return super.cancel(mayInterruptIfRunning);
 	}
+	
+	/**
+	 * 
+	 * @return true if a report has been generated. If false, just the program has been created.
+	 */
+	public boolean hasCreatedReport() {
+		return !callable.queries.isEmpty();
+	}
 
 	public int getProgress() {
 		return progress;

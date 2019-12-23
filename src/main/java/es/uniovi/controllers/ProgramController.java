@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import es.uniovi.analyzer.tasks.AnalyzerTask;
 import es.uniovi.entities.Program;
 import es.uniovi.entities.Result;
 import es.uniovi.entities.User;
@@ -58,6 +59,9 @@ public class ProgramController {
 		User user = usersService.getUserByEmail(email);
 		if (!program.getUser().equals(user))
 			return "redirect:/program/list";
+		if (!isTaskDone(user))
+			return "redirect:/analyzer/loading";
+		// Finally analyze
 		model.addAttribute("program", program);
 		model.addAttribute("queriesList", queryService.getAvailableQueriesForUser(user));
 		return "program/analyze";
@@ -72,7 +76,8 @@ public class ProgramController {
 			return "redirect:/program/list";
 		if (!program.getUser().equals(user))
 			return "redirect:/program/list";
-		analyzerService.analyzeProgram(user, program, queries);
+		if (isTaskDone(user))
+			analyzerService.analyzeProgram(user, program, queries);
 		return "redirect:/analyzer/loading";
 	}
 	
@@ -99,6 +104,22 @@ public class ProgramController {
 			return "redirect:/program/list";
 		programService.deleteProgram(id);
 		return "redirect:/program/list";
+	}
+	
+	// Auxiliary methods
+	
+	/**
+	 * 
+	 * @param user
+	 * @return true if no user is being computed for the user
+	 */
+	private boolean isTaskDone(User user) {
+		AnalyzerTask task = analyzerService.getCurrentTask(user);
+		if (task != null) {
+			if (!task.isDone() && !task.isCancelled())
+				return false;
+		}
+		return true;
 	}
 	
 }

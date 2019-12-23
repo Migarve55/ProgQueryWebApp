@@ -40,19 +40,20 @@ public class AnalyzerController {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		if (!isTaskDone(user))
-			return "redirect:/loading";
+			return "redirect:/analyzer/loading";
 		model.addAttribute("queriesList", queryService.getAvailableQueriesForUser(user));
 		return "analyzer/file";
 	}
 
 	@RequestMapping(path = "/analyzer/file", method = RequestMethod.POST, consumes = { "multipart/form-data" })
 	public String postAnalizeFile(@RequestParam("file") MultipartFile file, @RequestParam(value = "args", required = false) String args
-			, @RequestParam("queries") String[] queries, Principal principal
+			, @RequestParam(value = "queries", required = false) String[] queries, Principal principal
 			, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		try {
-			analyzerService.analyzeFile(user, file, args, queries);
+			if (isTaskDone(user))
+				analyzerService.analyzeFile(user, file, args, queries);
 		} catch (IOException e) {
 			e.printStackTrace();
 			redirect.addFlashAttribute("error", "error.fileError");
@@ -66,19 +67,20 @@ public class AnalyzerController {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		if (!isTaskDone(user))
-			return "redirect:/loading";
+			return "redirect:/analyzer/loading";
 		model.addAttribute("queriesList", queryService.getAvailableQueriesForUser(user));
 		return "analyzer/zip";
 	}
 
 	@RequestMapping(path = "/analyzer/zip", method = RequestMethod.POST, consumes = { "multipart/form-data" })
 	public String postAnalizeZip(@RequestParam("zip") MultipartFile zip, @RequestParam("compOpt") String compOpt,
-			@RequestParam(value = "args", required = false) String args, @RequestParam("queries") String[] queries, 
+			@RequestParam(value = "args", required = false) String args, @RequestParam(value = "queries", required = false) String[] queries, 
             Principal principal, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		try {
-			analyzerService.analyzeZip(user, zip, compOpt, args, queries);
+			if (isTaskDone(user))
+				analyzerService.analyzeZip(user, zip, compOpt, args, queries);
 		} catch (IOException e) {
 			e.printStackTrace();
 			redirect.addFlashAttribute("error", "error.fileError");
@@ -92,17 +94,18 @@ public class AnalyzerController {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		if (!isTaskDone(user))
-			return "redirect:/loading";
+			return "redirect:/analyzer/loading";
 		model.addAttribute("queriesList", queryService.getAvailableQueriesForUser(user));
 		return "analyzer/git";
 	}
 
 	@RequestMapping(path = "/analyzer/git", method = RequestMethod.POST)
 	public String postAnalizeGit(@RequestParam("url") String url, @RequestParam("args") String args, 
-			@RequestParam("compOpt") String compOpt, @RequestParam("queries") String[] queries, Principal principal) {
+			@RequestParam("compOpt") String compOpt, @RequestParam(value = "queries", required = false) String[] queries, Principal principal) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
-		analyzerService.analyzeGitRepo(user, url, compOpt, args, queries);
+		if (isTaskDone(user))
+			analyzerService.analyzeGitRepo(user, url, compOpt, args, queries);
 		return "redirect:/analyzer/loading";
 	}
 	
@@ -140,17 +143,14 @@ public class AnalyzerController {
 		map.put("error", task.isCancelled());
 		return map;
 	}
-	
-	@RequestMapping("/analyzer/cancel")
-	public String cancelTask(Principal principal) {
-		String email = principal.getName();
-		User user = usersService.getUserByEmail(email);
-		analyzerService.cancelCurrentTask(user);
-		return "redirect:/";
-	}
 
 	// Auxiliary methods
 
+	/**
+	 * 
+	 * @param user
+	 * @return true if no user is being computed for the user
+	 */
 	private boolean isTaskDone(User user) {
 		AnalyzerTask task = analyzerService.getCurrentTask(user);
 		if (task != null) {

@@ -23,9 +23,9 @@ public class ProgramAnalyzerCallable extends AbstractAnalyzerCallable {
 		// Nothing to do here
 	}
 
-	protected List<ProblemDto> createReport() throws ReportException {
+	protected void createReport(List<ProblemDto> result) throws ReportException {
 		nextStep("Creating report from program " + programID, 25);
-		return super.createReport();
+		super.createReport(result);
 	}
 
 	protected void cleanEnviroment() throws EnviromentException {

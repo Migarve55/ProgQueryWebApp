@@ -39,6 +39,11 @@ public class ProgramService {
 		return programRepository.findAllByUser(user);
 	}
 	
+	public Program getLastFromUser(User user) {
+		List<Program> results = programRepository.findLastByUser(user);
+		return results.isEmpty() ? null : results.get(0);
+	}
+	
 	@Transactional
 	public void deleteProgram(Long id) {
 		try (Neo4jFacade neo4jFacade = new Neo4jFacade(System.getProperty("neo4j.url"))) {

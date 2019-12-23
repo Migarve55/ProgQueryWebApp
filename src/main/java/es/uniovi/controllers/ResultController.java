@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import es.uniovi.analyzer.tasks.AnalyzerTask;
+import es.uniovi.entities.Program;
 import es.uniovi.entities.Result;
 import es.uniovi.entities.User;
 import es.uniovi.services.AnalyzerService;
+import es.uniovi.services.ProgramService;
 import es.uniovi.services.ResultService;
 import es.uniovi.services.UsersService;
 
@@ -28,6 +30,9 @@ public class ResultController {
 	
 	@Autowired
 	private ResultService resultService;
+	
+	@Autowired
+	private ProgramService programService;
 	
 	@Autowired
 	private AnalyzerService analyzerService;
@@ -47,6 +52,15 @@ public class ResultController {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		AnalyzerTask task = analyzerService.getCurrentTask(user);
+		// No task, return
+		if (task == null) {
+			redirect.addFlashAttribute("error", "error.noTask");
+			return "redirect:/";
+		}
+		// Task is not done
+		if (!task.isDone()) 
+			return "redirect:/analyzer/loading";
+		// Task is done, get
 		try {
 			task.get();
 		} catch (CancellationException | InterruptedException e) {
@@ -55,14 +69,27 @@ public class ResultController {
 		} catch (ExecutionException e) {
 			redirect.addFlashAttribute("error", getRootCause(e).getLocalizedMessage());
 			return "redirect:/";
-		} 
-		// Get result
-		Result result = resultService.getLastFromUser(user);
-		if (result == null) {
-			redirect.addFlashAttribute("error", "error.noReport");
-			return "redirect:/";
+		} finally {
+			// Clear user task
+			analyzerService.clearUserTask(user);
 		}
-		return "redirect:/result/" + result.getId();
+		if (task.hasCreatedReport()) {
+			// Get result
+			Result result = resultService.getLastFromUser(user);
+			if (result == null) {
+				redirect.addFlashAttribute("error", "error.noReport");
+				return "redirect:/";
+			}
+			return "redirect:/result/" + result.getId();
+		} else {
+			// Get program
+			Program program = programService.getLastFromUser(user);
+			if (program == null) {
+				redirect.addFlashAttribute("error", "error.noProgram");
+				return "redirect:/";
+			}
+			return "redirect:/program/detail/" + program.getId();
+		}
 	}
 	
 	private Throwable getRootCause(Throwable t) {

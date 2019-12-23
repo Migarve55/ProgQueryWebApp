@@ -6,7 +6,8 @@
 		<button id="addBtn" type="button" class="btn btn-primary"  th:text="#{analyzer.queries.add}">Add</button>
 		<button id="delBtn" type="button" class="btn btn-danger" th:text="#{delete}">Delete</button>
 	</div>
-	<select id="queriesList" multiple class="form-control" name="queries" required>
+	<span class="form-text" th:text="#{analyzer.queries.msg}"></span>
+	<select id="queriesList" multiple class="form-control" name="queries">
 		<option class="queryOp" th:each="query : ${queriesList}" th:value="${query.name}" th:text="${query.name}"></option>
 	</select>
 	<script type="text/javascript" src="/script/queries.js"></script>
