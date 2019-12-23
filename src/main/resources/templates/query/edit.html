@@ -4,7 +4,7 @@
 <body>
 	<!-- Barra de Navegación superior -->
 	<nav th:replace="fragments/nav" />
-	<div class="container">
+	<div class="container mt-3">
 		<h2 th:text="#{query.edit.title} + ' ' + ${query.name}">Editar consulta</h2>
 		<form class="form-horizontal" method="post" th:action="${'/query/edit/' + query.id}" th:object="${query}">
 			<div class="form-group">

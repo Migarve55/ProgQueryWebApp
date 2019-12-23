@@ -24,8 +24,8 @@
 						<td th:unless="${error.msg}">
 							<span th:if="${error.compilationUnit != null and error.line >= 0 and error.col >= 0}" 
 							th:text="${error.compilationUnit + ' (' + error.line + ',' + error.col + ')'}"></span>
-							<span th:if="${error.line < 0 or error.col < 0 and error.compilationUnit != null}" th:text="${error.compilationUnit}"></span>
-							<span th:if="${error.line < 0 or error.col < 0 and error.compilationUnit == null}" th:text="#{result.detail.noMsg}"></span>
+							<span th:if="${(error.line < 0 or error.col < 0) and error.compilationUnit != null}" th:text="${error.compilationUnit}"></span>
+							<span th:if="${(error.line < 0 or error.col < 0) and error.compilationUnit == null}" th:text="#{result.detail.noMsg}"></span>
 						</td>
 						<td th:if="${error.query}">
 							<a th:text="${error.query.description}" th:href="${'/query/detail/' + error.query.id}"></a>
