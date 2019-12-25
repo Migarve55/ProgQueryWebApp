@@ -130,6 +130,18 @@ public class AnalyzerService {
 	}
 	
 	/**
+	 * 
+	 * @param user
+	 * @param repoUrl
+	 * @param compOp
+	 * @param args
+	 */
+	public void uploadGitRepo(User user, String repoUrl, String compOp, String args) {
+		String[] queries = new String[0]; //Empty array with no queries
+		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(repoUrl, args), queries);
+	}
+	
+	/**
 	 * Analyzes a program
 	 * @param user
 	 * @param program
@@ -195,7 +207,7 @@ public class AnalyzerService {
 			case "maven":
 				return ToolFactory.getMavenCompilerTool();
 			default:
-				return ToolFactory.getJavaCompilerTool();
+				return ToolFactory.getMavenCompilerTool();
 		}
 	}
 	

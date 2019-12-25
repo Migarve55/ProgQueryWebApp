@@ -26,6 +26,8 @@ public class AddQueryValidator implements Validator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "error.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "error.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "queryText", "error.empty");
+		if (query.getName() == null || query.getDescription() == null || query.getQueryText() == null)
+			return;
 		if (queryService.findQueryByName(query.getName()) != null) {
 			errors.rejectValue("name", "error.query.name.duplicate");
 		}

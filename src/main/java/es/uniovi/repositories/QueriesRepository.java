@@ -17,6 +17,9 @@ public interface QueriesRepository extends CrudRepository<Query, Long> {
 	
 	Query findByName(String name);
 	
+	@org.springframework.data.jpa.repository.Query("select q from Query q where q.publicForAll = true")
+	List<Query> findAllPublic();
+	
 	@org.springframework.data.jpa.repository.Query(value = "select q.* from query q where q.name = ?1 and (q.public_for_all = true or q.user_id = ?2 or q.id in (select c.query_id from public_to c where c.user_id = ?2))", nativeQuery = true)
 	Query findAvailableByNameAndUser(String name, User user);
 	

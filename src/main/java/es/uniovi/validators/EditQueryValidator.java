@@ -25,6 +25,8 @@ public class EditQueryValidator implements Validator {
 		Query query = (Query) target;
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "error.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "queryText", "error.empty");
+		if (query.getDescription() == null || query.getQueryText() == null)
+			return;
 		if (!queryService.validateQueryText(query.getQueryText())) {
 			errors.rejectValue("queryText", "error.query.text");
 		}

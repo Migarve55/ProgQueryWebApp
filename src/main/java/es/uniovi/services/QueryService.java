@@ -51,6 +51,10 @@ public class QueryService {
 		return queriesRepository.findAllByUserAndNameLike(pageable, user, searchText);
 	}
 	
+	public List<Query> getPublicQueries() {
+		return queriesRepository.findAllPublic();
+	}
+	
 	public List<Query> getAvailableQueriesForUser(User user) {
 		return queriesRepository.findAvailableQueriesForUser(user);
 	}
@@ -58,6 +62,7 @@ public class QueryService {
 	public void saveQuery(Query query) {
 		query.setModified(new Date());
 		queriesRepository.save(query);
+		logger.info("Query {} was saved", query.getName());
 	}
 	
 	@Transactional
