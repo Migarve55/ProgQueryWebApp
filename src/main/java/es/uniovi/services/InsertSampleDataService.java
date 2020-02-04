@@ -62,9 +62,7 @@ public class InsertSampleDataService {
 		result.setTimestamp(new Date());
 		resultRepository.save(result);
 		Query query = queryService.findQueryByName("es.uniovi.test1");
-		createProblem(result, query, "Global error");
-		createProblem(result, query, "file.java", -1, -1);
-		createProblem(result, query, "file.java", 5, 10);
+		createProblem(result, query, "Error 1");
 	}
 	
 	private User createUser(String email, String name, String surname, String password) {
@@ -76,14 +74,6 @@ public class InsertSampleDataService {
 	
 	private Problem createProblem(Result result, Query query, String msg) {
 		Problem problem = new Problem(msg);
-		problem.setResult(result);
-		problem.setQuery(query);
-		problemsRepository.save(problem);
-		return problem;
-	}
-	
-	private Problem createProblem(Result result, Query query, String file, int line, int col) {
-		Problem problem = new Problem(file, line, col);
 		problem.setResult(result);
 		problem.setQuery(query);
 		problemsRepository.save(problem);

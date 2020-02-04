@@ -15,11 +15,6 @@ public class Problem {
 	
 	private String msg;
 	
-	private int line = -1;
-	private int col = -1;
-	
-	private String compilationUnit;
-	
 	@ManyToOne
 	@JoinColumn(name = "query_id")
 	private Query query;
@@ -36,12 +31,6 @@ public class Problem {
 		this.msg = msg;
 	}
 
-	public Problem(String file, int line, int col) {
-		this.compilationUnit = file;
-		this.line = line;
-		this.col = col;
-	}
-
 	public String getMsg() {
 		return msg;
 	}
@@ -56,30 +45,6 @@ public class Problem {
 
 	public void setId(long id) {
 		this.id = id;
-	}
-
-	public int getLine() {
-		return line;
-	}
-
-	public void setLine(int line) {
-		this.line = line;
-	}
-
-	public int getCol() {
-		return col;
-	}
-
-	public void setCol(int col) {
-		this.col = col;
-	}
-
-	public String getCompilationUnit() {
-		return compilationUnit;
-	}
-
-	public void setCompilationUnit(String compilationUnit) {
-		this.compilationUnit = compilationUnit;
 	}
 
 	public Query getQuery() {

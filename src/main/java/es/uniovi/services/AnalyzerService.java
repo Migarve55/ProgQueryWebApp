@@ -86,9 +86,9 @@ public class AnalyzerService {
 	public void cancelCurrentTask(User user) {
 		AnalyzerTask task = getCurrentTask(user);
 		if (task.cancel(false))
-			logger.info("User {} cancelled his/her task {} succesfully", user.getEmail(), task);
+			logger.info("User {} cancelled their task {} succesfully", user.getEmail(), task);
 		else
-			logger.info("User {} could not cancel his/her task {}", user.getEmail(), task);
+			logger.info("User {} could not cancel their task {}", user.getEmail(), task);
 		finalizeUserTask(user, task);
 	}
 	
@@ -158,8 +158,7 @@ public class AnalyzerService {
 		}
 		AnalyzerTask task = new AnalyzerTask(callable);
 		task.setCallback((errors) -> {
-			if (!errors.isEmpty())
-				createReport(user, program, errors);
+			createReport(user, program, errors);
 			finalizeUserTask(user, task);
 		});
 		executor.execute(task);
@@ -190,9 +189,7 @@ public class AnalyzerService {
 		AnalyzerTask task = new AnalyzerTask(callable);
 		task.setCallback((errors) -> {
 			Program program = createProgram(user, name, callable.getProgramID());
-			if (!errors.isEmpty()) {
-				createReport(user, program, errors);
-			} 
+			createReport(user, program, errors);
 			finalizeUserTask(user, task);
 		});
 		executor.execute(task);
@@ -222,9 +219,6 @@ public class AnalyzerService {
 			problem.setResult(result);
 			problem.setQuery(queriesRepository.findByName(problemDto.getQueryName()));
 			problem.setMsg(problemDto.getMsg());
-			problem.setLine((int) problemDto.getLine());
-			problem.setCol((int) problemDto.getColumn());
-			problem.setCompilationUnit(problemDto.getFile());
 			problemsRepository.save(problem);
 		}
 	}

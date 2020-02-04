@@ -125,11 +125,8 @@ public class ResultRestController {
 	
 	private Map<String, Object> problemToMap(Problem problem) {
 		Map<String, Object> pMap = new HashMap<String, Object>();
-		pMap.put("compilationUnit", problem.getCompilationUnit());
 		pMap.put("msg", problem.getMsg());
 		pMap.put("query", problem.getQuery().getId());
-		pMap.put("line", problem.getLine());
-		pMap.put("col", problem.getCol());
 		return pMap;
 	}
 

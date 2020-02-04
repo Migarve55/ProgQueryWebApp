@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.exceptions.Neo4jException;
+import org.neo4j.driver.v1.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,24 +72,17 @@ public class ReportTool {
 	
 	private ProblemDto getProblemDtoFromResult(Record record) {
 		ProblemDto error = new ProblemDto();
-		String msg = record.get("msg").asString(null);
-		if (msg != null) {
-			error.setMsg(msg);
+		StringBuilder sb = new StringBuilder();
+		if (record.fields().isEmpty())
 			return error;
+		for (int i = 0; i < record.fields().size() - 1; i++) {
+			Pair<String, ?> pair = record.fields().get(i);
+			sb.append(String.format("%s: %s, ", pair.key(), pair.value()));
 		}
-		String file = record.get("file").asString(null);
-		if (file != null)
-			error.setFile(prettifyFilename(file));
-		error.setLine(record.get("line", -1));
-		error.setColumn(record.get("column", -1));
+		Pair<String, ?> pair = record.fields().get(record.fields().size() - 1);
+		sb.append(String.format("%s: %s", pair.key(), pair.value()));
+		error.setMsg(sb.toString());
 		return error;
-	}
-	
-	private String prettifyFilename(String filename) {
-		int i = filename.indexOf("env_");
-		if (i >= 0)
-			return filename.substring(i + 41, filename.length());
-		return filename;
 	}
 	
 }
