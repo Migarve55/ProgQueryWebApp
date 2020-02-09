@@ -48,8 +48,9 @@ public class ProgramService {
 	public void deleteProgram(Long id) {
 		try (Neo4jFacade neo4jFacade = new Neo4jFacade(System.getProperty("neo4j.url"))) {
 			Program program = programRepository.findById(id).orElse(null);
+			String database = "DB_" + program.getUser().getId();
 			if (program.getProgramIdentifier() != null)
-				neo4jFacade.removeProgram(program.getProgramIdentifier());
+				neo4jFacade.removeProgram(database, program.getProgramIdentifier());
 			programRepository.deleteById(id);
 			logger.info("Program {} was deleted", program.getProgramIdentifier());
 		}

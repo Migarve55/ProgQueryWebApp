@@ -16,8 +16,8 @@ public class FileAnalyzerCallable extends AbstractAnalyzerCallable {
 	private InputStream fileIs;
 	private String fileName;
 
-	public FileAnalyzerCallable(String args, String fileName, InputStream fileIs) {
-		super(args);
+	public FileAnalyzerCallable(String args, String database, String fileName, InputStream fileIs) {
+		super(args, database);
 		this.fileName = fileName;
 		this.fileIs = fileIs;
 	}

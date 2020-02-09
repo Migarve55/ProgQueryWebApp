@@ -43,9 +43,6 @@ public class AddQueryValidator implements Validator {
 		if (query.getQueryText().length() > Query.QUERY_LENGTH) {
 			errors.rejectValue("queryText", "error.query.length");
 		}
-		if (!queryService.validateQueryText(query.getQueryText())) {
-			errors.rejectValue("queryText", "error.query.text");
-		}
 	}
 
 }

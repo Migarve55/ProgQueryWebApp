@@ -12,8 +12,8 @@ public class ZipAnalizerCallable extends AbstractAnalyzerCallable {
 
 	private InputStream fileIs;
 
-	public ZipAnalizerCallable(String args, InputStream fileIs) {
-		super(args);
+	public ZipAnalizerCallable(String args, String database, InputStream fileIs) {
+		super(args, database);
 		this.fileIs = fileIs;
 	}
 

@@ -10,8 +10,8 @@ import es.uniovi.analyzer.tools.reporter.dto.ProblemDto;
 
 public class ProgramAnalyzerCallable extends AbstractAnalyzerCallable {
 	
-	public ProgramAnalyzerCallable(String programID) {
-		super(null);
+	public ProgramAnalyzerCallable(String database, String programID) {
+		super(null, database);
 		this.programID = programID;
 	}
 

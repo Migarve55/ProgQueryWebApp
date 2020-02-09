@@ -3,9 +3,9 @@ package es.uniovi.analyzer.tools.reporter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.neo4j.driver.v1.Record;
-import org.neo4j.driver.v1.exceptions.Neo4jException;
-import org.neo4j.driver.v1.util.Pair;
+import org.neo4j.driver.Record;
+import org.neo4j.driver.exceptions.Neo4jException;
+import org.neo4j.driver.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,13 +15,15 @@ import es.uniovi.analyzer.tools.reporter.dto.QueryDto;
 public class ReportTool {
 	
 	private String url;
+	private String database;
 	private String programID;
 	private List<QueryDto> queries = new ArrayList<QueryDto>();
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	public ReportTool(String url, String programID) {
+	public ReportTool(String url, String database, String programID) {
 		this.url = url;
+		this.database = database;
 		this.programID = programID;
 	}
 	
@@ -34,40 +36,21 @@ public class ReportTool {
 		logger.info("Creating report for program {}", programID);
 		try (Neo4jFacade queryRunner = new Neo4jFacade(url)) {
 			for (QueryDto query : queries) {
-				if (isQuerySafe(query.getQueryText())) {
-					try {
-						logger.info("Running query {}", query.getName());
-						queryRunner.runQuery(query.getQueryText(), programID).forEachRemaining((result) -> {
-							ProblemDto problem = getProblemDtoFromResult(result);
-							problem.setQueryName(query.getName());
-							errors.add(problem);
-						});
-					} catch (Neo4jException qee) {
-						logger.info("Could not execute query {}, error: {}", query.getName(), qee.getMessage());
-					}
-				} else {
-					logger.info("Query {} was not safe. Avoiding execution...", query.getName());
+				try {
+					logger.info("Running query {}", query.getName());
+					queryRunner.runQuery(database, query.getQueryText(), programID).forEachRemaining((result) -> {
+						ProblemDto problem = getProblemDtoFromResult(result);
+						problem.setQueryName(query.getName());
+						errors.add(problem);
+					});
+				} catch (Neo4jException qee) {
+					logger.info("Could not execute query {}, error: {}", query.getName(), qee.getMessage());
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
 		return errors;
-	}
-	
-	/**
-	 * Checks if the query modifies in any way the data base
-	 * Statments that remove, add or modify nodes or relationsa are not allowed
-	 * @param query
-	 * @return
-	 */
-	public static boolean isQuerySafe(String query) {
-		String lcQuery = query.toLowerCase();
-		return !lcQuery.contains("delete") 
-			&& !lcQuery.contains("create") 
-			&& !lcQuery.contains("set") 
-			&& !lcQuery.contains("remove")
-			&& !lcQuery.contains("merge");
 	}
 	
 	private ProblemDto getProblemDtoFromResult(Record record) {

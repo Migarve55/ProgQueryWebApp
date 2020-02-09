@@ -3,13 +3,12 @@ package es.uniovi.analyzer.tools.reporter;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.neo4j.driver.v1.AuthTokens;
-import org.neo4j.driver.v1.Driver;
-import org.neo4j.driver.v1.GraphDatabase;
-import org.neo4j.driver.v1.Session;
-import org.neo4j.driver.v1.StatementResult;
-import org.neo4j.driver.v1.Transaction;
-import org.neo4j.driver.v1.TransactionWork;
+import org.neo4j.driver.AuthTokens;
+import org.neo4j.driver.Driver;
+import org.neo4j.driver.GraphDatabase;
+import org.neo4j.driver.Result;
+import org.neo4j.driver.Session;
+import org.neo4j.driver.SessionConfig;
 
 public class Neo4jFacade implements AutoCloseable {
 
@@ -19,6 +18,10 @@ public class Neo4jFacade implements AutoCloseable {
 			"MATCH (p:PROGRAM)-[*]->(connected) " + 
 			"WHERE p.ID = $programID " + 
 			"DETACH DELETE p, connected";
+	
+	private final static String CREATE_DATABASE = "create database $dbName";
+	
+	private final static String DELETE_DATABASE = "drop database $dbName";
 
     public Neo4jFacade(String url) {
     	driver = GraphDatabase.driver( url, AuthTokens.basic( System.getProperty("neo4j.user"), System.getProperty("neo4j.password") ) );
@@ -30,40 +33,51 @@ public class Neo4jFacade implements AutoCloseable {
      * @param programID the ID of the program to analize
      * @return
      */
-    public StatementResult runQuery(String query, String programID) {
-    	StatementResult result = null;
-    	try ( Session session = driver.session() )
+    public Result runQuery(String database, String query, String programID) {
+		try ( Session session = driver.session( SessionConfig.builder().withDatabase(database).build() ) )
         {
-            result = session.writeTransaction( new TransactionWork<StatementResult>()
-            {
-                @Override
-                public StatementResult execute( Transaction tx ) {
-                	Map<String, Object> params = new HashMap<>();
-                	params.put("programID", programID);
-                	return tx.run(query, params);
-                }
-
-            });
+            Map<String, Object> params = new HashMap<>();
+        	params.put("programID", programID);
+            return session.writeTransaction(tx -> tx.run(query, params));
         }
-		return result;
     }
     
     /**
      * Deletes a program from the database
      * @param programID
      */
-    public void removeProgram(String programID) {
+    public void removeProgram(String database, String programID) {
+    	try ( Session session = driver.session( SessionConfig.builder().withDatabase(database).build() ) )
+        {
+            Map<String, Object> params = new HashMap<>();
+        	params.put("programID", programID);
+            session.writeTransaction(tx -> tx.run(DELETE_PROGRAM_QUERY, params));
+        }
+    }
+    
+    /**
+     * Creates a new database
+     * @param database
+     */
+    public void addDataBase(String database) {
     	try ( Session session = driver.session() )
         {
-            session.writeTransaction( new TransactionWork<StatementResult>()
-            {
-                @Override
-                public StatementResult execute( Transaction tx ) {
-                	Map<String, Object> params = new HashMap<>();
-                	params.put("programID", programID);
-                	return tx.run(DELETE_PROGRAM_QUERY, params);
-                }
-            });
+            Map<String, Object> params = new HashMap<>();
+            params.put("dbName", database);
+            session.writeTransaction(tx -> tx.run(CREATE_DATABASE, params));
+        }
+    }
+    
+    /**
+     * Deletes a database
+     * @param database
+     */
+    public void removeDataBase(String database) {
+    	try ( Session session = driver.session() )
+        {
+            Map<String, Object> params = new HashMap<>();
+            params.put("dbName", database);
+            session.writeTransaction(tx -> tx.run(DELETE_DATABASE, params));
         }
     }
     

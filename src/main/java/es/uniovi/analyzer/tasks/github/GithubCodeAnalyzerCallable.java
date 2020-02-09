@@ -13,8 +13,8 @@ public class GithubCodeAnalyzerCallable extends AbstractAnalyzerCallable {
 
 	private String url;
 	
-	public GithubCodeAnalyzerCallable(String url, String args) {
-		super(args);
+	public GithubCodeAnalyzerCallable(String args, String database, String url) {
+		super(args, database);
 		this.url = url;
 	}
 	
