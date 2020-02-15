@@ -38,7 +38,7 @@ public class FileAnalyzerCallable extends AbstractAnalyzerCallable {
 	@Override
 	protected void compile() throws CompilerException {
 		nextStep(String.format("Compiling %s...", fileName), 25);
-		compiler.compileFile(basePath, programID, fileName, args);
+		compiler.compileFile(basePath, programID, database, fileName, args);
 	}
 
 }

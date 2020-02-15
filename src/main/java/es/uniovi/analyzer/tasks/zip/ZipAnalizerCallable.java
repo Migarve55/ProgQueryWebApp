@@ -32,7 +32,7 @@ public class ZipAnalizerCallable extends AbstractAnalyzerCallable {
 	@Override
 	protected void compile() throws CompilerException {
 		super.compile();
-		compiler.compileFolder(basePath, programID, args);
+		compiler.compileFolder(basePath, programID, database, args);
 	}
 
 }

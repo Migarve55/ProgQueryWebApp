@@ -26,25 +26,23 @@ import org.slf4j.LoggerFactory;
 
 import es.uniovi.analyzer.exceptions.CompilerException;
 
-public class MavenCompilerTool implements CompilerTool {
+public class MavenCompilerTool extends AbstractCompiler {
 	
 	private final static String PLUGIN_VERSION = "0.0.1-SNAPSHOT";
-	private final static String PLUGIN_ARG = "-Xplugin:ProgQueryPlugin %s S %s";
-
 	private static final List<String> PUBLISH_GOALS = Arrays.asList( "compile" );
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Override
-	public void compileFile(String basePath, String programID, String filename, String arguments) throws CompilerException {
+	public void compileFile(String basePath, String programID, String database, String filename, String arguments) throws CompilerException {
 		throw new CompilerException();
 	}
 	 
 	@Override
-	public void compileFolder(String basePath, String programID, String extraArgs) throws CompilerException {
+	public void compileFolder(String basePath, String programID, String database, String extraArgs) throws CompilerException {
 	    //Configure model
 	    try {
-			configurePOMFIle(new File(basePath + "pom.xml"), basePath, programID, extraArgs);
+			configurePOMFIle(new File(basePath + "pom.xml"), basePath, programID, database, extraArgs);
 		} catch (CompilerException e) {
 			e.printStackTrace();
 			throw e;
@@ -80,13 +78,13 @@ public class MavenCompilerTool implements CompilerTool {
 	    }
 	}
 	
-	private void configurePOMFIle(File pom, String basepath, String programID, String extraArgs) throws CompilerException {
+	private void configurePOMFIle(File pom, String basepath, String programID, String database, String extraArgs) throws CompilerException {
 		Model model = null;
 		//Read model
 		try (FileReader fr = new FileReader(pom)) {
 			MavenXpp3Reader reader = new MavenXpp3Reader();
 			model = reader.read(fr);
-			modifyCompilerArgs(model, basepath, programID, extraArgs);
+			modifyCompilerArgs(model, basepath, programID, database, extraArgs);
 			addDependencies(model);
 			//addRepo(model);
 		} catch (FileNotFoundException e) {
@@ -114,10 +112,9 @@ public class MavenCompilerTool implements CompilerTool {
 		pluginDependency.setArtifactId("progQuery");
 		pluginDependency.setVersion(PLUGIN_VERSION);
 		model.addDependency(pluginDependency);
-		//Add neo4j plugins used by the compilator plugin
 	}
 	
-	private void modifyCompilerArgs(Model model, String basepath, String programID, String extraArgs) throws CompilerException {
+	private void modifyCompilerArgs(Model model, String basepath, String programID, String database, String extraArgs) throws CompilerException {
 		Plugin plugin = model.getBuild().getPluginsAsMap()
 			.get("org.apache.maven.plugins:maven-compiler-plugin");
 		if (plugin == null) {
@@ -138,7 +135,7 @@ public class MavenCompilerTool implements CompilerTool {
 			configuration.addChild(compArgs);
 		}
 		//Xplugin argument
-		addArg(compArgs, String.format(PLUGIN_ARG, programID, System.getProperty("neo4j.url")));
+		addArg(compArgs, getPluginArg(database));
 		plugin.setConfiguration(configuration);
 		//Extra arguments
 		if (!extraArgs.trim().isEmpty()) {

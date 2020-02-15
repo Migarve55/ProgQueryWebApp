@@ -19,7 +19,7 @@ RUN adduser -S app -G app --disabled-password
 
 COPY . build/
 COPY deploy/application-prod.properties build/src/main/resources/application.properties
-RUN mvn -f build/pom.xml -Dmaven.test.skip=true package
+RUN mvn -Pprod -f build/pom.xml -Dmaven.test.skip=true package
 RUN mkdir -p /opt/webApp
 RUN mkdir /opt/webApp/uploads
 RUN cp build/target/*.jar /opt/webApp/app.jar
@@ -40,4 +40,4 @@ RUN mvn install:install-file -DcreateChecksum=true -Dpackaging=jar -Dfile=/opt/w
 # Run
 
 WORKDIR /opt/webApp/
-ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-Dspring.profiles.active=prod", "-jar", "app.jar"]

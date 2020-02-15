@@ -17,18 +17,17 @@ import org.slf4j.LoggerFactory;
 
 import es.uniovi.analyzer.exceptions.CompilerException;
 
-public class JavaCompilerTool implements CompilerTool {
+public class JavaCompilerTool extends AbstractCompiler {
 	
 	private final static String ENCODING = "ISO-8859-1";
-	private final static String PLUGIN_ARG = "-Xplugin:ProgQueryPlugin %s S %s";
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Override
-	public void compileFile(String basePath, String programID, String filename, String arguments) throws CompilerException {
+	public void compileFile(String basePath, String programID, String database, String filename, String arguments) throws CompilerException {
 		JavaCompiler compiler = getCompiler();
 		// Basic config
-		List<String> args = basicArgs(basePath, programID);
+		List<String> args = basicArgs(basePath, programID, database);
 		// Extra arguments
 		if (arguments != null)
 			addArgumentsFromString(args, arguments);
@@ -39,10 +38,10 @@ public class JavaCompilerTool implements CompilerTool {
 	}
 
 	@Override
-	public void compileFolder(String basePath, String programID, String arguments) throws CompilerException {
+	public void compileFolder(String basePath, String programID, String database, String arguments) throws CompilerException {
 		JavaCompiler compiler = getCompiler();
 		// Basic config
-		List<String> args = basicArgs(basePath, programID);
+		List<String> args = basicArgs(basePath, programID, database);
 		// Extra arguments
 		if (arguments != null)
 			addArgumentsFromString(args, arguments);
@@ -97,12 +96,12 @@ public class JavaCompilerTool implements CompilerTool {
 		return compiler;
 	}
 
-	private List<String> basicArgs(String basePath, String programID) {
+	private List<String> basicArgs(String basePath, String programID, String database) {
 		return new ArrayList<>(
 				Arrays.asList(
 						"-cp", System.getenv("PLUGIN_CLASSPATH"),
 						"-encoding", ENCODING,
-						String.format(PLUGIN_ARG, programID, System.getProperty("neo4j.url")), 
+						String.format(getPluginArg(database), programID, System.getProperty("neo4j.url")), 
 						"-d", basePath, "-nowarn", "-g:none", "-Xlint:none"));
 	}
 

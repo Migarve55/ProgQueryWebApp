@@ -19,9 +19,8 @@ public class Neo4jFacade implements AutoCloseable {
 			"WHERE p.ID = $programID " + 
 			"DETACH DELETE p, connected";
 	
-	private final static String CREATE_DATABASE = "create database $dbName";
-	
-	private final static String DELETE_DATABASE = "drop database $dbName";
+	private final static String CREATE_DATABASE = "CREATE DATABASE $dbName";
+	private final static String DELETE_DATABASE = "DROP DATABASE $dbName";
 
     public Neo4jFacade(String url) {
     	driver = GraphDatabase.driver( url, AuthTokens.basic( System.getProperty("neo4j.user"), System.getProperty("neo4j.password") ) );
