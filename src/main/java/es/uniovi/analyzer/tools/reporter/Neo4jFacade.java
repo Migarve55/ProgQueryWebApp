@@ -19,8 +19,8 @@ public class Neo4jFacade implements AutoCloseable {
 			"WHERE p.ID = $programID " + 
 			"DETACH DELETE p, connected";
 	
-	private final static String CREATE_DATABASE = "CREATE DATABASE $dbName";
-	private final static String DELETE_DATABASE = "DROP DATABASE $dbName";
+	private final static String CREATE_DATABASE = "CREATE DATABASE ";
+	private final static String DELETE_DATABASE = "DROP DATABASE ";
 
     public Neo4jFacade(String url) {
     	driver = GraphDatabase.driver( url, AuthTokens.basic( System.getProperty("neo4j.user"), System.getProperty("neo4j.password") ) );
@@ -59,11 +59,9 @@ public class Neo4jFacade implements AutoCloseable {
      * @param database
      */
     public void addDataBase(String database) {
-    	try ( Session session = driver.session() )
+    	try ( Session session = driver.session( SessionConfig.builder().withDatabase("system").build() ) )
         {
-            Map<String, Object> params = new HashMap<>();
-            params.put("dbName", database);
-            session.writeTransaction(tx -> tx.run(CREATE_DATABASE, params));
+            session.run(CREATE_DATABASE + database);
         }
     }
     
@@ -72,11 +70,9 @@ public class Neo4jFacade implements AutoCloseable {
      * @param database
      */
     public void removeDataBase(String database) {
-    	try ( Session session = driver.session() )
+    	try ( Session session = driver.session( SessionConfig.builder().withDatabase("system").build() ) )
         {
-            Map<String, Object> params = new HashMap<>();
-            params.put("dbName", database);
-            session.writeTransaction(tx -> tx.run(DELETE_DATABASE, params));
+            session.run(DELETE_DATABASE + database);
         }
     }
     

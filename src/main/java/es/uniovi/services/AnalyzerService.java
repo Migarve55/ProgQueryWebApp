@@ -172,7 +172,7 @@ public class AnalyzerService {
 	}
 	
 	private String getDatabaseFromUser(User user) {
-		return "DB_" + user.getId();
+		return "DB" + user.getId();
 	}
 	
 	/**
