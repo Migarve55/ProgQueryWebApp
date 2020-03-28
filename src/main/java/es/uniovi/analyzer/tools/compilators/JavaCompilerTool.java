@@ -101,7 +101,7 @@ public class JavaCompilerTool extends AbstractCompiler {
 				Arrays.asList(
 						"-cp", System.getenv("PLUGIN_CLASSPATH"),
 						"-encoding", ENCODING,
-						String.format(getPluginArg(database), programID, System.getProperty("neo4j.url")), 
+						String.format(getPluginArg(programID, database), programID, System.getProperty("neo4j.url")), 
 						"-d", basePath, "-nowarn", "-g:none", "-Xlint:none"));
 	}
 

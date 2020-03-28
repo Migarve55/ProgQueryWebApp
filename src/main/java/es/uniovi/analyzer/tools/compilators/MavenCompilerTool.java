@@ -135,7 +135,7 @@ public class MavenCompilerTool extends AbstractCompiler {
 			configuration.addChild(compArgs);
 		}
 		//Xplugin argument
-		addArg(compArgs, getPluginArg(database));
+		addArg(compArgs, getPluginArg(programID, database));
 		plugin.setConfiguration(configuration);
 		//Extra arguments
 		if (!extraArgs.trim().isEmpty()) {
