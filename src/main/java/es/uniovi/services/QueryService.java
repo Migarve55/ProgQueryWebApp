@@ -64,6 +64,40 @@ public class QueryService {
 		logger.info("Query {} was saved", query.getName());
 	}
 	
+	/**
+	 * Makes a query visible to an user
+	 * @param query
+	 * @param user
+	 * @return
+	 */
+	public boolean addUser(Query query, User user) {
+		if (user == null)
+			return false;
+		if (query.getPublicTo().contains(user))
+			return false;
+		query.getPublicTo().add(user);
+		queriesRepository.save(query);
+		logger.info("Query {} is now visible to user {}", query.getName(), user.getEmail());
+		return true;
+	}
+	
+	/**
+	 * Makes a query no longer visible to an user
+	 * @param query
+	 * @param user
+	 * @return
+	 */
+	public boolean removeUser(Query query, User user) {
+		if (user == null)
+			return false;
+		if (!query.getPublicTo().contains(user))
+			return false;
+		query.getPublicTo().remove(user);
+		queriesRepository.save(query);
+		logger.info("Query {} is no longer visible to user {}", query.getName(), user.getEmail());
+		return true;
+	}
+	
 	@Transactional
 	public void deleteQuery(Query query) {
 		queriesRepository.delete(query);

@@ -3,6 +3,8 @@ package es.uniovi.controllers;
 import java.security.Principal;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,10 +12,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import es.uniovi.entities.Query;
 import es.uniovi.entities.User;
@@ -37,7 +41,7 @@ public class QueryController {
 	@Autowired
 	private EditQueryValidator editQueryValidator;
 
-	@RequestMapping(value = "/query/add", method = RequestMethod.GET)
+	@GetMapping("/query/add")
 	public String addGet(Model model, Principal principal) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
@@ -48,7 +52,7 @@ public class QueryController {
 		return "query/add";
 	}
 	
-	@RequestMapping(value = "/query/add", method = RequestMethod.POST)
+	@PostMapping("/query/add")
 	public String addPost(@Validated Query query, BindingResult result, Principal principal) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
@@ -62,7 +66,7 @@ public class QueryController {
 		return "redirect:/query/list";
 	}
 	
-	@RequestMapping("/query/list")
+	@GetMapping("/query/list")
 	public String list(Model model, Principal principal, Pageable pageable, @RequestParam(value = "searchText", required = false) String searchText) {
 		Page<Query> queries = null;
 		String email = principal.getName();
@@ -76,7 +80,7 @@ public class QueryController {
 		return "query/list";
 	}
 	
-	@RequestMapping("/query/detail/{id}")
+	@GetMapping("/query/detail/{id}")
 	public String detail(Model model, @PathVariable Long id, Principal principal) {
 		Query query = queryService.findQuery(id);
 		String email = principal.getName();
@@ -93,7 +97,47 @@ public class QueryController {
 		return "query/detail";
 	}
 	
-	@RequestMapping(value = "/query/edit/{id}", method = RequestMethod.GET)
+	@PostMapping("/query/addUser/{id}")
+	public String addUser(Model model, @PathVariable Long id, HttpServletRequest request, Principal principal, RedirectAttributes redirect) {
+		Query query = queryService.findQuery(id);
+		String email = principal.getName();
+		User owner = usersService.getUserByEmail(email);
+		User toAdd = usersService.getUserByEmail(request.getParameter("user"));
+		if (query == null) {
+			return "redirect:/";
+		}
+		if (!queryService.canModifyQuery(owner, query)) {
+			return "redirect:/";
+		}
+		// Change query
+		if (!queryService.addUser(query, toAdd)) {
+			redirect.addFlashAttribute("error", "error.addUser");
+			return "redirect:/query/detail/" + id;
+		}
+		return "redirect:/query/detail/" + id;
+	}
+	
+	@PostMapping("/query/removeUser/{id}")
+	public String removeUser(Model model, @PathVariable Long id, HttpServletRequest request, Principal principal, RedirectAttributes redirect) {
+		Query query = queryService.findQuery(id);
+		String email = principal.getName();
+		User owner = usersService.getUserByEmail(email);
+		User toRemove = usersService.getUserByEmail(request.getParameter("user"));
+		if (query == null) {
+			return "redirect:/";
+		}
+		if (!queryService.canModifyQuery(owner, query)) {
+			return "redirect:/";
+		}
+		// Change query
+		if (!queryService.removeUser(query, toRemove)) {
+			redirect.addFlashAttribute("error", "error.removeUser");
+			return "redirect:/query/detail/" + id;
+		}
+		return "redirect:/query/detail/" + id;
+	}
+	
+	@GetMapping("/query/edit/{id}")
 	public String editGet(Model model, Principal principal, @PathVariable Long id) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
@@ -108,7 +152,7 @@ public class QueryController {
 		return "query/edit";
 	}
 	
-	@RequestMapping(value = "/query/edit/{id}", method = RequestMethod.POST)
+	@PostMapping("/query/edit/{id}")
 	public String editPost(@Validated Query query, @PathVariable Long id, BindingResult result, Principal principal) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);

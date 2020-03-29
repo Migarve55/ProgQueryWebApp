@@ -10,7 +10,7 @@
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="email" th:text="#{signup.email}">Correo:</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" name="email"
+					<input type="email" class="form-control" name="email"
 						placeholder="email@domain.com" required="true" /> <span
 						class="text-danger" th:if="${#fields.hasErrors('email')}"
 						th:errors="*{email}">

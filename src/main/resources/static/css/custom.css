@@ -10,6 +10,12 @@ form {
 	border-radius: 1em;
 }
 
+.form-hor {
+	display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
 p {
     display: block;
     margin-block-start: 1em;

@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:12-jdk-alpine
 MAINTAINER uo257431 uo257431@uniovi.es
 VOLUME /tmp
 

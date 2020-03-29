@@ -2,24 +2,46 @@
 <html lang="en">
 <head th:replace="fragments/head" />
 <body>
-	<!-- Barra de NavegaciÃ³n superior -->
 	<nav th:replace="fragments/nav" />
 	<div class="container mt-3">
 		<h2 th:text="#{query.detail.title}">Detalle de la consulta</h2>
 		<h3 th:text="${query.name}"></h3>
-		<h4 th:text="#{description}">DescripciÃ³n:</h4>
+		<h4 th:text="#{description}">Descripción:</h4>
 		<section th:text="${query.description}"></section>
 		<h4 th:text="#{query}">Consulta cipher:</h4>
-		<pre class="queryText" th:text="${query.queryText}"></pre>
+		<samp th:text="${query.queryText}"></samp>
 		<h4 th:text="#{visibility}">Privacidad:</h4>
-		<span th:if="${query.publicForAll}"  th:text="#{public}">PÃºblica</span>
+		<span th:if="${query.publicForAll}"  th:text="#{public}">Pública</span>
 		<span th:if="${!query.publicForAll}" th:text="#{private}">Privada</span>
-		<ul th:if="${!query.publicForAll}" th:each="user : ${query.publicTo}">
-			<li th:text="${user.name}"></li>
-		</ul>
 		<h3 th:if="${canModify}">Opciones</h3>
 		<a class="btn btn-primary" th:if="${canModify}" th:href="${'/query/edit/' + query.id}" th:text="#{edit}">Editar</a>
 		<a class="btn btn-danger" th:if="${canModify}" th:href="${'/query/delete/' + query.id}" th:text="#{delete}">Eliminar</a>
+		<h3 th:if="${canModify && !query.publicForAll}">Editar quien puede verla</h3>
+		<ul th:each="user : ${query.publicTo}">
+			<li>
+				<span th:text="${user.email}"></span>
+				<span>: </span>
+				<span th:text="${user.name}"></span>
+				<span> </span>
+				<span th:text="${user.lastName}"></span>
+			</li>
+		</ul>
+		<!-- Para editar la quien puede verlo -->
+		<form th:if="${canModify && !query.publicForAll}" method="post">
+			<div class="form-hor">
+				<label class="control-label col-sm-2" for="user" th:text="#{query.detail.user}">Usuario:</label>
+				<div class="col-sm-6">
+					<input type="email" class="form-control" name="user" placeholder="user@email.com" required="true"/> 
+				</div>
+				<div class="col-sm-2">
+					<button type="submit" class="btn btn-primary" th:text="#{query.detail.add}" th:formaction="${'/query/addUser/' + query.id}">Añadir</button>
+				</div>
+				<div class="col-sm-1">
+					<button type="submit" class="btn btn-primary" th:text="#{query.detail.remove}" th:formaction="${'/query/removeUser/' + query.id}">Quitar</button>
+				</div>
+			</div>
+			<span class="text-danger" th:if=${error} th:text=#{${error}} />
+		</form>
 	</div>
 	<footer th:replace="fragments/footer" />
 </body>
