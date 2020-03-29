@@ -30,7 +30,7 @@
 				</tbody>
 			</table>
 		</div>
-		<footer th:replace="fragments/pagination"/>
+		<div th:replace="fragments/pagination"/>
 	</div>
 	<div class="container" th:if="${#lists.isEmpty(resultsList)}">
 		<h2 class="text-center mt-5" th:text="#{result.list.empty}">No results to show</h2>

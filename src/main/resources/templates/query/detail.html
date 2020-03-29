@@ -16,7 +16,7 @@
 		<h3 th:if="${canModify}">Opciones</h3>
 		<a class="btn btn-primary" th:if="${canModify}" th:href="${'/query/edit/' + query.id}" th:text="#{edit}">Editar</a>
 		<a class="btn btn-danger" th:if="${canModify}" th:href="${'/query/delete/' + query.id}" th:text="#{delete}">Eliminar</a>
-		<h3 th:if="${canModify && !query.publicForAll}">Editar quien puede verla</h3>
+		<h3 th:if="${canModify && !query.publicForAll}" th:text="#{query.detail.edit}">Editar quien puede verla</h3>
 		<ul th:each="user : ${query.publicTo}">
 			<li>
 				<span th:text="${user.email}"></span>

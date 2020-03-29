@@ -9,9 +9,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import es.uniovi.entities.Problem;
 import es.uniovi.entities.Program;
 import es.uniovi.entities.Result;
 import es.uniovi.entities.User;
+import es.uniovi.repositories.ProblemsRepository;
 import es.uniovi.repositories.ResultsRepository;
 
 @Service
@@ -21,6 +23,9 @@ public class ResultService {
 	
 	@Autowired
 	private ResultsRepository resultsRepository;
+	
+	@Autowired
+	private ProblemsRepository problemsRepository;
 	
 	public List<Result> getResultsByUser(User user) {
 		return resultsRepository.findAllByUser(user);
@@ -46,6 +51,10 @@ public class ResultService {
 
 	public Page<Result> listByProgram(Pageable pageable, Program program) {
 		return resultsRepository.findAllByProgram(pageable, program);
+	}
+	
+	public Page<Problem> getProblemsForResult(Pageable pageable, Result result) {
+		return problemsRepository.findAllByResult(pageable, result);
 	}
 	
 }

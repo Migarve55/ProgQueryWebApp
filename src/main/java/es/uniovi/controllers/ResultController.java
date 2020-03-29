@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import es.uniovi.analyzer.tasks.AnalyzerTask;
+import es.uniovi.entities.Problem;
 import es.uniovi.entities.Program;
 import es.uniovi.entities.Result;
 import es.uniovi.entities.User;
@@ -38,7 +40,7 @@ public class ResultController {
 	private AnalyzerService analyzerService;
 	
 	@RequestMapping("/result/list")
-	public String list(Model model, Principal principal, Pageable pageable) {
+	public String list(Model model, Principal principal, @PageableDefault(value = 10) Pageable pageable) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		Page<Result> results = resultService.getResultsByUser(pageable, user);
@@ -97,7 +99,7 @@ public class ResultController {
 	}
  	
 	@RequestMapping("/result/{id}")
-	public String detail(Model model, @PathVariable Long id, Principal principal, RedirectAttributes redirect) {
+	public String detail(Model model, @PathVariable Long id, Principal principal, RedirectAttributes redirect, @PageableDefault(value = 20) Pageable pageable) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		Result result = resultService.getResult(id);
@@ -108,7 +110,9 @@ public class ResultController {
 		if (!result.getProgram().getUser().equals(user)) {
 			return "redirect:/";
 		}
-		model.addAttribute("problems", result.getProblems());
+		Page<Problem> problems = resultService.getProblemsForResult(pageable, result);
+		model.addAttribute("page", problems);
+		model.addAttribute("problems", problems.getContent());
 		model.addAttribute("timestamp", result.getTimestamp());
 		return "result/detail";
 	}

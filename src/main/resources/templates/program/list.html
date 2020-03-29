@@ -29,7 +29,7 @@
 				</tbody>
 			</table>
 		</div>
-		<footer th:replace="fragments/pagination"/>
+		<div th:replace="fragments/pagination"/>
 	</div>
 	<div class="container" th:if="${#lists.isEmpty(programsList)}">
 		<h2 class="text-center mt-5" th:text="#{program.list.empty}">No programs to show</h2>

@@ -33,6 +33,7 @@
 					</tr>
 				</tbody>
 			</table>
+			<div th:replace="fragments/pagination"/>
 		</div>
 	</div>
 	<div class="container" th:if="${#lists.isEmpty(problems)}">
