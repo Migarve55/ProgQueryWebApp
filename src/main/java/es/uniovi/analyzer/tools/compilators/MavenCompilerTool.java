@@ -56,11 +56,9 @@ public class MavenCompilerTool extends AbstractCompiler {
 	private void compileUsingMavenAPI(String basePath) throws CompilerException {
 		File folder = new File(basePath);
 		Invoker newInvoker = new DefaultInvoker();
-		if (System.getenv("SHOW_COMPILE_OUTPUT") != null) {
-			if (!System.getenv("SHOW_COMPILE_OUTPUT").toLowerCase().equals("yes"))
-				newInvoker.setOutputHandler(null);
-		} else
+		if (System.getenv("HIDE_COMPILER_OUTPUT") != null) {
 			newInvoker.setOutputHandler(null);
+		} 
 		//Configure request 
 		InvocationRequest request = new DefaultInvocationRequest();
 	    request.setBaseDirectory(folder);

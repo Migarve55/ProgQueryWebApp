@@ -33,11 +33,11 @@ RUN chmod +x /opt/webApp/wait-for
 COPY plugin/ProgQuery.zip /opt/webApp/plugin/ProgQuery.zip
 RUN unzip /opt/webApp/plugin/ProgQuery.zip -d /opt/webApp/plugin/
 RUN rm -f /opt/webApp/plugin/ProgQuery.zip
-RUN chown -R app:app /opt/webApp/
-USER app:app
 RUN mvn install:install-file -DcreateChecksum=true -Dpackaging=jar -Dfile=/opt/webApp/plugin/ProgQuery.jar -DgroupId=es.uniovi.progQuery -DartifactId=progQuery -Dversion=0.0.1-SNAPSHOT -DgeneratePom=true
+RUN chown -R app:app /opt/webApp/
 
 # Run
 
+USER app:app
 WORKDIR /opt/webApp/
 ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
