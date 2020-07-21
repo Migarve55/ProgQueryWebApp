@@ -20,7 +20,6 @@ RUN apk add --no-cache java-openjfx-8.151.12-r0.apk
 
 RUN addgroup -S app 
 RUN adduser -S app -G app --disabled-password
-USER app:app
 
 # Install progQuery webApp
 
@@ -44,5 +43,7 @@ RUN mvn install:install-file -DcreateChecksum=true -Dpackaging=jar -Dfile=/opt/w
 
 # Run
 
+RUN chown -R app:app /opt/webApp
+USER app:app
 WORKDIR /opt/webApp/
 ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
