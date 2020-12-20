@@ -16,8 +16,8 @@ public class FileAnalyzerCallable extends AbstractAnalyzerCallable {
 	private InputStream fileIs;
 	private String fileName;
 
-	public FileAnalyzerCallable(String args, String database, String fileName, InputStream fileIs) {
-		super(args, database);
+	public FileAnalyzerCallable(String args, String fileName, InputStream fileIs) {
+		super(args);
 		this.fileName = fileName;
 		this.fileIs = fileIs;
 	}
@@ -38,7 +38,7 @@ public class FileAnalyzerCallable extends AbstractAnalyzerCallable {
 	@Override
 	protected void compile() throws CompilerException {
 		nextStep(String.format("Compiling %s...", fileName), 25);
-		compiler.compileFile(basePath, programID, database, fileName, args);
+		compiler.compileFile(basePath, programID, fileName, args);
 	}
 
 }

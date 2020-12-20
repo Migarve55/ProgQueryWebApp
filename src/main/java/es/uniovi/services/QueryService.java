@@ -2,6 +2,7 @@ package es.uniovi.services;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,12 @@ public class QueryService {
 	
 	public List<Query> getAvailableQueriesForUser(User user) {
 		return queriesRepository.findAvailableQueriesForUser(user);
+	}
+	
+	public Optional<Query> getQueriesFromUserByName(User user, String queryName) {
+		return getAvailableQueriesForUser(user).stream()
+				.filter(q -> q.getName().equals(queryName))
+				.findFirst();
 	}
 	
 	public void saveQuery(Query query) {

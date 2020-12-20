@@ -9,7 +9,7 @@
   			<h1 class="display-4" th:text="#{analyzer.zip.title}">Upload</h1>
  			 <p class="lead" th:text="#{analyzer.zip.title.msg}">Please upload the zip file</p>
 		</div>
-		<form method="POST" action="/analyzer/zip" enctype="multipart/form-data">
+		<form class="wb-cont" method="POST" action="/analyzer/zip" enctype="multipart/form-data">
 			<div class="form-group">
 				<label for="zip" th:text="#{analyzer.zip.msg}">Zip file:</label>
 				<input class="form-control" type="file" name="zip" accept=".zip" required/>

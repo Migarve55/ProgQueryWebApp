@@ -8,22 +8,20 @@ public interface CompilerTool {
 	 * Compiles a single file
 	 * @param basePath to the folder
 	 * @param programID of the program to compile
-	 * @param database used to dump the program
 	 * @param filename of the file to compile
 	 * @param arguments for the java compiler
 	 * @throws CompilerException
 	 */
-	public void compileFile(String basePath, String programID, String database, String filename, String arguments) throws CompilerException;
+	public void compileFile(String basePath, String programID, String filename, String arguments) throws CompilerException;
 	
 	/**
 	 * Compiles a project inside the folder
 	 * @param basePath to the folder
 	 * @param programID of the program to compile
-	 * @param database used to dump the program
 	 * @param arguments for the java compiler
 	 *
 	 * @throws CompilerException 
 	 */
-	public void compileFolder(String basePath, String programID, String database, String arguments) throws CompilerException;
+	public void compileFolder(String basePath, String programID, String arguments) throws CompilerException;
 	
 }

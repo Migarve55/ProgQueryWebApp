@@ -6,7 +6,7 @@
 	<nav th:replace="fragments/nav" />
 	<div class="container mt-3">
 		<h2 th:text="#{query.edit.title} + ' ' + ${query.name}">Editar consulta</h2>
-		<form class="form-horizontal" method="post" th:action="${'/query/edit/' + query.id}" th:object="${query}">
+		<form class="form-horizontal wb-cont" method="post" th:action="${'/query/edit/' + query.id}" th:object="${query}">
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="description" th:text="#{description}">Descripción:</label>
 				<div class="col-sm-10">

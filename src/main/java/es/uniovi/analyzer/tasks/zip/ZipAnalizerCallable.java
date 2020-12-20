@@ -12,8 +12,8 @@ public class ZipAnalizerCallable extends AbstractAnalyzerCallable {
 
 	private InputStream fileIs;
 
-	public ZipAnalizerCallable(String args, String database, InputStream fileIs) {
-		super(args, database);
+	public ZipAnalizerCallable(String args, InputStream fileIs) {
+		super(args);
 		this.fileIs = fileIs;
 	}
 
@@ -32,7 +32,7 @@ public class ZipAnalizerCallable extends AbstractAnalyzerCallable {
 	@Override
 	protected void compile() throws CompilerException {
 		super.compile();
-		compiler.compileFolder(basePath, programID, database, args);
+		compiler.compileFolder(basePath, programID, args);
 	}
 
 }

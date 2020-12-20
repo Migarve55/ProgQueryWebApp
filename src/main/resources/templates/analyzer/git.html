@@ -9,7 +9,7 @@
   			<h1 class="display-4" th:text="#{analyzer.git.title}">Upload</h1>
  			 <p class="lead" th:text="#{analyzer.git.title.msg}">Please select a GitHub repo</p>
 		</div>
-		<form method="POST" action="/analyzer/git">
+		<form class="wb-cont" method="POST" action="/analyzer/git">
 			<div class="form-group">
 				<label for="url" th:text="#{analyzer.git.msg}">GitHub repository URL:</label>
 				<input class="form-control" name="url" required/>

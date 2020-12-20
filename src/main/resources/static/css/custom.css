@@ -4,10 +4,29 @@ body {
 	background: radial-gradient(circle, rgba(43,43,43,1) 0%, rgba(237,234,234,1) 0%, rgba(155,237,254,1) 100%);
 }
 
-form {
+.wb-cont {
 	background: white;
-	padding: 1.3em;
+	padding: 1.2em;
 	border-radius: 1em;
+}
+
+.analysisTitle {
+	text-transform: uppercase;
+	background: #343a40;
+	color: white;
+	margin: 0px;
+	padding: 0.8em;
+	font-size: 1.2em;
+}
+
+.programAnalyzerContainer span {
+	display: block;
+	margin-top: 0.5em;
+	margin-bottom: 0.5em; 
+}
+
+.textAreaAnalyzer {
+	height: 20em !important; 
 }
 
 .form-hor {
@@ -88,4 +107,14 @@ td.description {
 
 .outdated {
 	background: lightgray;
+}
+
+.resultHeader {
+	padding: 1.2em;
+	background: orange;
+}
+
+.pTitle {
+	font-weight: bolder;
+	margin-right: 1em;
 }

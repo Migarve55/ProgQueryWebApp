@@ -14,10 +14,12 @@
 			</div>
 		</li>
 		<!-- Programs --> 
-		<li id="programs-menu" class="active" sec:authorize="isAuthenticated()">
-			<a  class="nav-link" href="/program/list" th:text="#{nav.program}">
-				Programs
-			</a>
+		<li id="programs-menu" class="dropdown" sec:authorize="isAuthenticated()" ><a class="nav-link dropdown-toggle" 
+			th:text="#{nav.program}" data-toggle="dropdown" href="#">Programas</a>
+			<div class="dropdown-menu">
+				<a class="dropdown-item" href="/program/list" th:text="#{nav.program.list}">Listar</a>
+				<a class="dropdown-item" href="/program/playground" th:text="#{nav.program.analyze}">Analizar</a>
+			</div>
 		</li>
 		<!-- Results -->
 		<li id="results-menu" class="dropdown" sec:authorize="isAuthenticated()" ><a class="nav-link dropdown-toggle" 

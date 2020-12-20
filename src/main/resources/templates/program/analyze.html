@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head th:replace="fragments/head" />
@@ -8,7 +9,7 @@
 		<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
   			<h1 class="display-4 title" th:text="${program.name}">...</h1>
 		</div>
-		<form method="POST" th:action="${'/program/analyze/' + program.id}">
+		<form class="wb-cont" method="POST" th:action="${'/program/analyze/' + program.id}">
 			<div class="form-group">
 				<label for="queries"  th:text="#{analyzer.queries.title}">Queries to run:</label>
 				<div class="container mt-1 mb-1">

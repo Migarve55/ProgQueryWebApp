@@ -34,15 +34,15 @@ public class MavenCompilerTool extends AbstractCompiler {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Override
-	public void compileFile(String basePath, String programID, String database, String filename, String arguments) throws CompilerException {
+	public void compileFile(String basePath, String programID, String filename, String arguments) throws CompilerException {
 		throw new CompilerException();
 	}
 	 
 	@Override
-	public void compileFolder(String basePath, String programID, String database, String extraArgs) throws CompilerException {
+	public void compileFolder(String basePath, String programID, String extraArgs) throws CompilerException {
 	    //Configure model
 	    try {
-			configurePOMFIle(new File(basePath + "pom.xml"), basePath, programID, database, extraArgs);
+			configurePOMFIle(new File(basePath + "pom.xml"), basePath, programID, extraArgs);
 		} catch (CompilerException e) {
 			e.printStackTrace();
 			throw e;
@@ -64,6 +64,7 @@ public class MavenCompilerTool extends AbstractCompiler {
 	    request.setBaseDirectory(folder);
 	    request.setBatchMode(true);
 	    request.setGoals( PUBLISH_GOALS );
+	    request.setDebug(true);
 		InvocationResult result = null;
 		try {
 			result = newInvoker.execute( request );
@@ -76,13 +77,13 @@ public class MavenCompilerTool extends AbstractCompiler {
 	    }
 	}
 	
-	private void configurePOMFIle(File pom, String basepath, String programID, String database, String extraArgs) throws CompilerException {
+	private void configurePOMFIle(File pom, String basepath, String programID, String extraArgs) throws CompilerException {
 		Model model = null;
 		//Read model
 		try (FileReader fr = new FileReader(pom)) {
 			MavenXpp3Reader reader = new MavenXpp3Reader();
 			model = reader.read(fr);
-			modifyCompilerArgs(model, basepath, programID, database, extraArgs);
+			modifyCompilerArgs(model, basepath, programID, extraArgs);
 			addDependencies(model);
 			//addRepo(model);
 		} catch (FileNotFoundException e) {
@@ -112,7 +113,7 @@ public class MavenCompilerTool extends AbstractCompiler {
 		model.addDependency(pluginDependency);
 	}
 	
-	private void modifyCompilerArgs(Model model, String basepath, String programID, String database, String extraArgs) throws CompilerException {
+	private void modifyCompilerArgs(Model model, String basepath, String programID, String extraArgs) throws CompilerException {
 		Plugin plugin = model.getBuild().getPluginsAsMap()
 			.get("org.apache.maven.plugins:maven-compiler-plugin");
 		if (plugin == null) {
@@ -133,7 +134,7 @@ public class MavenCompilerTool extends AbstractCompiler {
 			configuration.addChild(compArgs);
 		}
 		//Xplugin argument
-		addArg(compArgs, getPluginArg(programID, database));
+		addArg(compArgs, getPluginArg(programID));
 		plugin.setConfiguration(configuration);
 		//Extra arguments
 		if (!extraArgs.trim().isEmpty()) {

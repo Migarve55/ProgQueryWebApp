@@ -8,7 +8,7 @@
 		<div class="alert alert-danger" role="alert" th:if="${param.error}">
  			<span th:text="#{error.login}"></span>
 		</div>
-		<form class="form-horizontal" method="post" action="/login">
+		<form class="form-horizontal wb-cont" method="post" action="/login">
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="username" th:text="#{login.email}">Email:</label>
 				<div class="col-sm-10">

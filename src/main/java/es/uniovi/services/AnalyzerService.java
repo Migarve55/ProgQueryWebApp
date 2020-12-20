@@ -101,8 +101,7 @@ public class AnalyzerService {
 	 * @throws IOException if the java file could not be saved
 	 */
 	public void analyzeFile(User user, MultipartFile file, String args, String[] queries) throws IOException {
-		String database = getDatabaseFromUser(user);
-		launchAnalyzerTask(user, file.getOriginalFilename(), "java", new FileAnalyzerCallable(args, database, file.getOriginalFilename(), file.getInputStream()), queries);
+		launchAnalyzerTask(user, file.getOriginalFilename(), "java", new FileAnalyzerCallable(args, file.getOriginalFilename(), file.getInputStream()), queries);
 	}
 	
 	/**
@@ -115,8 +114,7 @@ public class AnalyzerService {
 	 * @throws IOException if the zip file could not be saved
 	 */
 	public void analyzeZip(User user, MultipartFile zip, String compOp, String args, String[] queries) throws IOException {
-		String database = getDatabaseFromUser(user);
-		launchAnalyzerTask(user, zip.getOriginalFilename(), compOp, new ZipAnalizerCallable(args, database, zip.getInputStream()), queries);
+		launchAnalyzerTask(user, zip.getOriginalFilename(), compOp, new ZipAnalizerCallable(args, zip.getInputStream()), queries);
 	}
 
 	/**
@@ -128,8 +126,7 @@ public class AnalyzerService {
 	 * @param queries
 	 */
 	public void analyzeGitRepo(User user, String repoUrl, String compOp, String args, String[] queries) {
-		String database = getDatabaseFromUser(user);
-		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(args, database, repoUrl), queries);
+		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(args, repoUrl), queries);
 	}
 	
 	/**
@@ -141,8 +138,27 @@ public class AnalyzerService {
 	 */
 	public void uploadGitRepo(User user, String repoUrl, String compOp, String args) {
 		String[] queries = new String[0]; //Empty array with no queries
-		String database = getDatabaseFromUser(user);
-		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(args, database, repoUrl), queries);
+		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(args, repoUrl), queries);
+	}
+	
+	/**
+	 * 
+	 * @param user
+	 * @param queryText
+	 * @param program
+	 */
+	public void analyzeProgramWithQueryText(User user, String queryText, Program program) {
+		
+	}
+	
+	/**
+	 * 
+	 * @param user
+	 * @param queryText
+	 * @param programSource
+	 */
+	public void analyzeSourceWithQueryText(User user, String queryText, String programSource) {
+		
 	}
 	
 	/**
@@ -152,8 +168,7 @@ public class AnalyzerService {
 	 * @param queries 
 	 */
 	public void analyzeProgram(User user, Program program, String[] queries) {
-		String database = getDatabaseFromUser(user);
-		AbstractAnalyzerCallable callable = new ProgramAnalyzerCallable(database, program.getProgramIdentifier());
+		AbstractAnalyzerCallable callable = new ProgramAnalyzerCallable(program.getProgramIdentifier());
 		List<Query> queriesList = getQueries(queries, user);
 		callable.setQueries(toQueryDto(queriesList));
 		AnalyzerTask oldTask = getCurrentTask(user);
@@ -169,10 +184,6 @@ public class AnalyzerService {
 		executor.execute(task);
 		setCurrentTask(user, task);
 		logger.info("User {} started program {} analysis", user.getEmail(), program.getProgramIdentifier());
-	}
-	
-	private String getDatabaseFromUser(User user) {
-		return "DB" + user.getId();
 	}
 	
 	/**

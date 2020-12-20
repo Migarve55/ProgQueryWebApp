@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="fragments/head" />
+<body>
+	<nav th:replace="fragments/nav" />
+	<div class="container">
+		<div class="mx-auto my-4 wb-cont programAnalyzerContainer">
+			<div class="alert alert-danger" role="alert" th:if=${error} th:text=#{${error}}></div>
+  			<div class="row">
+  				<div class="col-md-6">
+  					<h2 class="analysisTitle">Program</h2>
+  					<span>Search a Java program: </span>
+  					<div class="input-group">
+					    <input form="getProgramForm" type="text" class="form-control" placeholder="Search" name="programName">
+					    <div class="input-group-append">
+					    	<div class="input-group-text"><i class="fa fa-search"></i></div>
+						</div>
+					</div>
+  					<span>Or enter its source code: </span>
+  					<div class="form-group">
+  						<textarea form="analyzeForm" class="form-control textAreaAnalyzer" name="pgSource" spellcheck="false"></textarea>
+  					</div>
+  				</div>
+  				<div class="col-md-6">
+  					<h2 class="analysisTitle">Query</h2>
+  					<span>Search an existing query: </span>
+  					<div class="input-group">
+					    <input form="getQueryForm" type="text" class="form-control" placeholder="Search" name="queryName">
+					    <div class="input-group-append">
+					    	<div class="input-group-text"><i class="fa fa-search"></i></div>
+						</div>
+					</div>
+  					<span>Or enter its Cypher code: </span>
+  					<div class="form-group">
+  						<textarea form="analyzeForm" class="form-control textAreaAnalyzer" name="qrText" spellcheck="false" th:text="${queryText}"></textarea>
+  					</div>
+  				</div>
+  			</div>
+  			<input form="analyzeForm" class="form-control btn btn-primary" type="submit" value="Upload" th:value="#{analyzer.submit}"/>
+  			<span>Result:</span>
+  			<div class="form-group">
+  				<textarea disabled class="form-control" spellcheck="false" cols="2"></textarea>
+  			</div>
+		</div>
+	</div>
+	<form id="analyzeForm" method="POST" th:action="${'/program/playground'}"></form>
+	<form id="getQueryForm" method="GET" th:action="${'/program/playground'}"></form>
+	<form id="getProgramForm" method="POST" th:action="${'/program/analyze/'}"></form>
+	<footer th:replace="fragments/footer" />
+</body>
+</html>

@@ -13,8 +13,8 @@ public class GithubCodeAnalyzerCallable extends AbstractAnalyzerCallable {
 
 	private String url;
 	
-	public GithubCodeAnalyzerCallable(String args, String database, String url) {
-		super(args, database);
+	public GithubCodeAnalyzerCallable(String args, String url) {
+		super(args);
 		this.url = url;
 	}
 	
@@ -40,7 +40,7 @@ public class GithubCodeAnalyzerCallable extends AbstractAnalyzerCallable {
 	@Override
 	protected void compile() throws CompilerException {
 		super.compile();
-		compiler.compileFolder(basePath, programID, database, args);
+		compiler.compileFolder(basePath, programID, args);
 	}
 	
 }

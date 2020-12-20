@@ -1,6 +1,7 @@
 package es.uniovi.controllers;
 
 import java.security.Principal;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import es.uniovi.analyzer.tasks.AnalyzerTask;
 import es.uniovi.entities.Program;
+import es.uniovi.entities.Query;
 import es.uniovi.entities.Result;
 import es.uniovi.entities.User;
 import es.uniovi.services.AnalyzerService;
@@ -78,6 +80,31 @@ public class ProgramController {
 			return "redirect:/program/list";
 		if (isTaskDone(user))
 			analyzerService.analyzeProgram(user, program, queries);
+		return "redirect:/analyzer/loading";
+	}
+
+	@RequestMapping(path = "/program/playground", method = RequestMethod.GET)
+	public String getPlaygroundAnalyze(Principal principal, Model model, @RequestParam(required = false) String queryName, @RequestParam(required = false) String programName) {
+		String email = principal.getName();
+		User user = usersService.getUserByEmail(email);
+		// Cargar consulta
+		model.addAttribute("queryText", "");
+		if (queryName != null) {
+			Optional<Query> query = queryService.getQueriesFromUserByName(user, queryName);
+			if (query.isPresent()) {
+				model.addAttribute("queryText", query.get().getQueryText());
+			} else { // No ha sido encontrada
+				model.addAttribute("error", "program.playground.queryNotFound");
+			}
+		}
+		return "program/playground";
+	}
+	
+	@RequestMapping(path = "/program/playground", method = RequestMethod.POST)
+	public String postPlaygroundAnalyze(Model model, Principal principal, @RequestParam("qrText") String queryText, @RequestParam("pgSource") String programSource) {
+		String email = principal.getName();
+		User user = usersService.getUserByEmail(email);
+		analyzerService.analyzeSourceWithQueryText(user, queryText, programSource);
 		return "redirect:/analyzer/loading";
 	}
 	

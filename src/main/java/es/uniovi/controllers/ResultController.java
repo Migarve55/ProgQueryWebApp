@@ -44,8 +44,11 @@ public class ResultController {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		Page<Result> results = resultService.getResultsByUser(pageable, user);
+		// Change results list to adjust problems max size
+		int maxSize = 5;
 		model.addAttribute("resultsList", results.getContent());
 		model.addAttribute("page", results);
+		model.addAttribute("maxSize", maxSize);
 		return "result/list";
 	}
 	

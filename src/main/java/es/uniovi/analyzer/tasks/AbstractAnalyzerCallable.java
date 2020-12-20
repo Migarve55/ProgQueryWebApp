@@ -19,7 +19,6 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 	
 	protected String args;
 	protected String basePath;
-	protected String database;
 	protected String programID;
 	protected AnalyzerTask task;
 	protected CompilerTool compiler;
@@ -27,9 +26,8 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 	
 	private Consumer<List<ProblemDto>> callback;
 
-	public AbstractAnalyzerCallable(String args, String database) {
+	public AbstractAnalyzerCallable(String args) {
 		this.args = args;
-		this.database = database;
 		this.programID = UUID.randomUUID().toString();
 	}
 
@@ -78,7 +76,7 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 			nextStep("Creating report", 25);
 			result.addAll(
 				ToolFactory
-				.getReportTool(System.getProperty("neo4j.url"), database, programID, queries)
+				.getReportTool(System.getProperty("neo4j.url"), programID, queries)
 				.generateReport()
 			);
 		} else {

@@ -3,8 +3,10 @@
 <head th:replace="fragments/head" />
 <body>
 	<nav th:replace="fragments/nav" />
-	<div class="container mt-3">
+	<div class="container mt-3 wb-cont">
+	
 		<h2 th:text="#{query.detail.title}">Detalle de la consulta</h2>
+		
 		<h3 th:text="${query.name}"></h3>
 		<h4 th:text="#{description}">Descripción:</h4>
 		<section th:text="${query.description}"></section>

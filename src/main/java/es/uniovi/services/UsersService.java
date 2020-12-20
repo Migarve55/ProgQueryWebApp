@@ -42,8 +42,7 @@ public class UsersService {
 			if (user.getPassword() != null)
 				user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 			User newUser = usersRepository.save(user);
-			neo4jFacade.addDataBase("DB" + newUser.getId());
-			logger.info("User {} has been added", user.getEmail());
+			logger.info("User {} has been added", newUser.getEmail());
 		}
 	}
 	
@@ -74,7 +73,6 @@ public class UsersService {
 	@Transactional
 	public void deleteUser(Long id) {
 		try (Neo4jFacade neo4jFacade = new Neo4jFacade(System.getProperty("neo4j.url"))) {
-			neo4jFacade.removeDataBase("DB" + id);
 			usersRepository.deleteById(id);
 			logger.info("User with id {} has been deleted", id);
 		}

@@ -2,11 +2,10 @@
 <html lang="en">
 <head th:replace="fragments/head" />
 <body>
-	<!-- Barra de Navegación superior -->
 	<nav th:replace="fragments/nav" />
 	<div class="container mt-3">
 		<h2 th:text="#{query.add.title}">Agregar consulta</h2>
-		<form class="form-horizontal" method="post" action="/query/add" th:object="${query}">
+		<form class="form-horizontal wb-cont" method="post" action="/query/add" th:object="${query}">
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="name" th:text="#{name}">Nombre:</label>
 				<div class="col-sm-10">

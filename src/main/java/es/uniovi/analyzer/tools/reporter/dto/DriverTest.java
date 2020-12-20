@@ -3,32 +3,29 @@ package es.uniovi.analyzer.tools.reporter.dto;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.neo4j.driver.AuthTokens;
-import org.neo4j.driver.Driver;
-import org.neo4j.driver.GraphDatabase;
-import org.neo4j.driver.Result;
-import org.neo4j.driver.Session;
-import org.neo4j.driver.SessionConfig;
+import org.neo4j.driver.v1.AuthTokens;
+import org.neo4j.driver.v1.Driver;
+import org.neo4j.driver.v1.GraphDatabase;
+import org.neo4j.driver.v1.Session;
+import org.neo4j.driver.v1.StatementResult;
+
 
 public class DriverTest {
 
 	public static void main(String[] args) {
 		Driver driver = GraphDatabase.driver( "bolt://localhost:7687", AuthTokens.basic( "neo4j", "s3cr3t0." ) );
-	
-		
-		String database = "system";
 		String query = "CREATE DATABASE $param";
 		
-		try ( Session session = driver.session( SessionConfig.builder().withDatabase(database).build() ) )
+		try ( Session session = driver.session() )
         {
             Map<String, Object> params = new HashMap<>();
             params.put("param", "test");
-            Result result = session.run(query, params);
+            StatementResult result = session.run(query, params);
             printResult(result);
         }
 	}
 	
-	private static void printResult(Result result) {
+	private static void printResult(StatementResult result) {
 		result.forEachRemaining((record) -> {
 			StringBuilder sb = new StringBuilder();
 			record.fields().forEach((field) -> { 

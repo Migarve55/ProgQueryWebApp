@@ -24,10 +24,10 @@ public class JavaCompilerTool extends AbstractCompiler {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Override
-	public void compileFile(String basePath, String programID, String database, String filename, String arguments) throws CompilerException {
+	public void compileFile(String basePath, String programID, String filename, String arguments) throws CompilerException {
 		JavaCompiler compiler = getCompiler();
 		// Basic config
-		List<String> args = basicArgs(basePath, programID, database);
+		List<String> args = basicArgs(basePath, programID);
 		// Extra arguments
 		if (arguments != null)
 			addArgumentsFromString(args, arguments);
@@ -38,10 +38,10 @@ public class JavaCompilerTool extends AbstractCompiler {
 	}
 
 	@Override
-	public void compileFolder(String basePath, String programID, String database, String arguments) throws CompilerException {
+	public void compileFolder(String basePath, String programID, String arguments) throws CompilerException {
 		JavaCompiler compiler = getCompiler();
 		// Basic config
-		List<String> args = basicArgs(basePath, programID, database);
+		List<String> args = basicArgs(basePath, programID);
 		// Extra arguments
 		if (arguments != null)
 			addArgumentsFromString(args, arguments);
@@ -96,12 +96,12 @@ public class JavaCompilerTool extends AbstractCompiler {
 		return compiler;
 	}
 
-	private List<String> basicArgs(String basePath, String programID, String database) {
+	private List<String> basicArgs(String basePath, String programID) {
 		return new ArrayList<>(
 				Arrays.asList(
 						"-cp", System.getenv("PLUGIN_CLASSPATH"),
 						"-encoding", ENCODING,
-						String.format(getPluginArg(programID, database), programID, System.getProperty("neo4j.url")), 
+						String.format(getPluginArg(programID), programID, System.getProperty("neo4j.url")), 
 						"-d", basePath, "-nowarn", "-g:none", "-Xlint:none"));
 	}
 
