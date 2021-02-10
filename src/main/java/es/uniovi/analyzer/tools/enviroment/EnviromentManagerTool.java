@@ -1,6 +1,8 @@
 package es.uniovi.analyzer.tools.enviroment;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -30,6 +32,20 @@ public class EnviromentManagerTool {
 	
 	/**
 	 * 
+	 * @param filePath
+	 * @param source
+	 * @throws IOException 
+	 */
+	public void createSourceFile(String filePath, String source) throws EnviromentException {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));) {
+			writer.write(source);
+		} catch (IOException ioe) {
+			throw new EnviromentException("error.enviroment.create");
+		}
+	}
+	
+	/**
+	 * Deletes the enviroment in a folder
 	 * @param basePath
 	 * @throws IOException 
 	 */

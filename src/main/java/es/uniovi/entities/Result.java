@@ -65,5 +65,13 @@ public class Result {
 	public void setProgram(Program program) {
 		this.program = program;
 	}
+
+	public String getTextSummary() {
+		StringBuilder sb = new StringBuilder();
+		for (Problem p : problems) {
+			sb.append(p.getTextSummary() + "\n");
+		}
+		return sb.toString();
+	}
 	
 }

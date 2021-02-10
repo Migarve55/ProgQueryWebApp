@@ -87,5 +87,9 @@ public class Program {
 	public void setResults(Set<Result> results) {
 		this.results = results;
 	}
+	
+	public String getDisplayName() {
+		return String.format("%s (%s)", this.name, this.timestamp);
+	}
 
 }

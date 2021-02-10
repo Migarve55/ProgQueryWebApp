@@ -4,18 +4,64 @@
 <body>
 	<!-- Barra de Navegación superior -->
 	<nav th:replace="fragments/nav" />
-	<div class="container mt-2" >
-		<h1 class="title" th:text="${program.name}"></h1>
-		<h2 th:text="#{result.list.title}">Resultados</h2>
-		<div class="table-responsive" th:if="${not #lists.isEmpty(resultsList)}">
-			<table th:replace="result/list :: tableResults"></table>
+	<div class="container mt-2" th:if="not ${#lists.isEmpty(resultsList)}">
+		<h2> 
+			<span th:text="#{program.detail.title}"></span> 
+			<span th:text="${program.name}"></span>
+		</h2>	
+		<div class="wb-cont mt-2 mb-2">
+			<div th:each="result : ${resultsList}">
+				<div class="resultHeader">
+					<span class="pTitle" th:text="#{result.list.pTitle}">Programa: </span>
+					<a th:href="${'/result/' + result.id}">
+						<span th:text="${result.program.name}"></span>
+						<span>(</span>
+						<span th:text="${result.timestamp}"></span>
+						<span>)</span>
+					</a>
+					<button type="button" class="btn btn-danger btnDelete" data-toggle="modal" data-target="#deleteModal" data-type="result" th:data-id="${result.id}" th:text="#{delete}">Borrar</button>
+				</div>
+				<div class="table-responsive" th:if="${not #lists.isEmpty(result.problems)}">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th th:text="#{result.detail.msg}">Message</th>
+								<th th:text="#{result.detail.description}">Description</th>
+							</tr>
+						</thead>
+						<tbody>
+							<th:block th:each="error,iter : ${result.problems}">
+								<tr th:if="${ iter.index <= maxSize - 1 }">
+									<td th:if="${error.msg}" th:text="${error.msg}">
+										<span th:text="${error.msg}"></span>
+									</td>
+									<td th:unless="${error.msg}">
+										<span th:text="#{result.detail.noMsg}"></span>
+									</td>
+									<td th:if="${error.query}">
+										<a th:text="${error.query.description}" th:href="${'/query/detail/' + error.query.id}"></a>
+									</td>
+									<td th:unless="${error.query}" th:text="#{result.detail.userDeletedQuery}"></td>
+								</tr>
+							</th:block>
+						</tbody>
+					</table>
+					<div th:if="${#lists.size(result.problems) > maxSize}" th:text="#{result.detail.full}" class="text-center m-2">No se han mostrado todo los resultados, entre en el detalle para mostrarlos todos</div>
+				</div>
+				<div class="container" th:if="${#lists.isEmpty(result.problems)}">
+					<div class="text-center m-2" th:text="#{result.detail.empty}">No errors to show</div>
+				</div>
+			</div>
 		</div>
-		<div class="container" th:if="${#lists.isEmpty(resultsList)}">
-			<h2 class="text-center mt-5" th:text="#{result.list.empty}">No results to show</h2>
-		</div>
-		<a class="btn btn-primary" th:href="${'/program/analyze/' + program.id}" th:text="#{analyze}">Analyze</a>
-		<a class="btn btn-danger" th:href="${'/program/delete/' + program.id}" th:text="#{delete}">Delete</a>
+		<div th:replace="fragments/pagination"/>
 	</div>
+	
+	<div class="container" th:if="${#lists.isEmpty(resultsList)}">
+		<h2 class="text-center mt-5" th:text="#{result.list.empty}">No results to show</h2>
+	</div>
+	
+	<div th:replace="fragments/deleteDialog"/>
+	
 	<footer th:replace="fragments/footer" />
 </body>
 </html>

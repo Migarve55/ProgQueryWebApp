@@ -5,20 +5,20 @@
 			<img src="/img/favicon-32x32.png" width="32" height="32" class="d-inline-block align-top" alt="logo">
 			<span th:text="#{nav.title}">Home</span>
 		</a>
-		<!-- Queries -->
-		<li id="queries-menu" class="dropdown" sec:authorize="isAuthenticated()" ><a class="nav-link dropdown-toggle" 
-			th:text="#{nav.query.title}" data-toggle="dropdown" href="#"> Gestión de consultas</a>
-			<div class="dropdown-menu">
-				<a class="dropdown-item" href="/query/add" th:text="#{nav.query.add}">Crear consulta</a>
-				<a class="dropdown-item" href="/query/list" th:text="#{nav.query.list}">Mis consultas</a>
-			</div>
-		</li>
 		<!-- Programs --> 
 		<li id="programs-menu" class="dropdown" sec:authorize="isAuthenticated()" ><a class="nav-link dropdown-toggle" 
 			th:text="#{nav.program}" data-toggle="dropdown" href="#">Programas</a>
 			<div class="dropdown-menu">
 				<a class="dropdown-item" href="/program/list" th:text="#{nav.program.list}">Listar</a>
 				<a class="dropdown-item" href="/program/playground" th:text="#{nav.program.analyze}">Analizar</a>
+			</div>
+		</li>
+		<!-- Analyses -->
+		<li id="queries-menu" class="dropdown" sec:authorize="isAuthenticated()" ><a class="nav-link dropdown-toggle" 
+			th:text="#{nav.query.title}" data-toggle="dropdown" href="#"> Gestión de consultas</a>
+			<div class="dropdown-menu">
+				<a class="dropdown-item" href="/query/add" th:text="#{nav.query.add}">Crear consulta</a>
+				<a class="dropdown-item" href="/query/list" th:text="#{nav.query.list}">Mis consultas</a>
 			</div>
 		</li>
 		<!-- Results -->

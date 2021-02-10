@@ -63,4 +63,8 @@ public class Problem {
 		this.result = result;
 	}
 
+	public String getTextSummary() {
+		return String.format("%s", msg);
+	}
+
 }

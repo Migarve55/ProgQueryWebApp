@@ -22,7 +22,7 @@
 							<div class="text-right pr-3">
 								<a class="btn btn-primary" th:href="${'/program/analyze/' + program.id}" th:text="#{analyze}">Analyze</a>
 								<a class="btn btn-primary" th:href="${'/program/detail/' + program.id}" th:text="#{detail}">Detail</a>
-								<a class="btn btn-danger" th:href="${'/program/delete/' + program.id}" th:text="#{delete}">Delete</a>
+								<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-type="program" th:data-id="${program.id}" th:text="#{delete}">Borrar</button>
 							</div>
 						</td>
 					</tr>
@@ -34,6 +34,7 @@
 	<div class="container" th:if="${#lists.isEmpty(programsList)}">
 		<h2 class="text-center mt-5" th:text="#{program.list.empty}">No programs to show</h2>
 	</div>
+	<div th:replace="fragments/deleteDialog"/>
 	<footer th:replace="fragments/footer" />
 </body>
 </html>

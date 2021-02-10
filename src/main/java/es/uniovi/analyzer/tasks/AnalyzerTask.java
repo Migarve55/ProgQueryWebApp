@@ -14,6 +14,8 @@ public class AnalyzerTask extends FutureTask<List<ProblemDto>> {
 
 	private AbstractAnalyzerCallable callable;
 	
+	private boolean isPlaygroundTask = false;
+	
 	public AnalyzerTask(AbstractAnalyzerCallable callable) {
 		super(callable);
 		callable.setTask(this);
@@ -39,12 +41,12 @@ public class AnalyzerTask extends FutureTask<List<ProblemDto>> {
 		return super.cancel(mayInterruptIfRunning);
 	}
 	
-	/**
-	 * 
-	 * @return true if a report has been generated. If false, just the program has been created.
-	 */
-	public boolean hasCreatedReport() {
-		return !callable.queries.isEmpty();
+	public void setAsPlaygroundTask() {
+		this.isPlaygroundTask = true;
+	}
+	
+	public boolean isPlaygroundTask() {
+		return isPlaygroundTask;
 	}
 
 	public int getProgress() {

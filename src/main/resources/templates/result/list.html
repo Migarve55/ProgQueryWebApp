@@ -17,6 +17,7 @@
 						<span th:text="${result.timestamp}"></span>
 						<span>)</span>
 					</a>
+					<button type="button" class="btn btn-danger btnDelete" data-toggle="modal" data-target="#deleteModal" data-type="result" th:data-id="${result.id}" th:text="#{delete}">Borrar</button>
 				</div>
 				<div class="table-responsive" th:if="${not #lists.isEmpty(result.problems)}">
 					<table class="table table-hover">
@@ -56,6 +57,8 @@
 	<div class="container" th:if="${#lists.isEmpty(resultsList)}">
 		<h2 class="text-center mt-5" th:text="#{result.list.empty}">No results to show</h2>
 	</div>
+	
+	<div th:replace="fragments/deleteDialog"/>
 	
 	<footer th:replace="fragments/footer" />
 </body>

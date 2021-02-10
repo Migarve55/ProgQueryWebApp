@@ -112,6 +112,13 @@ td.description {
 .resultHeader {
 	padding: 1.2em;
 	background: orange;
+	position: relative;
+}
+
+.btnDelete {
+	position: absolute;
+    right: 1em;
+    top: 0.8em;
 }
 
 .pTitle {

@@ -1,6 +1,8 @@
 package es.uniovi.controllers;
 
 import java.security.Principal;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,10 +10,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import es.uniovi.analyzer.tasks.AnalyzerTask;
 import es.uniovi.entities.Program;
@@ -42,7 +45,7 @@ public class ProgramController {
 	@Autowired
 	private UsersService usersService;
 
-	@RequestMapping("/program/list")
+	@GetMapping("/program/list")
 	public String list(Model model, Principal principal, Pageable pageable) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
@@ -52,7 +55,7 @@ public class ProgramController {
 		return "program/list";
 	}
 	
-	@RequestMapping(path = "/program/analyze/{id}", method = RequestMethod.GET)
+	@GetMapping("/program/analyze/{id}")
 	public String getAnalyze(Model model, Principal principal, @PathVariable Long id) {
 		Program program = programService.findProgram(id);
 		if (program == null)
@@ -69,7 +72,7 @@ public class ProgramController {
 		return "program/analyze";
 	}
 	
-	@RequestMapping(path = "/program/analyze/{id}", method = RequestMethod.POST)
+	@PostMapping("/program/analyze/{id}")
 	public String postAnalyze(Principal principal, @PathVariable Long id, @RequestParam("queries") String[] queries) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
@@ -83,11 +86,14 @@ public class ProgramController {
 		return "redirect:/analyzer/loading";
 	}
 
-	@RequestMapping(path = "/program/playground", method = RequestMethod.GET)
-	public String getPlaygroundAnalyze(Principal principal, Model model, @RequestParam(required = false) String queryName, @RequestParam(required = false) String programName) {
+	@GetMapping("/program/playground")
+	public String getPlaygroundAnalyze(Principal principal, Model model, @RequestParam(required = false) String queryName, @RequestParam(required = false) Long resultId) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
-		// Cargar consulta
+		// Load programs
+		List<Program> programs = programService.listByUser(user);
+		model.addAttribute("programs", programs);
+		// Load queries
 		model.addAttribute("queryText", "");
 		if (queryName != null) {
 			Optional<Query> query = queryService.getQueriesFromUserByName(user, queryName);
@@ -97,30 +103,51 @@ public class ProgramController {
 				model.addAttribute("error", "program.playground.queryNotFound");
 			}
 		}
+		// Load result 
+		String results = "";
+		if (resultId != null) {
+			Result result = resultService.getResult(resultId);
+			results = result.getTextSummary();
+		}
+		model.addAttribute("results", results);
 		return "program/playground";
 	}
 	
-	@RequestMapping(path = "/program/playground", method = RequestMethod.POST)
-	public String postPlaygroundAnalyze(Model model, Principal principal, @RequestParam("qrText") String queryText, @RequestParam("pgSource") String programSource) {
+	@PostMapping("/program/playground")
+	public String postPlaygroundAnalyze(Principal principal, RedirectAttributes redirect, @RequestParam Map<String,String> params) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
-		analyzerService.analyzeSourceWithQueryText(user, queryText, programSource);
+		String queryText = params.get("queryText");
+		String programId = params.get("programId");
+		String programSource = params.get("programSource");
+		if (programSource != null) {
+			if (programSource.trim().isEmpty()) {
+				redirect.addFlashAttribute("error", "program.playground.noProgram");
+				return "redirect:/program/playground";
+			}
+			analyzerService.analyzeSourceWithQueryText(user, queryText, programSource);
+		} else if (programId != null) {
+			Program program = programService.findProgram(Long.parseLong(programId));
+			analyzerService.analyzeProgramWithQueryText(user, queryText, program);
+		} 
 		return "redirect:/analyzer/loading";
 	}
 	
-	@RequestMapping("/program/detail/{id}")
+	@GetMapping("/program/detail/{id}")
 	public String detail(Model model, Pageable pageable, @PathVariable Long id) {
 		Program program = programService.findProgram(id);
 		if (program == null)
 			return "redirect:/program/list";
 		Page<Result> results = resultService.listByProgram(pageable, program);
+		int maxSize = 5;
+		model.addAttribute("maxSize", maxSize);
 		model.addAttribute("program", program);
 		model.addAttribute("resultsList", results.getContent());
 		model.addAttribute("page", results);
 		return "program/detail";
 	}
 	
-	@RequestMapping("/program/delete/{id}")
+	@GetMapping("/program/delete/{id}")
 	public String delete(@PathVariable Long id, Principal principal) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);

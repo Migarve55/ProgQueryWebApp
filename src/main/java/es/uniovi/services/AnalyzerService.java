@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import javax.annotation.PreDestroy;
@@ -24,6 +25,7 @@ import es.uniovi.analyzer.tasks.AbstractAnalyzerCallable;
 import es.uniovi.analyzer.tasks.AnalyzerTask;
 import es.uniovi.analyzer.tasks.file.FileAnalyzerCallable;
 import es.uniovi.analyzer.tasks.github.GithubCodeAnalyzerCallable;
+import es.uniovi.analyzer.tasks.playground.PlaygroundSourceAnalyzerCallable;
 import es.uniovi.analyzer.tasks.program.ProgramAnalyzerCallable;
 import es.uniovi.analyzer.tasks.zip.ZipAnalizerCallable;
 import es.uniovi.analyzer.tools.ToolFactory;
@@ -148,9 +150,16 @@ public class AnalyzerService {
 	 * @param program
 	 */
 	public void analyzeProgramWithQueryText(User user, String queryText, Program program) {
-		
+		AbstractAnalyzerCallable callable = new ProgramAnalyzerCallable(program.getProgramIdentifier());
+		callable.setQueries(getSimpleQueryList(queryText));
+		replaceTasks(user, callable, (errors, task) -> {
+			task.setAsPlaygroundTask();
+			createReport(user, program, errors);
+			finalizeUserTask(user, task);
+		});
+		logger.info("User {} started playground analysis of program {} with query: {}...", user.getEmail(), program.getName(), queryText);
 	}
-	
+
 	/**
 	 * 
 	 * @param user
@@ -158,7 +167,25 @@ public class AnalyzerService {
 	 * @param programSource
 	 */
 	public void analyzeSourceWithQueryText(User user, String queryText, String programSource) {
-		
+		AbstractAnalyzerCallable callable = new PlaygroundSourceAnalyzerCallable(programSource);
+		callable.setQueries(getSimpleQueryList(queryText));
+		callable.setCompiler(ToolFactory.getJavaCompilerTool());
+		replaceTasks(user, callable, (errors, task) -> {
+			task.setAsPlaygroundTask();
+			Program program = createProgram(user, "playgroundProgram", callable.getProgramID());
+			createReport(user, program, errors);
+			finalizeUserTask(user, task);
+		});
+		logger.info("User {} started playground analysis of program source with query: {}", user.getEmail(), queryText);
+	}
+	
+	private List<QueryDto> getSimpleQueryList(String queryText) {
+		List<QueryDto> queries = new ArrayList<QueryDto>();
+		QueryDto query = new QueryDto();
+		query.setName("");
+		query.setQueryText(queryText);
+		queries.add(query);
+		return queries;
 	}
 	
 	/**
@@ -171,18 +198,11 @@ public class AnalyzerService {
 		AbstractAnalyzerCallable callable = new ProgramAnalyzerCallable(program.getProgramIdentifier());
 		List<Query> queriesList = getQueries(queries, user);
 		callable.setQueries(toQueryDto(queriesList));
-		AnalyzerTask oldTask = getCurrentTask(user);
-		if (oldTask != null) {
-			if (!oldTask.isDone())
-				oldTask.cancel(false);
-		}
-		AnalyzerTask task = new AnalyzerTask(callable);
-		task.setCallback((errors) -> {
+		
+		replaceTasks(user, callable, (errors, task) -> {
 			createReport(user, program, errors);
 			finalizeUserTask(user, task);
 		});
-		executor.execute(task);
-		setCurrentTask(user, task);
 		logger.info("User {} started program {} analysis", user.getEmail(), program.getProgramIdentifier());
 	}
 	
@@ -201,20 +221,26 @@ public class AnalyzerService {
 		}
 		callable.setCompiler(getCompilationTool(compOp));
 		
+		replaceTasks(user, callable, (errors, task) -> {
+			Program program = createProgram(user, name, callable.getProgramID());
+			createReport(user, program, errors);
+			finalizeUserTask(user, task);
+		});
+		logger.info("User {} started analysis of new program from {} using {}", user.getEmail(), name, compOp);
+	}
+	
+	private void replaceTasks(User user, AbstractAnalyzerCallable callable, BiConsumer<List<ProblemDto>, AnalyzerTask> callback) {
 		AnalyzerTask oldTask = getCurrentTask(user);
 		if (oldTask != null) {
 			if (!oldTask.isDone())
 				oldTask.cancel(false);
 		}
 		AnalyzerTask task = new AnalyzerTask(callable);
-		task.setCallback((errors) -> {
-			Program program = createProgram(user, name, callable.getProgramID());
-			createReport(user, program, errors);
-			finalizeUserTask(user, task);
+		task.setCallback((list) -> {
+			callback.accept(list, task);
 		});
 		executor.execute(task);
 		setCurrentTask(user, task);
-		logger.info("User {} started analysis of new program from {} using {}", user.getEmail(), name, compOp);
 	}
 	
 	private CompilerTool getCompilationTool(String compilator) {

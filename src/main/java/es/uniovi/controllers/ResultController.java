@@ -16,11 +16,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import es.uniovi.analyzer.tasks.AnalyzerTask;
 import es.uniovi.entities.Problem;
-import es.uniovi.entities.Program;
 import es.uniovi.entities.Result;
 import es.uniovi.entities.User;
 import es.uniovi.services.AnalyzerService;
-import es.uniovi.services.ProgramService;
 import es.uniovi.services.ResultService;
 import es.uniovi.services.UsersService;
 
@@ -32,9 +30,6 @@ public class ResultController {
 	
 	@Autowired
 	private ResultService resultService;
-	
-	@Autowired
-	private ProgramService programService;
 	
 	@Autowired
 	private AnalyzerService analyzerService;
@@ -78,22 +73,16 @@ public class ResultController {
 			// Clear user task
 			analyzerService.clearUserTask(user);
 		}
-		if (task.hasCreatedReport()) {
-			// Get result
-			Result result = resultService.getLastFromUser(user);
-			if (result == null) {
-				redirect.addFlashAttribute("error", "error.noReport");
-				return "redirect:/";
-			}
+		// Get result
+		Result result = resultService.getLastFromUser(user);
+		if (result == null) {
+			redirect.addFlashAttribute("error", "error.noReport");
+			return "redirect:/";
+		}
+		if (!task.isPlaygroundTask()) {
 			return "redirect:/result/" + result.getId();
 		} else {
-			// Get program
-			Program program = programService.getLastFromUser(user);
-			if (program == null) {
-				redirect.addFlashAttribute("error", "error.noProgram");
-				return "redirect:/";
-			}
-			return "redirect:/program/detail/" + program.getId();
+			return "redirect:/program/playground?resultId=" + result.getId();
 		}
 	}
 	

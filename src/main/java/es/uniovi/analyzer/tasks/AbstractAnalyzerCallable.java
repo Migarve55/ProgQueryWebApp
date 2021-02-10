@@ -71,7 +71,6 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 	}
 
 	protected void createReport(List<ProblemDto> result) throws ReportException {
-		// If there are 
 		if (!queries.isEmpty()) {
 			nextStep("Creating report", 25);
 			result.addAll(
