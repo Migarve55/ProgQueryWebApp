@@ -11,5 +11,15 @@ public abstract class AbstractCompiler implements CompilerTool {
 				System.getProperty("neo4j.password", "neo4j"),
 				System.getProperty("neo4j.url", "bolt://localhost:7687"));
 	}
+	
+	// HIDE_COMPILER_OUTPUT
+	protected boolean shouldHideCompilerOutput() {
+		return System.getenv("HIDE_COMPILER_OUTPUT") != null;
+	}
+	
+	// SHOW_DEBUG_OUTPUT
+	protected boolean shouldShowDebugOutput() {
+		return System.getenv("SHOW_DEBUG_OUTPUT") != null;
+	}
 
 }

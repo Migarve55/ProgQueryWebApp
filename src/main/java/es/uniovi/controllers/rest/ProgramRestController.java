@@ -1,8 +1,6 @@
 package es.uniovi.controllers.rest;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +23,7 @@ import es.uniovi.services.ProgramService;
 import es.uniovi.services.UsersService;
 
 @RestController
-public class ProgramRestController {
+public class ProgramRestController extends BaseRestController {
 
 	@Autowired
 	private UsersService usersService;
@@ -36,21 +34,14 @@ public class ProgramRestController {
 	@Autowired
 	private AnalyzerService analyzerService;
 
-	@GetMapping("/api/program")
-	public List<Map<String, Object>> list(Principal principal) {
-		List<Map<String, Object>> responseBody = new ArrayList<Map<String, Object>>();
-		User user = usersService.getUserByEmail(principal.getName());
-		for (Program program : programService.listByUser(user)) {
-			Map<String, Object> pMap = new HashMap<String, Object>();
-			loadProgramIntoMap(program, pMap);
-			responseBody.add(pMap);
-		}
-		return responseBody;
+	@GetMapping("/api/programs")
+	public List<Map<String, Object>> list(Principal principal, @RequestParam(value = "email", required = true) String email) {
+		User user = usersService.getUserByEmail(email);
+		return programToMapList(user.getPrograms());
 	}
 
-	@GetMapping("/api/program/{id}")
+	@GetMapping("/api/programs/{id}")
 	public Map<String, Object> get(@PathVariable(value = "id") Long id, Principal principal) {
-		Map<String, Object> responseBody = new HashMap<String, Object>();
 		User user = usersService.getUserByEmail(principal.getName());
 		Program program = programService.findProgram(id);
 		if (program == null) {
@@ -58,8 +49,7 @@ public class ProgramRestController {
 		} else if (!program.getUser().equals(user)) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Program can not be accessed");
 		} else {
-			loadProgramIntoMap(program, responseBody);
-			return responseBody;
+			return loadProgramIntoMap(program);
 		}
 	}
 	
@@ -71,7 +61,7 @@ public class ProgramRestController {
 		analyzerService.uploadGitRepo(user, url, compOpt, args);
 	}
 
-	@DeleteMapping("/api/program/{id}")
+	@DeleteMapping("/api/programs/{id}")
 	public void delete(@PathVariable(value = "id") Long id, Principal principal, HttpServletResponse response) {
 		User user = usersService.getUserByEmail(principal.getName());
 		Program program = programService.findProgram(id);
@@ -82,12 +72,6 @@ public class ProgramRestController {
 		} else {
 			programService.deleteProgram(program.getId());
 		}
-	}
-
-	private void loadProgramIntoMap(Program program, Map<String, Object> map) {
-		map.put("id", program.getId());
-		map.put("name", program.getName());
-		map.put("results", program.getResults().size());
 	}
 
 }

@@ -2,7 +2,6 @@ package es.uniovi.controllers.rest;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import es.uniovi.entities.Problem;
 import es.uniovi.entities.Program;
 import es.uniovi.entities.Result;
 import es.uniovi.entities.User;
@@ -29,7 +27,7 @@ import es.uniovi.services.ResultService;
 import es.uniovi.services.UsersService;
 
 @RestController
-public class ResultRestController {
+public class ResultRestController extends BaseRestController {
 
 	@Autowired
 	private UsersService usersService;
@@ -43,39 +41,33 @@ public class ResultRestController {
 	@Autowired
 	private AnalyzerService analyzerService;
 	
-	@GetMapping("/api/result")
-	public List<Map<String, Object>> list(Principal principal, @RequestParam(required = false) String programId) {
-		List<Map<String, Object>> responseBody = new ArrayList<Map<String, Object>>();
-		User user = usersService.getUserByEmail(principal.getName());
+	@GetMapping("/api/results")
+	public List<Map<String, Object>> list(
+			@RequestParam(required = false) Long programId,
+			@RequestParam(required = false) Long analysisId,
+			@RequestParam(required = false) String user) {		
 		// Get results
-		List<Result> results;
-		if (programId != null) {
-			try {
-				Long id = Long.parseLong(programId);
-				Program program = programService.findProgram(id);
-				if (program == null) {
-					throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Program not Found");
-				}
-				results = program.getResults().stream().collect(Collectors.toList());
-			} catch (NumberFormatException e) {
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "programId should be a number");
+		List<Result> results = new ArrayList<Result>();
+		if (programId != null && analysisId != null) {
+			results = resultService.getByProgramAndQuery(programId, analysisId);
+		} else if (programId != null) {
+			Program program = programService.findProgram(programId);
+			if (program == null) {
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Program not Found");
 			}
-		} else {
-			results = resultService.getResultsByUser(user);
-		}
-		// Create response body
-		for (Result result : results) {
-			Map<String, Object> rMap = new HashMap<String, Object>();
-			loadResultIntoMap(result, rMap);
-			responseBody.add(rMap);
-		}
-		return responseBody;
+			results = program.getResults().stream().collect(Collectors.toList());
+		} else if (user != null) {
+			User u = usersService.getUserByEmail(user);
+			results = resultService.getResultsByUser(u);
+		} else if (analysisId != null) {
+			results = resultService.getByQuery(analysisId);
+		} 
+		return resultsToMapList(results);
 	}
 
-	@GetMapping("/api/result/{id}")
+	@GetMapping("/api/results/{id}")
 	public Map<String, Object> get(@PathVariable(value = "id") Long id, Principal principal,
 			HttpServletResponse response) {
-		Map<String, Object> responseBody = new HashMap<String, Object>();
 		User user = usersService.getUserByEmail(principal.getName());
 		Result result = resultService.getResult(id);
 		if (result == null) {
@@ -83,8 +75,7 @@ public class ResultRestController {
 		} else if (!result.getProgram().getUser().equals(user)) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Result cannot be accessed");
 		} else {
-			loadResultIntoMap(result, responseBody);
-			return responseBody;
+			return loadResultIntoMap(result);
 		}
 	}
 	
@@ -114,20 +105,6 @@ public class ResultRestController {
 		} else {
 			resultService.deleteResult(result);
 		}
-	}
-	
-	private void loadResultIntoMap(Result result, Map<String, Object> map) {
-		map.put("id", result.getId());
-		map.put("program", result.getProgram().getName());
-		map.put("timeStamp", result.getTimestamp().toString());
-		map.put("problems", result.getProblems().stream().map(p -> problemToMap(p)));
-	}
-	
-	private Map<String, Object> problemToMap(Problem problem) {
-		Map<String, Object> pMap = new HashMap<String, Object>();
-		pMap.put("msg", problem.getMsg());
-		pMap.put("query", problem.getQuery().getId());
-		return pMap;
 	}
 
 }

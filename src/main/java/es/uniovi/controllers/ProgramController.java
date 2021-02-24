@@ -87,25 +87,34 @@ public class ProgramController {
 	}
 
 	@GetMapping("/program/playground")
-	public String getPlaygroundAnalyze(Principal principal, Model model, @RequestParam(required = false) String queryName, @RequestParam(required = false) Long resultId) {
+	public String getPlaygroundAnalyze(
+			Principal principal, Model model,
+			@RequestParam Map<String,String> params) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
+		String queryName = params.get("queryName");
+		String programSource = params.get("programSource");
+		// Load source
+		model.addAttribute("programSource", programSource != null ? programSource : "");
 		// Load programs
 		List<Program> programs = programService.listByUser(user);
 		model.addAttribute("programs", programs);
 		// Load queries
 		model.addAttribute("queryText", "");
 		if (queryName != null) {
-			Optional<Query> query = queryService.getQueriesFromUserByName(user, queryName);
-			if (query.isPresent()) {
-				model.addAttribute("queryText", query.get().getQueryText());
-			} else { // No ha sido encontrada
-				model.addAttribute("error", "program.playground.queryNotFound");
+			if (!queryName.trim().isEmpty()) {
+				Optional<Query> query = queryService.getQueriesFromUserByName(user, queryName);
+				if (query.isPresent()) {
+					model.addAttribute("queryText", query.get().getQueryText());
+				} else { // No ha sido encontrada
+					model.addAttribute("error", "program.playground.queryNotFound");
+				}
 			}
 		}
 		// Load result 
 		String results = "";
-		if (resultId != null) {
+		if (params.containsKey("resultId")) {
+			Long resultId = Long.parseLong(params.get("resultId"));
 			Result result = resultService.getResult(resultId);
 			results = result.getTextSummary();
 		}
@@ -114,12 +123,13 @@ public class ProgramController {
 	}
 	
 	@PostMapping("/program/playground")
-	public String postPlaygroundAnalyze(Principal principal, RedirectAttributes redirect, @RequestParam Map<String,String> params) {
+	public String postPlaygroundAnalyze(Principal principal, @RequestParam Map<String,String> params, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		String queryText = params.get("queryText");
 		String programId = params.get("programId");
 		String programSource = params.get("programSource");
+		// Analyze
 		if (programSource != null) {
 			if (programSource.trim().isEmpty()) {
 				redirect.addFlashAttribute("error", "program.playground.noProgram");

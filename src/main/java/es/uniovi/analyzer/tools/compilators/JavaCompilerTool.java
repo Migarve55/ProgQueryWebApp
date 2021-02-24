@@ -42,6 +42,8 @@ public class JavaCompilerTool extends AbstractCompiler {
 		JavaCompiler compiler = getCompiler();
 		// Basic config
 		List<String> args = basicArgs(basePath, programID);
+		if (shouldShowDebugOutput())
+			args.add("-g");
 		// Extra arguments
 		if (arguments != null)
 			addArgumentsFromString(args, arguments);
@@ -63,17 +65,17 @@ public class JavaCompilerTool extends AbstractCompiler {
 		sanitizeArguments(args);
 		String argsArray[] = new String[args.size()];
 		args.toArray(argsArray);
-		OutputStream dummyStream = new OutputStream() {
-			@Override
-			public void write(int b) throws IOException {
-				//Do nothing
-			}
-		};
-		if (System.getenv("SHOW_COMPILE_OUTPUT") != null)
-			if (System.getenv("SHOW_COMPILE_OUTPUT").toLowerCase().equals("yes"))
-				dummyStream = null;
+		OutputStream stream = System.out;
+		if (shouldHideCompilerOutput()) {
+			stream = new OutputStream() {
+				@Override
+				public void write(int b) throws IOException {
+					//Do nothing
+				}
+			};
+		}
 		logger.info("Executing compilation command: javac {}", String.join(" ", args));
-		if(compiler.run(null, dummyStream, dummyStream, argsArray) != 0) {
+		if(compiler.run(null, stream, stream, argsArray) != 0) {
 			throw new CompilerException();
 		}
 	}

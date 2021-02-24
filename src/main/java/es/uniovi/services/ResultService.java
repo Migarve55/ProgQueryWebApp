@@ -56,5 +56,13 @@ public class ResultService {
 	public Page<Problem> getProblemsForResult(Pageable pageable, Result result) {
 		return problemsRepository.findAllByResult(pageable, result);
 	}
+
+	public List<Result> getByProgramAndQuery(Long programId, Long analysisId) {
+		return problemsRepository.findAllByProgramAndQuery(programId, analysisId);
+	}
+
+	public List<Result> getByQuery(Long analysisId) {
+		return problemsRepository.findAllByQuery(analysisId);
+	}
 	
 }

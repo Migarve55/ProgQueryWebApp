@@ -39,27 +39,9 @@
  - M2_HOME: to the maven folder
  - PLUGIN_CLASSPATH: path to the plugin 
  - HIDE_COMPILER_OUTPUT: this is optional, if set all the compilers will hide their output
+ - SHOW_DEBUG_OUTPUT: this is optional, if set all the compilers will show the debug info
  
  The first two are already set in the docker image, so you do not have to worry about them.
- 
- ## Usage
- 
- Follow this steps to analize a program:
- 
- 1. Pick an analyzer option
- 2. Select the queries
- 3. Click "Analyze"
- 4. Wait... 
- 5. Done!!! Enjoy your report
- 
- Or...
- 
- 1. Go to "programs"
- 2  Pick a program that you want to analyze
- 3. Select the queries
- 4. Click "Analize"
- 5. Wait...
- 6. Done!!! Enjoy your report
  
  ## Credit
  

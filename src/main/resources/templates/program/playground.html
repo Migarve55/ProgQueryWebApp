@@ -3,6 +3,7 @@
 <head th:replace="fragments/head" />
 <body>
 	<nav th:replace="fragments/nav" />
+	<form method="GET" action="/program/playground">
 	<div class="container">
 		<div class="mx-auto my-4 wb-cont programAnalyzerContainer">
 			<div class="alert alert-danger" role="alert" th:if="${error}" th:text="#{${error}}"></div>
@@ -11,32 +12,33 @@
   					<h2 class="analysisTitle" th:text="#{playground.program}">Program</h2>
   					<span th:text="#{playground.program.choose}">Escoger programa: </span>
   					<div>
-					    <select class="form-control" id="programSelect" form="analyzeForm" name="programId">
+					    <select class="form-control" id="programSelect" name="programId">
 					      <option th:text="#{playground.program.useSource}"> Usar fuente </option>
 					      <option th:each="program : ${programs}" th:text="${program.displayName}" th:value="${program.id}"></option>
 					    </select>
 					</div>
   					<span th:text="#{playground.program.option}">O mete su código fuente: </span>
   					<div class="form-group">
-  						<textarea form="analyzeForm" id="programSource" class="form-control textAreaAnalyzer" name="programSource" spellcheck="false"></textarea>
+  						<textarea id="programSource" class="form-control textAreaAnalyzer" name="programSource" spellcheck="false" th:text="${programSource}"></textarea>
   					</div>
   				</div>
   				<div class="col-md-6">
   					<h2 class="analysisTitle" th:text="#{playground.query}">Analysis</h2>
   					<span th:text="#{playground.query.search}">Search an existing query: </span>
   					<div class="input-group">
-					    <input form="getQueryForm" type="text" class="form-control" placeholder="Search" name="queryName">
+					    <input type="text" class="form-control" placeholder="Search" name="queryName">
 					    <div class="input-group-append">
 					    	<div class="input-group-text"><i class="fa fa-search"></i></div>
 						</div>
 					</div>
   					<span th:text="#{playground.query.option}">Or enter its Cypher code: </span>
   					<div class="form-group">
-  						<textarea form="analyzeForm" class="form-control textAreaAnalyzer" name="queryText" spellcheck="false" th:text="${queryText}"></textarea>
+  						<textarea class="form-control textAreaAnalyzer" name="queryText" spellcheck="false" th:text="${queryText}"></textarea>
   					</div>
   				</div>
   			</div>
-  			<input form="analyzeForm" class="form-control btn btn-primary" type="submit" value="Upload" th:value="#{analyzer.submit}"/>
+  			<input style="display: none;" type="submit" formmethod="GET" formaction="/program/playground" value="">
+  			<input class="form-control btn btn-primary" type="submit" formmethod="POST" th:value="#{analyze}"/>
   			<span th:text="#{playground.result}">Result:</span>
   			<div class="form-group">
   				<textarea disabled th:text="${results}" class="form-control" spellcheck="false" cols="2"></textarea>
@@ -44,8 +46,7 @@
 		</div>
 		<script src="/script/playground.js"></script>
 	</div>
-	<form id="getQueryForm" method="GET" action="/program/playground"></form>
-	<form id="analyzeForm" method="POST" action="/program/playground"></form>
+	</form>
 	<footer th:replace="fragments/footer" />
 </body>
 </html>

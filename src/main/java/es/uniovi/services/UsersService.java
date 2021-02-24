@@ -66,8 +66,8 @@ public class UsersService {
 		return true;
 	}
 
-	public User getUserByEmail(String dni) {
-		return usersRepository.findByEmail(dni);
+	public User getUserByEmail(String email) {
+		return usersRepository.findByEmail(email);
 	}
 
 	@Transactional

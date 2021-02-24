@@ -56,7 +56,7 @@ public class MavenCompilerTool extends AbstractCompiler {
 	private void compileUsingMavenAPI(String basePath) throws CompilerException {
 		File folder = new File(basePath);
 		Invoker newInvoker = new DefaultInvoker();
-		if (System.getenv("HIDE_COMPILER_OUTPUT") != null) {
+		if (shouldHideCompilerOutput()) {
 			newInvoker.setOutputHandler(null);
 		} 
 		//Configure request 
@@ -64,7 +64,8 @@ public class MavenCompilerTool extends AbstractCompiler {
 	    request.setBaseDirectory(folder);
 	    request.setBatchMode(true);
 	    request.setGoals( PUBLISH_GOALS );
-	    request.setDebug(true);
+	    if (shouldShowDebugOutput())
+	    	request.setDebug(true);
 		InvocationResult result = null;
 		try {
 			result = newInvoker.execute( request );
