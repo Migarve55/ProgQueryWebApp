@@ -17,7 +17,7 @@ import es.uniovi.analyzer.tools.reporter.dto.QueryDto;
 
 public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemDto>> {
 	
-	protected String args;
+	protected String classpath;
 	protected String basePath;
 	protected String programID;
 	protected AnalyzerTask task;
@@ -26,8 +26,8 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 	
 	private Consumer<List<ProblemDto>> callback;
 
-	public AbstractAnalyzerCallable(String args) {
-		this.args = args;
+	public AbstractAnalyzerCallable(String classpath) {
+		this.classpath = classpath;
 		this.programID = UUID.randomUUID().toString();
 	}
 

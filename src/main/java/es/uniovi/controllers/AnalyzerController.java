@@ -46,14 +46,14 @@ public class AnalyzerController {
 	}
 
 	@RequestMapping(path = "/analyzer/file", method = RequestMethod.POST, consumes = { "multipart/form-data" })
-	public String postAnalizeFile(@RequestParam("file") MultipartFile file, @RequestParam(value = "args", required = false) String args
+	public String postAnalizeFile(@RequestParam("file") MultipartFile file, @RequestParam(value = "classpath", required = false) String classpath
 			, @RequestParam(value = "queries", required = false) String[] queries, Principal principal
 			, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		try {
 			if (isTaskDone(user))
-				analyzerService.analyzeFile(user, file, args, queries);
+				analyzerService.analyzeFile(user, file, classpath, queries);
 		} catch (IOException e) {
 			e.printStackTrace();
 			redirect.addFlashAttribute("error", "error.fileError");
@@ -74,13 +74,13 @@ public class AnalyzerController {
 
 	@RequestMapping(path = "/analyzer/zip", method = RequestMethod.POST, consumes = { "multipart/form-data" })
 	public String postAnalizeZip(@RequestParam("zip") MultipartFile zip, @RequestParam("compOpt") String compOpt,
-			@RequestParam(value = "args", required = false) String args, @RequestParam(value = "queries", required = false) String[] queries, 
+			@RequestParam(value = "classpath", required = false) String classpath, @RequestParam(value = "queries", required = false) String[] queries, 
             Principal principal, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		try {
 			if (isTaskDone(user))
-				analyzerService.analyzeZip(user, zip, compOpt, args, queries);
+				analyzerService.analyzeZip(user, zip, compOpt, classpath, queries);
 		} catch (IOException e) {
 			e.printStackTrace();
 			redirect.addFlashAttribute("error", "error.fileError");
@@ -100,12 +100,12 @@ public class AnalyzerController {
 	}
 
 	@RequestMapping(path = "/analyzer/git", method = RequestMethod.POST)
-	public String postAnalizeGit(@RequestParam("url") String url, @RequestParam("args") String args, 
+	public String postAnalizeGit(@RequestParam("url") String url, @RequestParam("classpath") String classpath, 
 			@RequestParam("compOpt") String compOpt, @RequestParam(value = "queries", required = false) String[] queries, Principal principal) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		if (isTaskDone(user))
-			analyzerService.analyzeGitRepo(user, url, compOpt, args, queries);
+			analyzerService.analyzeGitRepo(user, url, compOpt, classpath, queries);
 		return "redirect:/analyzer/loading";
 	}
 	

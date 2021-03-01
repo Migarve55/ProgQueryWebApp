@@ -98,12 +98,12 @@ public class AnalyzerService {
 	 * 
 	 * @param user
 	 * @param file
-	 * @param args
+	 * @param classpath
 	 * @param queries
 	 * @throws IOException if the java file could not be saved
 	 */
-	public void analyzeFile(User user, MultipartFile file, String args, String[] queries) throws IOException {
-		launchAnalyzerTask(user, file.getOriginalFilename(), "java", new FileAnalyzerCallable(args, file.getOriginalFilename(), file.getInputStream()), queries);
+	public void analyzeFile(User user, MultipartFile file, String classpath, String[] queries) throws IOException {
+		launchAnalyzerTask(user, file.getOriginalFilename(), "java", new FileAnalyzerCallable(classpath, file.getOriginalFilename(), file.getInputStream()), queries);
 	}
 	
 	/**
@@ -111,12 +111,12 @@ public class AnalyzerService {
 	 * @param user
 	 * @param zip
 	 * @param compOp
-	 * @param args
+	 * @param classpath
 	 * @param queries
 	 * @throws IOException if the zip file could not be saved
 	 */
-	public void analyzeZip(User user, MultipartFile zip, String compOp, String args, String[] queries) throws IOException {
-		launchAnalyzerTask(user, zip.getOriginalFilename(), compOp, new ZipAnalizerCallable(args, zip.getInputStream()), queries);
+	public void analyzeZip(User user, MultipartFile zip, String compOp, String classpath, String[] queries) throws IOException {
+		launchAnalyzerTask(user, zip.getOriginalFilename(), compOp, new ZipAnalizerCallable(classpath, zip.getInputStream()), queries);
 	}
 
 	/**
@@ -124,11 +124,11 @@ public class AnalyzerService {
 	 * @param user
 	 * @param repoUrl
 	 * @param compOp
-	 * @param args
+	 * @param classpath
 	 * @param queries
 	 */
-	public void analyzeGitRepo(User user, String repoUrl, String compOp, String args, String[] queries) {
-		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(args, repoUrl), queries);
+	public void analyzeGitRepo(User user, String repoUrl, String compOp, String classpath, String[] queries) {
+		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(classpath, repoUrl), queries);
 	}
 	
 	/**
@@ -136,11 +136,25 @@ public class AnalyzerService {
 	 * @param user
 	 * @param repoUrl
 	 * @param compOp
-	 * @param args
+	 * @param classpath
 	 */
-	public void uploadGitRepo(User user, String repoUrl, String compOp, String args) {
+	public void uploadGitRepo(User user, String repoUrl, String compOp, String classpath) {
 		String[] queries = new String[0]; //Empty array with no queries
-		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(args, repoUrl), queries);
+		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(classpath, repoUrl), queries);
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 * @param user
+	 * @param repoUrl
+	 * @param compOp
+	 * @param classpath
+	 */
+	public void reuploadGitRepo(Long id, User user, String repoUrl, String compOp, String classpath) {
+		String[] queries = new String[0]; //Empty array with no queries
+		programRepository.deleteById(id);
+		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(classpath, repoUrl), queries);
 	}
 	
 	/**

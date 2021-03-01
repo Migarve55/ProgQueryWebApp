@@ -33,6 +33,8 @@ public class UserRestController extends BaseRestController {
 	
 	@Autowired
 	private SignUpFormValidator userValidator;
+	
+	// Los servicios REST de GET all the XXXX of the User "pepe", deben tener la signatura GET /api/XXX?user={user}, no GET /api/analyses
 
 	@GetMapping("/api/users/{user}")
 	public Map<String, Object> getUser(@PathVariable(value = "user") String email, HttpServletResponse response) {

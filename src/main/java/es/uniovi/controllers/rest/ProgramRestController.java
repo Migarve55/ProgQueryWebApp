@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -34,6 +35,7 @@ public class ProgramRestController extends BaseRestController {
 	@Autowired
 	private AnalyzerService analyzerService;
 
+	// /api/programs?user={email}
 	@GetMapping("/api/programs")
 	public List<Map<String, Object>> list(Principal principal, @RequestParam(value = "email", required = true) String email) {
 		User user = usersService.getUserByEmail(email);
@@ -54,12 +56,28 @@ public class ProgramRestController extends BaseRestController {
 	}
 	
 	@PostMapping("/api/program")
-	public void postAnalizeGit(@RequestParam("url") String url, 
+	public void postProgram(@RequestParam("url") String url, 
 			@RequestParam(value = "args", required = false) String args, 
 			@RequestParam(value = "compOpt", required = false) String compOpt, Principal principal) {
 		User user = usersService.getUserByEmail(principal.getName());
 		analyzerService.uploadGitRepo(user, url, compOpt, args);
 	}
+	
+	@PutMapping("/api/program/{id}")
+	public void putProgram(
+			@PathVariable(value = "id") Long id,
+			@RequestParam("url") String url, 
+			@RequestParam(value = "args", required = false) String args, 
+			@RequestParam(value = "compOpt", required = false) String compOpt, Principal principal) {
+		User user = usersService.getUserByEmail(principal.getName());
+		analyzerService.reuploadGitRepo(id, user, url, compOpt, args);
+	}
+	
+	/**
+	 * @param id
+	 * @param principal
+	 * @param response
+	 */
 
 	@DeleteMapping("/api/programs/{id}")
 	public void delete(@PathVariable(value = "id") Long id, Principal principal, HttpServletResponse response) {

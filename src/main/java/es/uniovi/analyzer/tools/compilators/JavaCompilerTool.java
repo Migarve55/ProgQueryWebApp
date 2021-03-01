@@ -24,13 +24,10 @@ public class JavaCompilerTool extends AbstractCompiler {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Override
-	public void compileFile(String basePath, String programID, String filename, String arguments) throws CompilerException {
+	public void compileFile(String basePath, String programID, String filename, String classpath) throws CompilerException {
 		JavaCompiler compiler = getCompiler();
 		// Basic config
-		List<String> args = basicArgs(basePath, programID);
-		// Extra arguments
-		if (arguments != null)
-			addArgumentsFromString(args, arguments);
+		List<String> args = basicArgs(basePath, programID, classpath);
 		// Add file
 		args.add(basePath + filename);
 		// Compilation
@@ -38,15 +35,12 @@ public class JavaCompilerTool extends AbstractCompiler {
 	}
 
 	@Override
-	public void compileFolder(String basePath, String programID, String arguments) throws CompilerException {
+	public void compileFolder(String basePath, String programID, String classpath) throws CompilerException {
 		JavaCompiler compiler = getCompiler();
 		// Basic config
-		List<String> args = basicArgs(basePath, programID);
+		List<String> args = basicArgs(basePath, programID, classpath);
 		if (shouldShowDebugOutput())
 			args.add("-g");
-		// Extra arguments
-		if (arguments != null)
-			addArgumentsFromString(args, arguments);
 		// Add files
 		generateSourcesFile(basePath);
 		args.add("@" + basePath + "sources.txt");
@@ -98,20 +92,17 @@ public class JavaCompilerTool extends AbstractCompiler {
 		return compiler;
 	}
 
-	private List<String> basicArgs(String basePath, String programID) {
+	private List<String> basicArgs(String basePath, String programID, String classpath) {
 		return new ArrayList<>(
 				Arrays.asList(
-						"-cp", System.getenv("PLUGIN_CLASSPATH"),
+						"-cp", getClassPath(classpath),
 						"-encoding", ENCODING,
 						String.format(getPluginArg(programID), programID, System.getProperty("neo4j.url")), 
 						"-d", basePath, "-nowarn", "-g:none", "-Xlint:none"));
 	}
 
-	private void addArgumentsFromString(List<String> args, String extraArgs) {
-		Arrays.asList(extraArgs.split(" ")).stream()
-			.map((arg) -> arg.trim())
-			.filter((arg) -> !arg.isEmpty())
-			.forEach((arg) -> args.add(arg));
+	private String getClassPath(String classpath) {
+		return String.format("%s;%s", System.getenv("PLUGIN_CLASSPATH"), classpath);
 	}
 
 	/**
