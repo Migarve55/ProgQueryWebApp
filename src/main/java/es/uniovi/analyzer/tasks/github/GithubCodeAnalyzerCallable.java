@@ -30,6 +30,7 @@ public class GithubCodeAnalyzerCallable extends AbstractAnalyzerCallable {
 			  .setDirectory(new File(basePath))
 			  .call();
 		} catch (GitAPIException e) {
+			e.printStackTrace();
 			throw new EnviromentException("error.enviroment.create.github");
 		} finally {
 			if (result != null)

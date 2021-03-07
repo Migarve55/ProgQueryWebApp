@@ -67,6 +67,7 @@ public class ResultController {
 			redirect.addFlashAttribute("error", "error.taskCancelled");
 			return "redirect:/";
 		} catch (ExecutionException e) {
+			e.printStackTrace();
 			redirect.addFlashAttribute("error", getRootCause(e).getLocalizedMessage());
 			return "redirect:/";
 		} finally {

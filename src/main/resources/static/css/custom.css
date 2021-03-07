@@ -125,3 +125,9 @@ td.description {
 	font-weight: bolder;
 	margin-right: 1em;
 }
+
+.userListItem {
+	margin: 0.25em;
+	display: flex;
+    align-items: center;
+}

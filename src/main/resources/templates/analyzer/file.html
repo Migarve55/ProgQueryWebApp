@@ -14,11 +14,6 @@
 				<label for="file" th:text="#{analyzer.file.msg}">Java file:</label>
 				<input class="form-control" type="file" name="file" accept=".java" required/>
 			</div>
-			<div class="form-group">
-				<label for="classpath"  th:text="#{analyzer.javaCompOpt}">Java compilation arguments:</label>
-				<input class="form-control" name="classpath"/>
-				<small class="form-text text-muted"  th:text="#{analyzer.optional}">This is optional</small>
-			</div>
 			<div th:replace="analyzer/queries"/>
 			<div class="form-group">
 				<input class="form-control btn btn-primary" type="submit" value="Upload" th:value="#{analyzer.submit}"/>

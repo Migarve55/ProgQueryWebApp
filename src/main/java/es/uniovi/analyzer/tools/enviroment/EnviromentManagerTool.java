@@ -57,7 +57,7 @@ public class EnviromentManagerTool {
 			logger.info("Enviroment in {} was already deleted", basePath);
 		} catch (IOException e) {
 			logger.error("Could not delete enviroment in {}, error: {}", basePath, e.getMessage());
-			throw new EnviromentException("error.enviroment.delete");
+			//throw new EnviromentException("error.enviroment.delete");
 		}
 	}
 

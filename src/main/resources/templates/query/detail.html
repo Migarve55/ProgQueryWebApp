@@ -19,15 +19,6 @@
 		<a class="btn btn-primary" th:if="${canModify}" th:href="${'/query/edit/' + query.id}" th:text="#{edit}">Editar</a>
 		<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-type="query" th:data-id="${query.id}" th:text="#{delete}">Borrar</button>
 		<h3 th:if="${canModify && !query.publicForAll}" th:text="#{query.detail.edit}">Editar quien puede verla</h3>
-		<ul th:each="user : ${query.publicTo}">
-			<li>
-				<span th:text="${user.email}"></span>
-				<span>: </span>
-				<span th:text="${user.name}"></span>
-				<span> </span>
-				<span th:text="${user.lastName}"></span>
-			</li>
-		</ul>
 		<!-- Para editar la quien puede verlo -->
 		<form th:if="${canModify && !query.publicForAll}" method="post">
 			<div class="form-hor">
@@ -38,12 +29,21 @@
 				<div class="col-sm-2">
 					<button type="submit" class="btn btn-primary" th:text="#{query.detail.add}" th:formaction="${'/query/addUser/' + query.id}">Añadir</button>
 				</div>
-				<div class="col-sm-1">
-					<button type="submit" class="btn btn-primary" th:text="#{query.detail.remove}" th:formaction="${'/query/removeUser/' + query.id}">Quitar</button>
-				</div>
 			</div>
 			<span class="text-danger" th:if=${error} th:text=#{${error}} />
 		</form>
+		<ul th:each="user : ${query.publicTo}">
+			<li class="userListItem">
+				<span th:text="${user.email}"></span>
+				<span>: </span>
+				<span th:text="${user.name}"></span>
+				<span> </span>
+				<span th:text="${user.lastName}"></span>
+				<form method="POST" th:action="${'/query/' + query.id + '/removeUser/' + user.id}">
+					<button type="submit" class="btn btn-danger" th:text="#{query.detail.remove}">Quitar</button>
+				</form>
+			</li>
+		</ul>
 	</div>
 	<div th:replace="fragments/deleteDialog"/>
 	<footer th:replace="fragments/footer" />

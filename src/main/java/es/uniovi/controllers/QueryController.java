@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -81,7 +82,7 @@ public class QueryController {
 	}
 	
 	@GetMapping("/query/detail/{id}")
-	public String detail(Model model, @PathVariable Long id, Principal principal) {
+	public String detail(Model model, @PathVariable Long id, Principal principal, HttpServletResponse response) {
 		Query query = queryService.findQuery(id);
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
@@ -89,6 +90,7 @@ public class QueryController {
 			return "redirect:/";
 		}
 		if (!queryService.canSeeQuery(user, query)) {
+			response.setStatus(403);
 			return "redirect:/";
 		}
 		//Display the query
@@ -98,7 +100,7 @@ public class QueryController {
 	}
 	
 	@PostMapping("/query/addUser/{id}")
-	public String addUser(Model model, @PathVariable Long id, HttpServletRequest request, Principal principal, RedirectAttributes redirect) {
+	public String addUser(Model model, @PathVariable Long id, HttpServletRequest request, Principal principal, RedirectAttributes redirect, HttpServletResponse response) {
 		Query query = queryService.findQuery(id);
 		String email = principal.getName();
 		User owner = usersService.getUserByEmail(email);
@@ -107,6 +109,7 @@ public class QueryController {
 			return "redirect:/";
 		}
 		if (!queryService.canModifyQuery(owner, query)) {
+			response.setStatus(403);
 			return "redirect:/";
 		}
 		// Change query
@@ -117,16 +120,18 @@ public class QueryController {
 		return "redirect:/query/detail/" + id;
 	}
 	
-	@PostMapping("/query/removeUser/{id}")
-	public String removeUser(Model model, @PathVariable Long id, HttpServletRequest request, Principal principal, RedirectAttributes redirect) {
+	@PostMapping("/query/{id}/removeUser/{userId}")
+	public String removeUser(Model model, @PathVariable Long id, @PathVariable Long userId, Principal principal, 
+			RedirectAttributes redirect, HttpServletResponse response) {
 		Query query = queryService.findQuery(id);
 		String email = principal.getName();
 		User owner = usersService.getUserByEmail(email);
-		User toRemove = usersService.getUserByEmail(request.getParameter("user"));
+		User toRemove = usersService.getUser(userId);
 		if (query == null) {
 			return "redirect:/";
 		}
 		if (!queryService.canModifyQuery(owner, query)) {
+			response.setStatus(403);
 			return "redirect:/";
 		}
 		// Change query
@@ -138,7 +143,7 @@ public class QueryController {
 	}
 	
 	@GetMapping("/query/edit/{id}")
-	public String editGet(Model model, Principal principal, @PathVariable Long id) {
+	public String editGet(Model model, Principal principal, @PathVariable Long id, HttpServletResponse response) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		Query query = queryService.findQuery(id);
@@ -146,14 +151,15 @@ public class QueryController {
 			return "redirect:/";
 		}
 		if (!queryService.canModifyQuery(user, query)) {
-			return "redirect:/query/detail/" + id;
+			response.setStatus(403);
+			return "redirect:/";
 		}
 		model.addAttribute("query", query);
 		return "query/edit";
 	}
 	
 	@PostMapping("/query/edit/{id}")
-	public String editPost(@Validated Query query, @PathVariable Long id, BindingResult result, Principal principal) {
+	public String editPost(@Validated Query query, @PathVariable Long id, BindingResult result, Principal principal, HttpServletResponse response) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		editQueryValidator.validate(query, result);
@@ -165,6 +171,7 @@ public class QueryController {
 			return "redirect:/";
 		}
 		if (!queryService.canModifyQuery(user, original)) {
+			response.setStatus(403);
 			return "redirect:/query/detail/" + id;
 		}
 		//Finally save
@@ -176,7 +183,7 @@ public class QueryController {
 	}
 	
 	@RequestMapping("/query/delete/{id}")
-	public String delete(@PathVariable Long id, Principal principal) {
+	public String delete(@PathVariable Long id, Principal principal, HttpServletResponse response) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		Query query = queryService.findQuery(id);
@@ -184,6 +191,7 @@ public class QueryController {
 			return "redirect:/query/list";
 		}
 		if (!queryService.canModifyQuery(user, query)) {
+			response.setStatus(403);
 			return "redirect:/query/list";
 		}
 		//Finally delete
