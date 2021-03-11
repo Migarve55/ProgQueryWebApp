@@ -3,9 +3,9 @@ package es.uniovi.analyzer.tools.reporter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.neo4j.driver.v1.Record;
-import org.neo4j.driver.v1.exceptions.Neo4jException;
-import org.neo4j.driver.v1.util.Pair;
+import org.neo4j.driver.Record;
+import org.neo4j.driver.exceptions.Neo4jException;
+import org.neo4j.driver.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,8 +37,8 @@ public class ReportTool {
 			for (QueryDto query : queries) {
 				try {
 					logger.info("Running query {}", query.getName());
-					queryRunner.runQuery(database, query.getQueryText(), programID).forEachRemaining((result) -> {
-						ProblemDto problem = getProblemDtoFromResult(result);
+					queryRunner.runQuery(database, query.getQueryText(), programID).forEach((record) -> {
+						ProblemDto problem = getProblemDtoFromResult(record);
 						problem.setQueryName(query.getName());
 						errors.add(problem);
 					});

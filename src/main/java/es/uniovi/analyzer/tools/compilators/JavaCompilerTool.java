@@ -24,10 +24,10 @@ public class JavaCompilerTool extends AbstractCompiler {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Override
-	public void compileFile(String basePath, String programID, String filename, String classpath) throws CompilerException {
+	public void compileFile(String basePath, String programID, String filename) throws CompilerException {
 		JavaCompiler compiler = getCompiler();
 		// Basic config
-		List<String> args = basicArgs(basePath, programID, classpath);
+		List<String> args = basicArgs(basePath, programID, "");
 		// Add file
 		args.add(basePath + filename);
 		// Compilation

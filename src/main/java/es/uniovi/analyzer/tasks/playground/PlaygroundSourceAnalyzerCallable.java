@@ -24,7 +24,7 @@ public class PlaygroundSourceAnalyzerCallable extends AbstractAnalyzerCallable {
 
 	protected void compile() throws CompilerException {
 		super.compile();
-		compiler.compileFile(basePath, programID, JAVA_SOURCE_FILENAME, "");
+		compiler.compileFile(basePath, programID, JAVA_SOURCE_FILENAME);
 	}
 	
 }

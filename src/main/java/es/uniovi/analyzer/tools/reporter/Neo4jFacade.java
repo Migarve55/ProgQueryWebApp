@@ -1,13 +1,17 @@
 package es.uniovi.analyzer.tools.reporter;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.neo4j.driver.v1.AuthTokens;
-import org.neo4j.driver.v1.Driver;
-import org.neo4j.driver.v1.GraphDatabase;
-import org.neo4j.driver.v1.Session;
-import org.neo4j.driver.v1.StatementResult;
+import org.neo4j.driver.AuthTokens;
+import org.neo4j.driver.Driver;
+import org.neo4j.driver.GraphDatabase;
+import org.neo4j.driver.Record;
+import org.neo4j.driver.Result;
+import org.neo4j.driver.Session;
+import org.neo4j.driver.Transaction;
+import org.neo4j.driver.TransactionWork;
 
 import es.uniovi.reflection.processing.CypherAdapter;
 
@@ -18,6 +22,7 @@ public class Neo4jFacade implements AutoCloseable {
 	private final static String DELETE_PROGRAM_QUERY = "MATCH (p:PROGRAM) WHERE p.ID=$programID CALL apoc.path.subgraphNodes(p,{minLevel:0}) YIELD node DETACH DELETE node";
 
     public Neo4jFacade(String url) {
+    	url = "neo4j://" + url;
     	driver = GraphDatabase.driver( url, AuthTokens.basic( System.getProperty("neo4j.user"), System.getProperty("neo4j.password") ) );
     }
 
@@ -27,13 +32,19 @@ public class Neo4jFacade implements AutoCloseable {
      * @param programID the ID of the program to analize
      * @return
      */
-    public StatementResult runQuery(String database, String query, String programID) {
+    public List<Record> runQuery(String database, String query, String programID) {
 		try ( Session session = driver.session() )
         {
             Map<String, Object> params = new HashMap<>();
         	params.put("programID", programID);
         	String modifiedQuery = limitQuery(query, programID);
-            return session.writeTransaction(tx -> tx.run(modifiedQuery, params));
+            return session.writeTransaction(new TransactionWork<List<Record>>() {
+            	@Override
+            	public List<Record> execute(Transaction tx) {
+	            	 Result result = tx.run(modifiedQuery, params);
+	            	 return result.list();
+            	}
+			});
         }
     }
     
