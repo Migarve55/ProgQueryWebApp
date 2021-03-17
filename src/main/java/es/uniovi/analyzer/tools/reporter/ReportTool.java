@@ -21,7 +21,7 @@ public class ReportTool {
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	public ReportTool(String url, String programID) {
+	public ReportTool(String url, String programID) { 
 		this.url = url;
 		this.programID = programID;
 	}

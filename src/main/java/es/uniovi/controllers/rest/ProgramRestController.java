@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -56,6 +57,7 @@ public class ProgramRestController extends BaseRestController {
 	}
 	
 	@PostMapping("/api/program")
+	@ResponseStatus(HttpStatus.OK)
 	public void postProgram(@RequestParam("url") String url, 
 			@RequestParam(value = "args", required = false) String args, 
 			@RequestParam(value = "compOpt", required = false) String compOpt, Principal principal) {
@@ -64,6 +66,7 @@ public class ProgramRestController extends BaseRestController {
 	}
 	
 	@PutMapping("/api/program/{id}")
+	@ResponseStatus(HttpStatus.OK)
 	public void putProgram(
 			@PathVariable(value = "id") Long id,
 			@RequestParam("url") String url, 
@@ -80,6 +83,7 @@ public class ProgramRestController extends BaseRestController {
 	 */
 
 	@DeleteMapping("/api/programs/{id}")
+	@ResponseStatus(HttpStatus.OK)
 	public void delete(@PathVariable(value = "id") Long id, Principal principal, HttpServletResponse response) {
 		User user = usersService.getUserByEmail(principal.getName());
 		Program program = programService.findProgram(id);

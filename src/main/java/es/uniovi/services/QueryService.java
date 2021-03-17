@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.uniovi.controllers.ForbiddenException;
 import es.uniovi.entities.Query;
 import es.uniovi.entities.User;
 import es.uniovi.repositories.ProblemsRepository;
@@ -65,40 +66,32 @@ public class QueryService {
 				.findFirst();
 	}
 	
-	public void saveQuery(Query query) {
+	public void saveQuery(User user, Query query) {
+		checkUserWriteQueryAccess(user, query);
 		query.setModified(new Date());
 		queriesRepository.save(query);
 		logger.info("Query {} was saved", query.getName());
 	}
 	
-	/**
-	 * Makes a query visible to an user
-	 * @param query
-	 * @param user
-	 * @return
-	 */
-	public boolean addUser(Query query, User user) {
+
+	public boolean addUser(User user, Query query, User toAdd) {
 		if (user == null)
 			return false;
 		if (query.getPublicTo().contains(user))
 			return false;
+		checkUserWriteQueryAccess(user, query);
 		query.getPublicTo().add(user);
 		queriesRepository.save(query);
 		logger.info("Query {} is now visible to user {}", query.getName(), user.getEmail());
 		return true;
 	}
-	
-	/**
-	 * Makes a query no longer visible to an user
-	 * @param query
-	 * @param user
-	 * @return
-	 */
-	public boolean removeUser(Query query, User user) {
+
+	public boolean removeUser(User user, Query query, User toRemove) {
 		if (user == null)
 			return false;
 		if (!query.getPublicTo().contains(user))
 			return false;
+		checkUserWriteQueryAccess(user, query);
 		query.getPublicTo().remove(user);
 		queriesRepository.save(query);
 		logger.info("Query {} is no longer visible to user {}", query.getName(), user.getEmail());
@@ -106,10 +99,27 @@ public class QueryService {
 	}
 	
 	@Transactional
-	public void deleteQuery(Query query) {
+	public void deleteQuery(User user, Query query) {
+		checkUserWriteQueryAccess(user, query);
 		queriesRepository.delete(query);
 		problemsRepository.setQueryAsDeleted(query);
 		logger.info("Query {} was deleted", query.getName());
+	}
+	
+	// Auxiliar
+	
+	public void checkUserReadQueryAccess(User user, Query query) {
+		if (!canSeeQuery(user, query)) {
+			logger.warn("User {} does not have read access to query '{}'", user.getEmail(), query.getName());
+			throw new ForbiddenException();
+		}
+	}
+	
+	public void checkUserWriteQueryAccess(User user, Query query) {
+		if (!canModifyQuery(user, query)) {
+			logger.warn("User {} does not have write access to query '{}'", user.getEmail(), query.getName());
+			throw new ForbiddenException();
+		}
 	}
 	
 	public boolean canSeeQuery(User user, Query query) {

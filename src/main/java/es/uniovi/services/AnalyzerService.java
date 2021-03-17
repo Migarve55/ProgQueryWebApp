@@ -164,10 +164,9 @@ public class AnalyzerService {
 	 * @param program
 	 */
 	public void analyzeProgramWithQueryText(User user, String queryText, Program program) {
-		AbstractAnalyzerCallable callable = new ProgramAnalyzerCallable(program.getProgramIdentifier());
+		AbstractAnalyzerCallable callable = new ProgramAnalyzerCallable(program.getProgramIdentifier(), true);
 		callable.setQueries(getSimpleQueryList(queryText));
 		replaceTasks(user, callable, (errors, task) -> {
-			task.setAsPlaygroundTask();
 			createReport(user, program, errors);
 			finalizeUserTask(user, task);
 		});
@@ -185,7 +184,6 @@ public class AnalyzerService {
 		callable.setQueries(getSimpleQueryList(queryText));
 		callable.setCompiler(ToolFactory.getJavaCompilerTool());
 		replaceTasks(user, callable, (errors, task) -> {
-			task.setAsPlaygroundTask();
 			Program program = createProgram(user, "playgroundProgram", callable.getProgramID());
 			createReport(user, program, errors);
 			finalizeUserTask(user, task);

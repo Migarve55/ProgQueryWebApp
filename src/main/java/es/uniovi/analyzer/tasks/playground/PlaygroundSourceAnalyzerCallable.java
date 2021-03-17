@@ -27,4 +27,9 @@ public class PlaygroundSourceAnalyzerCallable extends AbstractAnalyzerCallable {
 		compiler.compileFile(basePath, programID, JAVA_SOURCE_FILENAME);
 	}
 	
+	@Override
+	public boolean isPlayground() {
+		return true;
+	}
+	
 }

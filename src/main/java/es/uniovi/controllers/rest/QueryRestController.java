@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -41,23 +42,18 @@ public class QueryRestController extends BaseRestController {
 	private EditQueryValidator editQueryValidator;
 	
 	@GetMapping("/api/analyses")
-	public List<Map<String, Object>> list(Principal principal, @RequestParam(required = false) String userId, @RequestParam(required = false) Boolean owner) {
+	public List<Map<String, Object>> list(Principal principal, @RequestParam(required = false) String user, @RequestParam(required = false) Boolean owner) {
 		// Get queries
 		List<Query> queries;
-		if (userId != null) { // From user
-			try {
-				Long id = Long.parseLong(userId);
-				User from = usersService.getUser(id);
-				if (from == null) {
-					throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not Found");
-				}
-				if (owner != null && owner)
-					queries = queryService.getQueriesFromUser(from);
-				else
-					queries = queryService.getAvailableQueriesForUser(from);
-			} catch (NumberFormatException e) {
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "userId should be a number");
+		if (user != null) { // From user
+			User from = usersService.getUserByEmail(user);
+			if (from == null) {
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not Found");
 			}
+			if (owner != null && owner)
+				queries = queryService.getQueriesFromUser(from);
+			else
+				queries = queryService.getAvailableQueriesForUser(from);
 		} else { // All public queries
 			queries = queryService.getPublicQueries();
 		}
@@ -88,7 +84,7 @@ public class QueryRestController extends BaseRestController {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed user, errors: " + toErrorList(result));
 		}
 		//Add it
-		queryService.saveQuery(query);
+		queryService.saveQuery(user, query);
 		return loadQueryIntoMap(query);
 	}
 
@@ -112,11 +108,12 @@ public class QueryRestController extends BaseRestController {
 		original.setQueryText(query.getQueryText());
 		original.setPublicForAll(query.isPublicForAll());
 		original.setPublicTo(query.getPublicTo());
-		queryService.saveQuery(original);
+		queryService.saveQuery(user, original);
 		return loadQueryIntoMap(original);
 	}
 	
 	@DeleteMapping("/api/analyses/{id}")
+	@ResponseStatus(HttpStatus.OK)
 	public void delete(@PathVariable(value = "id") Long id, Principal principal) {
 		User user = usersService.getUserByEmail(principal.getName());
 		Query query = queryService.findQuery(id);
@@ -125,7 +122,7 @@ public class QueryRestController extends BaseRestController {
 		} else if (!queryService.canModifyQuery(user, query)) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can not delete this query");
 		} else {
-			queryService.deleteQuery(query);
+			queryService.deleteQuery(user, query);
 		}
 	}
 	

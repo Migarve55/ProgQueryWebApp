@@ -14,8 +14,6 @@ public class AnalyzerTask extends FutureTask<List<ProblemDto>> {
 
 	private AbstractAnalyzerCallable callable;
 	
-	private boolean isPlaygroundTask = false;
-	
 	public AnalyzerTask(AbstractAnalyzerCallable callable) {
 		super(callable);
 		callable.setTask(this);
@@ -41,12 +39,8 @@ public class AnalyzerTask extends FutureTask<List<ProblemDto>> {
 		return super.cancel(mayInterruptIfRunning);
 	}
 	
-	public void setAsPlaygroundTask() {
-		this.isPlaygroundTask = true;
-	}
-	
 	public boolean isPlaygroundTask() {
-		return isPlaygroundTask;
+		return this.callable.isPlayground();
 	}
 
 	public int getProgress() {

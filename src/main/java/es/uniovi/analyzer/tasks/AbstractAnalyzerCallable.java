@@ -112,4 +112,8 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 		return programID;
 	}
 	
+	public boolean isPlayground() {
+		return false;
+	}
+	
 }

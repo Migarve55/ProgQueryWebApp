@@ -10,9 +10,17 @@ import es.uniovi.analyzer.tools.reporter.dto.ProblemDto;
 
 public class ProgramAnalyzerCallable extends AbstractAnalyzerCallable {
 	
+	private boolean isPlayground;
+
 	public ProgramAnalyzerCallable(String programID) {
 		super(null);
 		this.programID = programID;
+	}
+	
+	public ProgramAnalyzerCallable(String programID, boolean isPlayground) {
+		super(null);
+		this.programID = programID;
+		this.isPlayground = isPlayground;
 	}
 
 	protected void prepareEnviroment() throws EnviromentException {
@@ -30,6 +38,11 @@ public class ProgramAnalyzerCallable extends AbstractAnalyzerCallable {
 
 	protected void cleanEnviroment() throws EnviromentException {
 		// Nothing to do here
+	}
+	
+	@Override
+	public boolean isPlayground() {
+		return this.isPlayground;
 	}
 
 }

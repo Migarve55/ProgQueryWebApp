@@ -67,9 +67,12 @@ public class ResultController {
 			redirect.addFlashAttribute("error", "error.taskCancelled");
 			return "redirect:/";
 		} catch (ExecutionException e) {
-			e.printStackTrace();
 			redirect.addFlashAttribute("error", getRootCause(e).getLocalizedMessage());
-			return "redirect:/";
+			if (task.isPlaygroundTask()) {
+				return "redirect:/program/playground";
+			} else {
+				return "redirect:/";
+			}
 		} finally {
 			// Clear user task
 			analyzerService.clearUserTask(user);

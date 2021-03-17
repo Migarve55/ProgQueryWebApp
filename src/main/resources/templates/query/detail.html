@@ -4,10 +4,8 @@
 <body>
 	<nav th:replace="fragments/nav" />
 	<div class="container mt-3 wb-cont">
-	
-		<h2 th:text="#{query.detail.title}">Detalle de la consulta</h2>
+		<h2 th:text="${query.name}">es.uniovi.test</h2>
 		
-		<h3 th:text="${query.name}"></h3>
 		<h4 th:text="#{description}">Descripción:</h4>
 		<section th:text="${query.description}"></section>
 		<h4 th:text="#{query}">Consulta cipher:</h4>
@@ -17,7 +15,7 @@
 		<span th:if="${!query.publicForAll}" th:text="#{private}">Privada</span>
 		<h3 th:if="${canModify}">Opciones</h3>
 		<a class="btn btn-primary" th:if="${canModify}" th:href="${'/query/edit/' + query.id}" th:text="#{edit}">Editar</a>
-		<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-type="query" th:data-id="${query.id}" th:text="#{delete}">Borrar</button>
+		<button th:if="${canModify}" type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-type="query" th:data-id="${query.id}" th:text="#{delete}">Borrar</button>
 		<h3 th:if="${canModify && !query.publicForAll}" th:text="#{query.detail.edit}">Editar quien puede verla</h3>
 		<!-- Para editar la quien puede verlo -->
 		<form th:if="${canModify && !query.publicForAll}" method="post">
@@ -39,7 +37,7 @@
 				<span th:text="${user.name}"></span>
 				<span> </span>
 				<span th:text="${user.lastName}"></span>
-				<form method="POST" th:action="${'/query/' + query.id + '/removeUser/' + user.id}">
+				<form th:if="${canModify}" method="POST" th:action="${'/query/' + query.id + '/removeUser/' + user.id}">
 					<button type="submit" class="btn btn-danger" th:text="#{query.detail.remove}">Quitar</button>
 				</form>
 			</li>

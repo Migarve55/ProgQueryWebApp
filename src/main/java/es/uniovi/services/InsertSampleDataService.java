@@ -11,7 +11,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +29,11 @@ import es.uniovi.repositories.ResultsRepository;
 
 @Service
 public class InsertSampleDataService {
+	
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	
+	@Value("${spring.profiles.active:Unknown}")
+	private String activeProfile;
 
 	@Autowired
 	private UsersService usersService;
@@ -44,11 +52,12 @@ public class InsertSampleDataService {
 
 	@PostConstruct
 	public void init() {
-		if (!isDBCreated())
+		if (shouldCreateDB())
 			createAllData();
 	}
 	
 	private void createAllData() {
+		logger.info("Creating test sample data");
 		User user = createUser("miguel@email.com", "Miguel", "Garnacho Vélez", "123456");
 		createUser("oscar@email.com", "Oscar", "Rodrigez Prieto", "123456");
 		loadQueriesFromFile(user);
@@ -80,12 +89,8 @@ public class InsertSampleDataService {
 		return problem;
 	}
 	
-	/**
-	 * This checks the database has the basic initial data
-	 * @return
-	 */
-	private boolean isDBCreated() {
-		return usersService.getUserByEmail("miguel@email.com") != null;
+	private boolean shouldCreateDB() {
+		return this.activeProfile.equals("test");
 	}
 
 	private void loadQueriesFromFile(User user) {
@@ -103,7 +108,7 @@ public class InsertSampleDataService {
 					(String) queryJson.get("query"));
 				query.setUser(user);
 				query.setPublicForAll(true);
-				queryService.saveQuery(query);
+				queryService.saveQuery(user, query);
 			}
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
