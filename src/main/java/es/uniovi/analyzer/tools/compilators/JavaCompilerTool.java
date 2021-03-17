@@ -70,7 +70,7 @@ public class JavaCompilerTool extends AbstractCompiler {
 		}
 		logger.info("Executing compilation command: javac {}", String.join(" ", args));
 		if(compiler.run(null, stream, stream, argsArray) != 0) {
-			throw new CompilerException();
+			throw new CompilerException("error.compiler.java");
 		}
 	}
 	

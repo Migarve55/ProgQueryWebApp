@@ -47,9 +47,15 @@ public class QueryService {
 		return queriesRepository.findAllByUserOrderByName(pageable, user);
 	}
 	
-	public Page<Query> getQueriesFromUser(Pageable pageable, User user, String searchText) {
-		searchText = "%" + searchText + "%";
-		return queriesRepository.findAllByUserAndNameLike(pageable, user, searchText);
+	public Page<Query> getQueriesFromUser(Pageable pageable, User user, String searchText, boolean onlyOwner) {
+		if (searchText == null)
+			searchText = "%";
+		else
+			searchText = "%" + searchText + "%";
+		if (onlyOwner)
+			return queriesRepository.findAllByUserAndNameLike(pageable, user, searchText);
+		else
+			return queriesRepository.findAvailableQueriesForUser(pageable, user, searchText);
 	}
 	
 	public List<Query> getPublicQueries() {
@@ -70,31 +76,31 @@ public class QueryService {
 		checkUserWriteQueryAccess(user, query);
 		query.setModified(new Date());
 		queriesRepository.save(query);
-		logger.info("Query {} was saved", query.getName());
+		logger.info("Query '{}' was saved", query.getName());
 	}
 	
 
 	public boolean addUser(User user, Query query, User toAdd) {
-		if (user == null)
+		if (toAdd == null)
 			return false;
-		if (query.getPublicTo().contains(user))
+		if (query.getPublicTo().contains(toAdd))
 			return false;
 		checkUserWriteQueryAccess(user, query);
-		query.getPublicTo().add(user);
+		query.getPublicTo().add(toAdd);
 		queriesRepository.save(query);
-		logger.info("Query {} is now visible to user {}", query.getName(), user.getEmail());
+		logger.info("Query '{}' is now visible to user '{}'", query.getName(), toAdd.getEmail());
 		return true;
 	}
 
 	public boolean removeUser(User user, Query query, User toRemove) {
-		if (user == null)
+		if (toRemove == null)
 			return false;
-		if (!query.getPublicTo().contains(user))
+		if (!query.getPublicTo().contains(toRemove))
 			return false;
 		checkUserWriteQueryAccess(user, query);
-		query.getPublicTo().remove(user);
+		query.getPublicTo().remove(toRemove);
 		queriesRepository.save(query);
-		logger.info("Query {} is no longer visible to user {}", query.getName(), user.getEmail());
+		logger.info("Query '{}' is no longer visible to user '{}'", query.getName(), toRemove.getEmail());
 		return true;
 	}
 	
@@ -103,21 +109,21 @@ public class QueryService {
 		checkUserWriteQueryAccess(user, query);
 		queriesRepository.delete(query);
 		problemsRepository.setQueryAsDeleted(query);
-		logger.info("Query {} was deleted", query.getName());
+		logger.info("Query '{}' was deleted", query.getName());
 	}
 	
 	// Auxiliar
 	
 	public void checkUserReadQueryAccess(User user, Query query) {
 		if (!canSeeQuery(user, query)) {
-			logger.warn("User {} does not have read access to query '{}'", user.getEmail(), query.getName());
+			logger.warn("User '{}' does not have read access to query '{}'", user.getEmail(), query.getName());
 			throw new ForbiddenException();
 		}
 	}
 	
 	public void checkUserWriteQueryAccess(User user, Query query) {
 		if (!canModifyQuery(user, query)) {
-			logger.warn("User {} does not have write access to query '{}'", user.getEmail(), query.getName());
+			logger.warn("User '{}' does not have write access to query '{}'", user.getEmail(), query.getName());
 			throw new ForbiddenException();
 		}
 	}

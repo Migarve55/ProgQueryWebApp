@@ -67,14 +67,14 @@ public class QueryController {
 	}
 	
 	@GetMapping("/query/list")
-	public String list(Model model, Principal principal, Pageable pageable, @RequestParam(value = "searchText", required = false) String searchText) {
+	public String list(Model model, Principal principal, Pageable pageable, @RequestParam(value = "searchText", required = false) String searchText
+			, @RequestParam(value = "onlyOwner", required = false) String onlyOwner) {
 		Page<Query> queries = null;
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
-		if (searchText != null && !searchText.isEmpty())
-			queries = queryService.getQueriesFromUser(pageable, user, searchText);
-		else
-			queries = queryService.getQueriesFromUser(pageable, user);
+		queries = queryService.getQueriesFromUser(pageable, user, searchText, onlyOwner != null);
+		model.addAttribute("searchText", searchText);
+		model.addAttribute("onlyOwner", onlyOwner != null);
 		model.addAttribute("queriesList", queries.getContent());
 		model.addAttribute("page", queries);
 		return "query/list";

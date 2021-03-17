@@ -1,9 +1,11 @@
 package es.uniovi.tests;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 import org.junit.Test;
 
+import es.uniovi.entities.Query;
 import es.uniovi.tests.util.AbstractRestApiTest;
 
 public class QueryRestApiTest extends AbstractRestApiTest {
@@ -16,7 +18,9 @@ public class QueryRestApiTest extends AbstractRestApiTest {
 	        .when()
 	        	.get("/api/analyses")
 	        .then()
-	        	.statusCode(200);
+	        	.statusCode(200)
+	        	.body("", equalTo(""));
+		 
 	}
 
 }

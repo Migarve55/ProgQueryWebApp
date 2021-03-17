@@ -32,4 +32,7 @@ public interface QueriesRepository extends CrudRepository<Query, Long> {
 	@org.springframework.data.jpa.repository.Query(value = "select q.* from query q where q.public_for_all = true or q.user_id = ?1 or q.id in (select c.query_id from public_to c where c.user_id = ?1)", nativeQuery = true)
 	List<Query> findAvailableQueriesForUser(User user);
 	
+	@org.springframework.data.jpa.repository.Query(value = "select q.* from query q where q.name like ?2 and ( q.public_for_all = true or q.user_id = ?1 or q.id in (select c.query_id from public_to c where c.user_id = ?1)) order by q.name", nativeQuery = true)
+	Page<Query> findAvailableQueriesForUser(Pageable pageable, User user, String name);
+	
 }

@@ -4,13 +4,19 @@
 <body>
 	<!-- Barra de Navegación superior -->
 	<nav th:replace="fragments/nav" />
-	<div class="container mt-3">
+	<div class="m-4 mt-3">
 		<h2 th:text="#{query.list.title}">Consultas</h2>
-		<form class="navbar-form" action="/query/list">
-			 <div class="form-group">
-			 	<input name="searchText" type="text" class="form-control" size="50" placeholder="...">
+		<form action="/query/list">
+			 <div class="input-group">
+				<input th:value="${searchText}" type="text" class="form-control" placeholder="es.uniovi.test..." name="searchText">
+				<div class="input-group-append">
+					<div class="input-group-text"><i class="fa fa-search"></i></div>
+				</div>
 			 </div>
-		 	<button type="submit" class="btn btn-primary" th:text="#{query.list.search}">Buscar por nombre</button>
+			 <div class="form-check">
+				<input type="checkbox" th:checked="${onlyOwner}" name="onlyOwner" class="form-check-input" id="ownCb">
+				<label class="form-check-label" for=""ownCb"" th:text="#{query.list.ownCb}">Mostrar solo las propias</label>
+			</div>
 		</form>
 		<h2 th:text="#{query.list.text}">Lista de tus consultas:</h2>
 		<div class="table-responsive" th:if="${queriesList.size() > 0}">
@@ -20,6 +26,7 @@
 						<th th:text="#{name}">Nombre</th>
 						<th th:text="#{description}">Descripción</th>
 						<th th:text="#{visibility}">Privacidad</th>
+						<th >Autor</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -30,10 +37,9 @@
 							<span th:if="${query.publicForAll}" th:text="#{public}">Pública</span>
 							<span th:if="${!query.publicForAll}" th:text="#{private}">Privada</span>
 						</td>
+						<td th:text="${query.user.email}"></td>
 						<td>
 							<a class="btn btn-primary" th:href="${'/query/detail/' + query.id}" th:text="#{detail}">Detalles</a>
-						</td>
-						<td>
 							<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-type="query" th:data-id="${query.id}" th:text="#{delete}">Borrar</button>
 						</td>
 					</tr>

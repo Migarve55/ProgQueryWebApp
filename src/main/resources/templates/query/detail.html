@@ -16,29 +16,22 @@
 		<h3 th:if="${canModify}">Opciones</h3>
 		<a class="btn btn-primary" th:if="${canModify}" th:href="${'/query/edit/' + query.id}" th:text="#{edit}">Editar</a>
 		<button th:if="${canModify}" type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-type="query" th:data-id="${query.id}" th:text="#{delete}">Borrar</button>
-		<h3 th:if="${canModify && !query.publicForAll}" th:text="#{query.detail.edit}">Editar quien puede verla</h3>
+		<h3 th:if="${canModify}" th:text="#{query.detail.edit}">Editar quien puede verla</h3>
 		<!-- Para editar la quien puede verlo -->
-		<form th:if="${canModify && !query.publicForAll}" method="post">
-			<div class="form-hor">
-				<label class="control-label col-sm-2" for="user" th:text="#{query.detail.user}">Usuario:</label>
-				<div class="col-sm-6">
-					<input type="email" class="form-control" name="user" placeholder="user@email.com" required="true"/> 
+		<div class="container">
+			<form th:if="${canModify}" method="post">
+				<div class="row">
+					<input class="col-sm-4 form-control" type="email" name="user" placeholder="user@email.com" required="true"/> 
+					<button class="btn btn-primary col-sm-1 ml-2" type="submit" th:text="#{query.detail.add}" th:formaction="${'/query/addUser/' + query.id}">Añadir</button>
 				</div>
-				<div class="col-sm-2">
-					<button type="submit" class="btn btn-primary" th:text="#{query.detail.add}" th:formaction="${'/query/addUser/' + query.id}">Añadir</button>
-				</div>
-			</div>
-			<span class="text-danger" th:if=${error} th:text=#{${error}} />
-		</form>
+				<span class="text-danger" th:if=${error} th:text=#{${error}} />
+			</form>
+		</div>
 		<ul th:each="user : ${query.publicTo}">
 			<li class="userListItem">
 				<span th:text="${user.email}"></span>
-				<span>: </span>
-				<span th:text="${user.name}"></span>
-				<span> </span>
-				<span th:text="${user.lastName}"></span>
 				<form th:if="${canModify}" method="POST" th:action="${'/query/' + query.id + '/removeUser/' + user.id}">
-					<button type="submit" class="btn btn-danger" th:text="#{query.detail.remove}">Quitar</button>
+					<button type="submit" class="btn btn-danger ml-2" th:text="#{query.detail.remove}">Quitar</button>
 				</form>
 			</li>
 		</ul>
