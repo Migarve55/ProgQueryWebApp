@@ -11,16 +11,217 @@ import es.uniovi.tests.util.AbstractRestApiTest;
 public class QueryRestApiTest extends AbstractRestApiTest {
 
 	@Test
-	public void getQueries() throws Exception {
-		 given()
+	public void CP_ANL_01() throws Exception {
+		Query newQuery = new Query();
+		newQuery.setName("created");
+		newQuery.setDescription("...");
+		newQuery.setQueryText("...");
+		newQuery.setPublicForAll(false);
+		given()
 	        .spec(getRequestSpecification())
 	        .contentType("application/json")
+	        .body(newQuery)
+	        .when()
+	        	.post("/api/analyses")
+	        .then()
+	        	.statusCode(200)
+	        	.body("name", equalTo("created"));
+		
+		given()
+	        .spec(getRequestSpecification())
+	        .contentType("application/json")
+	        .params("user", "miguel@email.com")
+	        .params("owner", "true")
 	        .when()
 	        	.get("/api/analyses")
 	        .then()
 	        	.statusCode(200)
-	        	.body("", equalTo(""));
+	        	.body("[0].name", equalTo("created"))
+	        	.body("[1].name", equalTo("test1"))
+	        	.body("[2].name", equalTo("test2"));
+	}
+	
+	@Test
+	public void CP_ANL_02() throws Exception {
+		Query newQuery = new Query();
+		newQuery.setName("");
+		newQuery.setDescription("...");
+		newQuery.setQueryText("...");
+		newQuery.setPublicForAll(false);
+		given()
+	        .spec(getRequestSpecification())
+	        .contentType("application/json")
+	        .body(newQuery)
+	        .when()
+	        	.post("/api/analyses")
+	        .then()
+	        	.statusCode(400);
+		
+		newQuery = new Query();
+		newQuery.setName("test..name");
+		newQuery.setDescription("...");
+		newQuery.setQueryText("...");
+		newQuery.setPublicForAll(false);
+		given()
+	        .spec(getRequestSpecification())
+	        .contentType("application/json")
+	        .body(newQuery)
+	        .when()
+	        	.post("/api/analyses")
+	        .then()
+	        	.statusCode(400);
+		
+		newQuery = new Query();
+		newQuery.setName("..testname");
+		newQuery.setDescription("...");
+		newQuery.setQueryText("...");
+		newQuery.setPublicForAll(false);
+		given()
+	        .spec(getRequestSpecification())
+	        .contentType("application/json")
+	        .body(newQuery)
+	        .when()
+	        	.post("/api/analyses")
+	        .then()
+	        	.statusCode(400);
+		
+		newQuery = new Query();
+		newQuery.setName("test.name");
+		newQuery.setDescription("");
+		newQuery.setQueryText("...");
+		newQuery.setPublicForAll(false);
+		given()
+	        .spec(getRequestSpecification())
+	        .contentType("application/json")
+	        .body(newQuery)
+	        .when()
+	        	.post("/api/analyses")
+	        .then()
+	        	.statusCode(400);
+		
+		newQuery = new Query();
+		newQuery.setName("test.name");
+		newQuery.setDescription("...");
+		newQuery.setQueryText("");
+		newQuery.setPublicForAll(false);
+		given()
+	        .spec(getRequestSpecification())
+	        .contentType("application/json")
+	        .body(newQuery)
+	        .when()
+	        	.post("/api/analyses")
+	        .then()
+	        	.statusCode(400);
+	}
+	
+	@Test
+	public void CP_ANL_03() throws Exception {
+		Query query = new Query();
+		query.setDescription("new description");
+		query.setQueryText("new query text");
+		query.setPublicForAll(false);
+		given()
+	        .spec(getRequestSpecification())
+	        .contentType("application/json")
+	        .body(query)
+	        .when()
+	        	.put("/api/analyses/test1")
+	        .then()
+	        	.statusCode(200);
+		
+		given()
+        .spec(getRequestSpecification())
+        .contentType("application/json")
+        .params("user", "miguel@email.com")
+        .when()
+        	.get("/api/analyses/test1")
+        .then()
+        	.statusCode(200)
+        	.body("name", equalTo("test1"))
+        	.body("description", equalTo("new description"))
+        	.body("query", equalTo("new query text"));
+	}
+	
+	@Test
+	public void CP_ANL_04() throws Exception {
+		Query query = new Query();
+		query.setDescription("");
+		query.setQueryText("new query text");
+		query.setPublicForAll(false);
+		given()
+	        .spec(getRequestSpecification())
+	        .contentType("application/json")
+	        .body(query)
+	        .when()
+	        	.put("/api/analyses/test1")
+	        .then()
+	        	.statusCode(400);
+		
+		query = new Query();
+		query.setDescription("new query description");
+		query.setQueryText("");
+		query.setPublicForAll(false);
+		given()
+	        .spec(getRequestSpecification())
+	        .contentType("application/json")
+	        .body(query)
+	        .when()
+	        	.put("/api/analyses/test1")
+	        .then()
+	        	.statusCode(400);
+	}
+	
+	@Test
+	public void CP_ANL_05() throws Exception {
+		 given()
+	        .spec(getRequestSpecification())
+	        .contentType("application/json")
+	        .params("user", "miguel@email.com")
+	        .when()
+	        	.get("/api/analyses")
+	        .then()
+	        	.statusCode(200)
+	        	.body("[0].name", equalTo("test1"))
+	        	.body("[1].name", equalTo("test2"))
+	        	.body("[2].name", equalTo("test3"));
 		 
+	}
+	
+	@Test
+	public void CP_ANL_06() throws Exception {
+		 given()
+	        .spec(getRequestSpecification())
+	        .contentType("application/json")
+	        .params("user", "miguel@email.com")
+	        .params("owner", "true")
+	        .when()
+	        	.get("/api/analyses")
+	        .then()
+	        	.statusCode(200)
+	        	.body("[0].name", equalTo("test1"))
+	        	.body("[1].name", equalTo("test2"));
+	}
+	
+	@Test
+	public void CP_ANL_07() throws Exception {
+		given()
+        .spec(getRequestSpecification())
+        .contentType("application/json")
+        .when()
+        	.delete("/api/analyses/test1")
+        .then()
+        	.statusCode(200);
+		
+		given()
+	        .spec(getRequestSpecification())
+	        .contentType("application/json")
+	        .params("user", "miguel@email.com")
+	        .params("owner", "true")
+	        .when()
+	        	.get("/api/analyses")
+	        .then()
+	        	.statusCode(200)
+	        	.body("[0].name", equalTo("test2"));
 	}
 
 }

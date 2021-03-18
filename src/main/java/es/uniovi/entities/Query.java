@@ -3,6 +3,7 @@ package es.uniovi.entities;
 import javax.persistence.*;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set; 
 
 @Entity
@@ -35,7 +36,7 @@ public class Query {
 			name="PUBLIC_TO",
 	        joinColumns={@JoinColumn(name="QUERY_ID")},
 	        inverseJoinColumns={@JoinColumn(name="USER_ID")})
-	private Set<User> publicTo;
+	private Set<User> publicTo = new HashSet<User>();
 
 	public Query() {
 	}

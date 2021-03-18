@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
+
 import javax.annotation.PostConstruct;
 
 import org.json.simple.JSONArray;
@@ -31,9 +34,6 @@ import es.uniovi.repositories.ResultsRepository;
 public class InsertSampleDataService {
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
-	
-	@Value("${spring.profiles.active:Unknown}")
-	private String activeProfile;
 
 	@Autowired
 	private UsersService usersService;
@@ -50,28 +50,33 @@ public class InsertSampleDataService {
 	@Autowired 
 	private ProblemsRepository problemsRepository;
 
-	@PostConstruct
-	public void init() {
-		if (shouldCreateDB())
-			createAllData();
+	public void resetDB() {
+		logger.info("Resetting database...");
+		problemsRepository.deleteAll();
+		resultRepository.deleteAll();
+		programRepository.deleteAll();
+		queryService.deleteAll();
+		usersService.deleteAll();
 	}
 	
-	private void createAllData() {
+	public void createAllData() {
 		logger.info("Creating test sample data");
-		User user = createUser("miguel@email.com", "Miguel", "Garnacho Vélez", "123456");
-		createUser("oscar@email.com", "Oscar", "Rodrigez Prieto", "123456");
-		loadQueriesFromFile(user);
-		//Add sample error
-		Program program = new Program();
-		program.setName("Test");
-		program.setUser(user);
-		program = programRepository.save(program);
-		Result result = new Result();
-		result.setProgram(program);
-		result.setTimestamp(new Date());
-		resultRepository.save(result);
-		Query query = queryService.findQueryByName("es.uniovi.test1");
-		createProblem(result, query, "Error 1");
+		
+		// Users
+		User miguel = createUser("miguel@email.com", "Miguel", "Garnacho Vélez", "123456");
+		User oscar =  createUser("oscar@email.com", "Oscar", "Rodrigez Prieto", "123456");
+		
+		// Queries
+		createQuery("test1", "...", "...", true, miguel);
+		createQuery("test2", "...", "...", false, miguel);
+		createQuery("test3", "...", "...", false, oscar, miguel);
+		
+		// Programs
+		
+		// Results
+		
+		// Problems
+		
 	}
 	
 	private User createUser(String email, String name, String surname, String password) {
@@ -81,16 +86,30 @@ public class InsertSampleDataService {
 		return user;
 	}
 	
+	private Query createQuery(String name, String description, String cipher, boolean isPublic, User creator, User... publicTo) {
+		Query query = new Query();
+		query.setName(name);
+		query.setDescription(description);
+		query.setQueryText(cipher);
+		query.setUser(creator);
+		query.setPublicForAll(isPublic);
+		if (publicTo.length > 0) {
+			Set<User> publicToUsers = new HashSet<User>();
+			for (User user : publicTo) {
+				publicToUsers.add(user);
+			}
+			query.setPublicTo(publicToUsers);
+		}
+		queryService.saveQuery(creator, query);
+		return query;
+	}
+	
 	private Problem createProblem(Result result, Query query, String msg) {
 		Problem problem = new Problem(msg);
 		problem.setResult(result);
 		problem.setQuery(query);
 		problemsRepository.save(problem);
 		return problem;
-	}
-	
-	private boolean shouldCreateDB() {
-		return this.activeProfile.equals("test");
 	}
 
 	private void loadQueriesFromFile(User user) {

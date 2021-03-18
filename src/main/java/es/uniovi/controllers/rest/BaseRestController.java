@@ -25,7 +25,7 @@ public abstract class BaseRestController {
 			sb.append(errors.get(0).getCode());
 		for (int i = 1;i < errors.size();i++) {
 			sb.append(", ");
-			sb.append(errors.get(i).getCode());
+			sb.append(errors.get(i).getObjectName());
 		}
 		return sb.toString();
 	}

@@ -8,7 +8,7 @@
 		<form class="form-horizontal wb-cont" method="post" action="/query/add" th:object="${query}">
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="name" th:text="#{name}">Nombre:</label>
-				<div class="col-sm-10">
+				<div class="col-sm-12">
 					<input type="text" class="form-control" name="name"
 						placeholder="..." required="true" /> <span
 						class="text-danger" th:if="${#fields.hasErrors('name')}"
@@ -20,7 +20,7 @@
 			</div>
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="description" th:text="#{description}">Descripción:</label>
-				<div class="col-sm-10">
+				<div class="col-sm-12">
 					<input type="text" class="form-control" name="description"
 						placeholder="..." required="true" /> <span
 						class="text-danger" th:if="${#fields.hasErrors('description')}"
@@ -29,7 +29,7 @@
 			</div>
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="queryText" th:text="#{query}">Query:</label>
-				<div class="col-sm-10">
+				<div class="col-sm-12">
 					<textarea class="form-control" name="queryText" rows="10" spellcheck="false"></textarea>
 					<span class="text-danger" th:if="${#fields.hasErrors('queryText')}" th:errors="*{queryText}" />
 				</div>

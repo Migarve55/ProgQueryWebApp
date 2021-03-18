@@ -61,8 +61,8 @@ public class QueryRestController extends BaseRestController {
 	}
 	
 	@GetMapping("/api/analyses/{id}")
-	public Map<String, Object> get(@PathVariable(value = "id") Long id, Principal principal) {
-		Query query = queryService.findQuery(id);
+	public Map<String, Object> get(@PathVariable(value = "id") String name, Principal principal) {
+		Query query = queryService.findQueryByName(name);
 		User user = usersService.getUserByEmail(principal.getName());
  		if (query == null) {
  			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Query not Found");
@@ -81,19 +81,19 @@ public class QueryRestController extends BaseRestController {
 		query.setUser(user);
 		addQueryValidator.validate(query, result);
 		if (result.hasErrors()) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed user, errors: " + toErrorList(result));
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed query, errors: " + toErrorList(result));
 		}
 		//Add it
 		queryService.saveQuery(user, query);
 		return loadQueryIntoMap(query);
 	}
 
-	@PutMapping("/api/analyses")
-	public Map<String, Object> edit(@Validated @RequestBody Query query, BindingResult result, Principal principal) {
+	@PutMapping("/api/analyses/{id}")
+	public Map<String, Object> edit(@PathVariable(value = "id") String name, @Validated @RequestBody Query query, BindingResult result, Principal principal) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
+		Query original = queryService.findQueryByName(name);
 		editQueryValidator.validate(query, result);
-		Query original = queryService.findQuery(query.getId());
 		if (result.hasErrors()) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed query, errors: " + toErrorList(result));
 		}
@@ -114,9 +114,9 @@ public class QueryRestController extends BaseRestController {
 	
 	@DeleteMapping("/api/analyses/{id}")
 	@ResponseStatus(HttpStatus.OK)
-	public void delete(@PathVariable(value = "id") Long id, Principal principal) {
+	public void delete(@PathVariable(value = "id") String name, Principal principal) {
 		User user = usersService.getUserByEmail(principal.getName());
-		Query query = queryService.findQuery(id);
+		Query query = queryService.findQueryByName(name);
 		if (query == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Query not Found");
 		} else if (!queryService.canModifyQuery(user, query)) {

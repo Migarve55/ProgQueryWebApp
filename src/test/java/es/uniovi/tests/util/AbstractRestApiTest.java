@@ -4,11 +4,13 @@ import static io.restassured.RestAssured.given;
 
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
 import es.uniovi.security.JwtSecurityConstants;
 import es.uniovi.security.JwtUser;
+import es.uniovi.services.InsertSampleDataService;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.filter.log.RequestLoggingFilter;
@@ -25,16 +27,26 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 public abstract class AbstractRestApiTest {
 
 	private RequestSpecification specification;
+	
+	@Autowired 
+	private InsertSampleDataService insertSampleDataService;
 
 	@LocalServerPort
 	private int portNumber;
 
 	@Before
 	public void setUp() {
+		this.insertSampleDataService.resetDB();
+		this.insertSampleDataService.createAllData();
 		this.buildJWTSpecification("miguel@email.com", "123456");
 	}
 
 	protected void buildJWTSpecification(String username, String password) {
+		
+		// Ignore if the token is ready
+		if (specification != null)
+			return;
+		
 		JwtUser user = new JwtUser();
 		user.setUsername(username);
 		user.setPassword(password);
@@ -51,7 +63,7 @@ public abstract class AbstractRestApiTest {
 		specification = new RequestSpecBuilder()
 				.addHeader(JwtSecurityConstants.HEADER, token)
 				.setPort(portNumber)
-				.addFilter(new RequestLoggingFilter(LogDetail.ALL))
+				.addFilter(new RequestLoggingFilter(LogDetail.PARAMS))
 				.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
 				.build();
 	}
