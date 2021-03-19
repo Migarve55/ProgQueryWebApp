@@ -1,11 +1,11 @@
 FROM openjdk:11
-MAINTAINER uo257431 uo257431@uniovi.es
+LABEL version="1.0"
+LABEL maintainer="uo257431@uniovi.es"
 VOLUME /tmp
 
 # Install the basics
 
-RUN apk update && apk add maven netcat-openbsd 
-RUN apk --no-cache add ca-certificates wget
+RUN yum update && yum install maven netcat-openbsd ca-certificates wget
 ENV M2_HOME /usr/
 ENV PLUGIN_CLASSPATH /opt/webApp/plugin/ProgQuery.jar
 EXPOSE 8080/tcp

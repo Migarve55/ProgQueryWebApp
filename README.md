@@ -16,13 +16,13 @@
  - MySQL 8.0
  - Docker 18.09
  - Docker-compose 3
- - Neo4j 3.5.4
+ - Neo4j 4.2.3
  - Bootstrap 4.3.1
  - jQuery 3.2.0
  
  ## Features
  
- - Java code analysys and problem detection
+ - Java code analyses and problem detection
  - Query creating and sharing
  - Persistent program analysis storage: analyze your programs again and again without needing to upload them
  - Both in English and in Spanish
