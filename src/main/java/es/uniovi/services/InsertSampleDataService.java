@@ -8,8 +8,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -17,7 +15,6 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
@@ -72,6 +69,8 @@ public class InsertSampleDataService {
 		createQuery("test3", "...", "...", false, oscar, miguel);
 		
 		// Programs
+		createProgram("program1", miguel, new Date());
+		createProgram("program2", oscar, new Date());
 		
 		// Results
 		
@@ -102,6 +101,15 @@ public class InsertSampleDataService {
 		}
 		queryService.saveQuery(creator, query);
 		return query;
+	}
+	
+	private Program createProgram(String name, User owner, Date timestamp) {
+		Program program = new Program();
+		program.setName(name);
+		program.setUser(owner);
+		program.setTimestamp(timestamp);
+		programRepository.save(program);
+		return program;
 	}
 	
 	private Problem createProblem(Result result, Query query, String msg) {

@@ -6,12 +6,12 @@
 	<div class="container mt-3 wb-cont">
 		<h2 th:text="${query.name}">es.uniovi.test</h2>
 		
-		<h4 th:text="#{description}">Descripción:</h4>
+		<h4 th:text="#{description}">DescripciÃ³n:</h4>
 		<section th:text="${query.description}"></section>
 		<h4 th:text="#{query}">Consulta cipher:</h4>
 		<samp th:text="${query.queryText}"></samp>
 		<h4 th:text="#{visibility}">Privacidad:</h4>
-		<span th:if="${query.publicForAll}"  th:text="#{public}">Pública</span>
+		<span th:if="${query.publicForAll}"  th:text="#{public}">PÃºblica</span>
 		<span th:if="${!query.publicForAll}" th:text="#{private}">Privada</span>
 		<h3 th:if="${canModify}">Opciones</h3>
 		<a class="btn btn-primary" th:if="${canModify}" th:href="${'/query/edit/' + query.id}" th:text="#{edit}">Editar</a>
@@ -22,19 +22,35 @@
 			<form th:if="${canModify}" method="post">
 				<div class="row">
 					<input class="col-sm-4 form-control" type="email" name="user" placeholder="user@email.com" required="true"/> 
-					<button class="btn btn-primary col-sm-1 ml-2" type="submit" th:text="#{query.detail.add}" th:formaction="${'/query/addUser/' + query.id}">Añadir</button>
+					<button class="btn btn-primary col-sm-1 ml-2" type="submit" th:text="#{query.detail.add}" th:formaction="${'/query/addUser/' + query.id}">AÃ±adir</button>
 				</div>
 				<span class="text-danger" th:if=${error} th:text=#{${error}} />
 			</form>
 		</div>
-		<ul th:each="user : ${query.publicTo}">
-			<li class="userListItem">
-				<span th:text="${user.email}"></span>
-				<form th:if="${canModify}" method="POST" th:action="${'/query/' + query.id + '/removeUser/' + user.id}">
-					<button type="submit" class="btn btn-danger ml-2" th:text="#{query.detail.remove}">Quitar</button>
-				</form>
-			</li>
-		</ul>
+		<div class="table-responsive" th:if="${query.publicTo.size() > 0}">
+			<table class="table table-hover mt-2">
+				<thead>
+					<tr>
+						<th th:text="#{signup.email}">Email</th>
+						<th th:text="#{signup.name}">Nombre</th>
+						<th th:text="#{signup.lastName}">Apellidos</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="user : ${query.publicTo}">
+						<td th:text="${user.email}"></td>
+						<td th:text="${user.name}"></td>
+						<td th:text="${user.lastName}"></td>
+						<td>
+							<form th:if="${canModify}" method="POST" th:action="${'/query/' + query.id + '/removeUser/' + user.id}">
+								<button type="submit" class="btn btn-danger ml-2" th:text="#{query.detail.remove}">Quitar</button>
+							</form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 	</div>
 	<div th:replace="fragments/deleteDialog"/>
 	<footer th:replace="fragments/footer" />
