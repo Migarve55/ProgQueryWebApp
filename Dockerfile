@@ -30,6 +30,8 @@ RUN chmod +x /opt/webApp/wait-for
 
 # Install the plugin
 
+RUN chown -R app:app /opt/webApp
+USER app:app
 COPY plugin/ProgQuery.zip /opt/webApp/plugin/ProgQuery.zip
 RUN unzip /opt/webApp/plugin/ProgQuery.zip -d /opt/webApp/plugin/
 RUN rm -f /opt/webApp/plugin/ProgQuery.zip
@@ -37,7 +39,5 @@ RUN mvn install:install-file -DcreateChecksum=true -Dpackaging=jar -Dfile=/opt/w
 
 # Run
 
-RUN chown -R app:app /opt/webApp
-USER app:app
 WORKDIR /opt/webApp/
 ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
