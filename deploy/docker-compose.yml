@@ -11,19 +11,28 @@ services:
       - neo4j
     ports:
       - "80:8080"
+    environment:
+      NEO4J_DB_PASSWORD: ${NEO4J_DB_PASSWORD}
+      MYSQL_DB_PASSWORD: ${MYSQL_DB_PASSWORD}
     entrypoint: sh -c './wait-for sql:3306 -- java -Djava.security.egd=file:/dev/./urandom -jar app.jar'
 
   neo4j:
-    image: neo4j:4.2.3
+    image: neo4j:4.2.3-enterprise
     container_name: neo4jDB
     restart: always
     environment:
-      NEO4J_AUTH: neo4j/s3cr3t0.
-      NEO4J_dbms_memory_heap_maxSize: 2G
-      NEO4J_dbms.connector.http.listen_address: 0.0.0.0:7474
+      NEO4J_AUTH: neo4j/${NEO4J_DB_PASSWORD}
       NEO4JLABS_PLUGINS: '["apoc"]'
+      NEO4J_dbms_memory_heap_maxSize: 4G
+      NEO4J_dbms.connector.http.listen_address: 0.0.0.0:7474
+      NEO4J_ACCEPT_LICENSE_AGREEMENT: 'yes'
     expose:
       - 7687
+    ports:
+      - "7687:7687"
+      - "7474:7474"
+    volumes:
+      - "./data/db/neo4j:/data"
 
   sql:
     image: mysql/mysql-server:8.0
@@ -31,7 +40,12 @@ services:
     restart: always
     environment:
       MYSQL_DATABASE: db
-      MYSQL_ROOT_PASSWORD: dbp4ssw0rd
+      MYSQL_ROOT_PASSWORD: ${MYSQL_DB_PASSWORD}
       MYSQL_ROOT_HOST: '%'
     expose:
       - 3306
+    ports:
+      - "3306:3306"
+    volumes:
+      - "./data/db/mysql:/var/lib/mysql"
+    command: --innodb-use-native-aio=0

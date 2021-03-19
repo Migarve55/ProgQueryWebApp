@@ -38,6 +38,8 @@
  
  - M2_HOME: to the maven folder
  - PLUGIN_CLASSPATH: path to the plugin 
+ - MYSQL_DB_PASSWORD: password of the sql database
+ - NEO4J_DB_PASSWORD: password of the neo4j database
  - HIDE_COMPILER_OUTPUT: this is optional, if set all the compilers will hide their output
  - SHOW_DEBUG_OUTPUT: this is optional, if set all the compilers will show the debug info
  

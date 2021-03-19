@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -46,6 +48,21 @@ public class InsertSampleDataService {
 	
 	@Autowired 
 	private ProblemsRepository problemsRepository;
+	
+	@PostConstruct
+    public void init() {
+		User miguel = usersService.getUserByEmail("miguel@email.com");
+		if (miguel == null) {
+			insertProdData();
+		}
+	}
+	
+	private void insertProdData() {
+		logger.info("Inserting data for production...");
+		User miguel = createUser("miguel@email.com", "Miguel", "Garnacho Vélez", "123456");
+		createUser("oscar@email.com", "Oscar", "Rodrigez Prieto", "123456");
+		loadQueriesFromFile(miguel);
+	}
 
 	public void resetDB() {
 		logger.info("Resetting database...");
@@ -64,17 +81,21 @@ public class InsertSampleDataService {
 		User oscar =  createUser("oscar@email.com", "Oscar", "Rodrigez Prieto", "123456");
 		
 		// Queries
-		createQuery("test1", "...", "...", true, miguel);
+		Query q1 = createQuery("test1", "...", "...", true, miguel);
 		createQuery("test2", "...", "...", false, miguel);
 		createQuery("test3", "...", "...", false, oscar, miguel);
 		
 		// Programs
-		createProgram("program1", miguel, new Date());
-		createProgram("program2", oscar, new Date());
+		Program p1 = createProgram("program1", miguel, new Date());
+		Program p2 = createProgram("program2", oscar, new Date());
 		
 		// Results
+		Result r1 = createResult(p1, new Date());
+		Result r2 = createResult(p2, new Date());
 		
 		// Problems
+		createProblem(r1, q1, "You got a problem");
+		createProblem(r2, q1, "You got a problem");
 		
 	}
 	
@@ -110,6 +131,14 @@ public class InsertSampleDataService {
 		program.setTimestamp(timestamp);
 		programRepository.save(program);
 		return program;
+	}
+	
+	private Result createResult(Program program, Date timestamp) {
+		Result result = new Result();
+		result.setProgram(program);
+		result.setTimestamp(timestamp);
+		resultRepository.save(result);
+		return result;
 	}
 	
 	private Problem createProblem(Result result, Query query, String msg) {
