@@ -5,7 +5,7 @@ VOLUME /tmp
 
 # Install the basics
 
-RUN apt-get update && apt-get -y install maven netcat-openbsd ca-certificates wget
+RUN apt-get update && apt-get -y install maven netcat-openbsd ca-certificates wget dos2unix
 ENV M2_HOME /usr/
 ENV PLUGIN_CLASSPATH /opt/webApp/plugin/ProgQuery.jar
 EXPOSE 8080/tcp
