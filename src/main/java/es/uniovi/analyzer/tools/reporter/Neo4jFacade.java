@@ -20,7 +20,7 @@ public class Neo4jFacade implements AutoCloseable {
 	private final Driver driver;
 	
 	private final static String DELETE_PROGRAM_QUERY = "MATCH (p:PROGRAM) WHERE p.ID=$programID CALL apoc.path.subgraphNodes(p,{minLevel:0}) YIELD node DETACH DELETE node";
-	private final static String MODIFY_PROGRAM_NODE_QUERY = "";
+	private final static String MODIFY_PROGRAM_NODE_QUERY = "MATCH (p:PROGRAM) WHERE p.ID=$programID SET p.userID = $userID";
 	
     public Neo4jFacade(String url) {
     	url = "neo4j://" + url;
@@ -67,7 +67,7 @@ public class Neo4jFacade implements AutoCloseable {
         {
             Map<String, Object> params = new HashMap<>();
         	params.put("programID", programID);
-        	params.put("userId", userId);
+        	params.put("userID", userId);
             session.writeTransaction(tx -> tx.run(MODIFY_PROGRAM_NODE_QUERY, params));
         }
     }

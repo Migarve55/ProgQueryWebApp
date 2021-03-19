@@ -75,7 +75,7 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 			nextStep("Creating report", 25);
 			result.addAll(
 				ToolFactory
-				.getReportTool(System.getProperty("neo4j.url"), programID, queries)
+				.getNeo4jTool(System.getProperty("neo4j.url"), programID, queries)
 				.generateReport()
 			);
 		} else {

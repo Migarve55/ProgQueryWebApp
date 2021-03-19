@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import es.uniovi.analyzer.tools.reporter.dto.ProblemDto;
 import es.uniovi.analyzer.tools.reporter.dto.QueryDto;
 
-public class ReportTool {
+public class Neo4jTool {
 	
 	private String url;
 	private String database;
@@ -21,7 +21,7 @@ public class ReportTool {
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	public ReportTool(String url, String programID) { 
+	public Neo4jTool(String url, String programID) { 
 		this.url = url;
 		this.programID = programID;
 	}
@@ -51,6 +51,8 @@ public class ReportTool {
 		} 
 		return errors;
 	}
+	
+	// Auxiliar
 	
 	private ProblemDto getProblemDtoFromResult(Record record) {
 		ProblemDto error = new ProblemDto();

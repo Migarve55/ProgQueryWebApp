@@ -30,6 +30,7 @@ import es.uniovi.analyzer.tasks.program.ProgramAnalyzerCallable;
 import es.uniovi.analyzer.tasks.zip.ZipAnalizerCallable;
 import es.uniovi.analyzer.tools.ToolFactory;
 import es.uniovi.analyzer.tools.compilators.CompilerTool;
+import es.uniovi.analyzer.tools.reporter.Neo4jFacade;
 import es.uniovi.analyzer.tools.reporter.dto.ProblemDto;
 import es.uniovi.analyzer.tools.reporter.dto.QueryDto;
 import es.uniovi.entities.Problem;
@@ -279,6 +280,7 @@ public class AnalyzerService {
 			problem.setMsg(problemDto.getMsg());
 			problemsRepository.save(problem);
 		}
+		modifyProgramNode(program.getProgramIdentifier(), user.getEmail());
 	}
 	
 	private Program createProgram(User user, String name, String programID) {
@@ -288,6 +290,13 @@ public class AnalyzerService {
 		program.setProgramIdentifier(programID);
 		program.setName(name);
 		return programRepository.save(program);
+	}
+	
+	private void modifyProgramNode(String programId, String userId) {
+		try (Neo4jFacade neo4jFacade = new Neo4jFacade(System.getProperty("neo4j.url"))) {
+			neo4jFacade.modifyProgram(programId, userId);
+			logger.info("Modified program node for program '{}' of user '{}'", programId, userId);
+		}
 	}
 	
 	/**
