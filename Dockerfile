@@ -12,6 +12,7 @@ EXPOSE 8080/tcp
 
 # Add app user and group
 
+RUN addgroup app
 RUN adduser --disabled-password app app
 
 # Install progQuery webApp
