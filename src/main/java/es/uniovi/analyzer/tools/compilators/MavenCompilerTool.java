@@ -140,14 +140,14 @@ public class MavenCompilerTool extends AbstractCompiler {
 			source = new Xpp3Dom("source");
 			configuration.addChild(source);
 		} 
-		source.setValue("1.6");
+		source.setValue("1.8");
 		// Set target
 		Xpp3Dom target = configuration.getChild("target");
 		if (target == null) {
 			target = new Xpp3Dom("target");
 			configuration.addChild(target);
 		} 
-		target.setValue("1.6");
+		target.setValue("1.8");
 		//Xplugin argument
 		addArg(compArgs, getPluginArg(programID));
 		plugin.setConfiguration(configuration);
