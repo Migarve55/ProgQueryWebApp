@@ -118,7 +118,13 @@ public class JavaCompilerTool extends AbstractCompiler {
 				continue;
 			sb.append(String.format("%s%s;", basePath, p));
 		}
-		return String.format("%s;%s", System.getenv("PLUGIN_CLASSPATH"), sb.toString());
+		String pluginClasspath = System.getenv("PLUGIN_CLASSPATH");
+		String additionalClasspath = sb.toString();
+		if (additionalClasspath.isEmpty()) {
+			return pluginClasspath;
+		} else {
+			return pluginClasspath + ";" + additionalClasspath;
+		}
 	}
 
 	/**
