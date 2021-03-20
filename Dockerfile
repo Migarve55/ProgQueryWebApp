@@ -18,12 +18,15 @@ RUN adduser app app
 # Install progQuery webApp
 
 COPY . build/
+COPY lib/ProgQueryCypherAdapter.jar PQCA.jar
+RUN mvn install:install-file -DcreateChecksum=true -Dpackaging=jar -Dfile=PQCA.jar -DgroupId=es.uniovi -DartifactId=cypherAdapter -Dversion=1.0 -DgeneratePom=true
+RUN rm PQCA.jar
 COPY deploy/application-prod.properties build/src/main/resources/application.properties
 RUN mvn -Pprod -f build/pom.xml -Dmaven.test.skip=true package
 RUN mkdir -p /opt/webApp
 RUN mkdir /opt/webApp/uploads
 RUN cp build/target/*.jar /opt/webApp/app.jar
-RUN rm -r -f build/
+RUN rm -rf build/
 COPY deploy/wait-for /opt/webApp/wait-for
 RUN dos2unix /opt/webApp/wait-for
 RUN chmod +x /opt/webApp/wait-for
@@ -31,14 +34,11 @@ RUN chmod +x /opt/webApp/wait-for
 # Install the plugin
 
 COPY plugin/ProgQuery.zip /opt/webApp/plugin/ProgQuery.zip
-COPY lib/ProgQueryCypherAdapter.jar PQCA.jar
 RUN unzip /opt/webApp/plugin/ProgQuery.zip -d /opt/webApp/plugin/
 RUN rm -f /opt/webApp/plugin/ProgQuery.zip
 RUN chown -R app:app /opt/webApp
 USER app:app
 RUN mvn install:install-file -DcreateChecksum=true -Dpackaging=jar -Dfile=/opt/webApp/plugin/ProgQuery.jar -DgroupId=es.uniovi.progQuery -DartifactId=progQuery -Dversion=0.0.1-SNAPSHOT -DgeneratePom=true
-RUN mvn install:install-file -DcreateChecksum=true -Dpackaging=jar -Dfile=PQCA.jar -DgroupId=es.uniovi -DartifactId=cypherAdapter -Dversion=1.0 -DgeneratePom=true
-RUN PQCA.jar
 
 # Run
 
