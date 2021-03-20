@@ -128,8 +128,6 @@
 			<groupId>es.uniovi</groupId>
 			<artifactId>cypherAdapter</artifactId>
 			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/ProgQueryCypherAdapter.jar</systemPath>
 		</dependency>
 		
 	</dependencies>
