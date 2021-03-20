@@ -4,16 +4,21 @@ import java.security.Principal;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import es.uniovi.analyzer.exceptions.AnalyzerException;
 import es.uniovi.analyzer.tasks.AnalyzerTask;
 import es.uniovi.entities.Problem;
 import es.uniovi.entities.Result;
@@ -24,6 +29,8 @@ import es.uniovi.services.UsersService;
 
 @Controller
 public class ResultController {
+	
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired
 	private UsersService usersService;
@@ -67,11 +74,19 @@ public class ResultController {
 			redirect.addFlashAttribute("error", "error.taskCancelled");
 			return "redirect:/";
 		} catch (ExecutionException e) {
-			redirect.addFlashAttribute("error", getRootCause(e).getLocalizedMessage());
-			if (task.isPlaygroundTask()) {
-				return "redirect:/program/playground";
+			Throwable exception = getRootCause(e);
+			if (exception instanceof AnalyzerException) {
+				AnalyzerException ae = (AnalyzerException) exception;
+				redirect.addFlashAttribute("error", ae.getErrorCode());
+				if (task.isPlaygroundTask()) {
+					return "redirect:/program/playground";
+				} else {
+					return "redirect:/";
+				}
 			} else {
-				return "redirect:/";
+				logger.error("Unexpected exception for report of user '{}'", user.getEmail());
+				e.printStackTrace();
+				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		} finally {
 			// Clear user task

@@ -38,12 +38,10 @@ public class UsersService {
 
 	@Transactional
 	public void addUser(User user) {
-		try (Neo4jFacade neo4jFacade = new Neo4jFacade(System.getProperty("neo4j.url"))) {
-			if (user.getPassword() != null)
-				user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-			User newUser = usersRepository.save(user);
-			logger.info("User {} has been added", newUser.getEmail());
-		}
+		if (user.getPassword() != null)
+			user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+		User newUser = usersRepository.save(user);
+		logger.info("User {} has been added", newUser.getEmail());
 	}
 	
 	public boolean checkUserPassword(User user, String password) {
