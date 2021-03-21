@@ -1,8 +1,17 @@
 package es.uniovi.analyzer.tools.compilators;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 public abstract class AbstractCompiler implements CompilerTool {
 
 	private final static String PLUGIN_ARG_TEMPLATE = "-Xplugin:ProgQueryPlugin %s S %s;%s;%s";
+	
+	public StringBuilder sb = new StringBuilder("");
+	
+	public String getRecordedOutput() {
+		return sb.toString();
+	}
 	
 	protected String getPluginArg(String programId) {
 		return String.format(PLUGIN_ARG_TEMPLATE, 
@@ -20,6 +29,17 @@ public abstract class AbstractCompiler implements CompilerTool {
 	// SHOW_DEBUG_OUTPUT
 	protected boolean shouldShowDebugOutput() {
 		return System.getenv("SHOW_DEBUG_OUTPUT") != null;
+	}
+	
+	protected OutputStream getOutputStremRecorder() {
+		sb = new StringBuilder("");
+		return new OutputStream() {
+			@Override
+			public void write(int b) throws IOException {
+				System.out.print(b);
+				sb.append(b);
+			}
+		};
 	}
 
 }

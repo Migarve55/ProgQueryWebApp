@@ -64,7 +64,7 @@ public class JavaCompilerTool extends AbstractCompiler {
 			stream = new OutputStream() {
 				@Override
 				public void write(int b) throws IOException {
-					//Do nothing
+					
 				}
 			};
 		}
