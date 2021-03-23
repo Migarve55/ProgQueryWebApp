@@ -50,7 +50,7 @@ public class UsersService {
 	
 	public void changeUserPassword(User user, String newPassword) {
 		if (validateUserPassword(newPassword)) {
-			user.setPassword(newPassword);
+			user.setPassword(bCryptPasswordEncoder.encode(newPassword));
 			usersRepository.save(user);
 			logger.info("User {} has changed the password", user.getEmail());
 		}

@@ -25,15 +25,15 @@
   				<div class="col-md-6">
   					<h2 class="analysisTitle" th:text="#{playground.query}">Analysis</h2>
   					<span th:text="#{playground.query.search}">Search an existing query: </span>
-  					<div class="input-group">
-					    <input type="text" class="form-control" placeholder="Search" name="queryName">
-					    <div class="input-group-append">
-					    	<div class="input-group-text"><i class="fa fa-search"></i></div>
-						</div>
+  					<div>
+					    <select class="form-control" id="querySelect" name="queryId">
+					      <option th:text="#{playground.program.useSource}"> Usar fuente </option>
+					      <option th:each="query : ${queries}" th:text="${query.name}" th:value="${query.id}"></option>
+					    </select>
 					</div>
   					<span th:text="#{playground.query.option}">Or enter its Cypher code: </span>
   					<div class="form-group">
-  						<textarea class="form-control textAreaAnalyzer" name="queryText" spellcheck="false" th:text="${queryText}"></textarea>
+  						<textarea id="querySource" class="form-control textAreaAnalyzer" name="queryText" spellcheck="false" th:text="${queryText}"></textarea>
   					</div>
   				</div>
   			</div>
@@ -41,7 +41,7 @@
   			<input class="form-control btn btn-primary" type="submit" formmethod="POST" th:value="#{analyze}"/>
   			<span th:text="#{playground.result}">Result:</span>
   			<div class="form-group">
-  				<textarea disabled th:text="${results}" class="form-control" spellcheck="false" cols="2"></textarea>
+  				<textarea disabled th:text="${results}" class="form-control" spellcheck="false" rows="6"></textarea>
   			</div>
 		</div>
 		<script src="/script/playground.js"></script>

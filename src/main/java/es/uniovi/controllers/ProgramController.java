@@ -100,6 +100,7 @@ public class ProgramController {
 		List<Program> programs = programService.listByUser(user);
 		model.addAttribute("programs", programs);
 		// Load queries
+		model.addAttribute("queries", queryService.getAvailableQueriesForUser(user));
 		model.addAttribute("queryText", "");
 		if (queryName != null) {
 			if (!queryName.trim().isEmpty()) {
@@ -127,6 +128,15 @@ public class ProgramController {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		String queryText = params.get("queryText");
+		if (queryText == null) {
+			long queryId = Long.parseLong(params.get("queryId"));
+			queryText = queryService.findQuery(queryId).getQueryText();
+		} else {
+			if (!queryService.isQueryOk(queryText)) {
+				redirect.addFlashAttribute("error", "error.query.text");
+				return "redirect:/program/playground";
+			}
+		}
 		String programId = params.get("programId");
 		String programSource = params.get("programSource");
 		// Analyze
