@@ -41,7 +41,7 @@ public class SettingsController {
 			redir.addFlashAttribute("passChangeError", "error.settings.password");
 			return "redirect:/settings";
 		}
-		if (usersService.validateUserPassword(newPass)) {
+		if (!usersService.validateUserPassword(newPass)) {
 			redir.addFlashAttribute("passChangeError", "error.password");
 			return "redirect:/settings";
 		}
