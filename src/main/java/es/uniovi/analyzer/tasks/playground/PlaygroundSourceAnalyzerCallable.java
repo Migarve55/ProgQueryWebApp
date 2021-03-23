@@ -33,7 +33,7 @@ public class PlaygroundSourceAnalyzerCallable extends AbstractAnalyzerCallable {
 	}
 	
 	private String getJavaFilename(String source) {
-		String src = source.toLowerCase().trim();
+		String src = source.trim();
 		if (!src.startsWith("public"))
 			return "source.java";
 		// Encontrar nombre de la clase

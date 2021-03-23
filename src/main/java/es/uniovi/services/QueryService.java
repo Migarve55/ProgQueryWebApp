@@ -143,7 +143,12 @@ public class QueryService {
 	}
 	
 	public boolean isQueryOk(String query) {
-		return CypherAdapter.limitQuery(query, "test") != null;
+		try {
+			CypherAdapter.limitQuery(query, "test");
+			return true;
+		} catch (NullPointerException npe) {
+			return false;
+		}
 	}
 	
 	public void deleteAll() {
