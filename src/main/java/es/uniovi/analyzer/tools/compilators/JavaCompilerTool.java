@@ -24,10 +24,10 @@ public class JavaCompilerTool extends AbstractCompiler {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Override
-	public void compileFile(String basePath, String programID, String filename) throws CompilerException {
+	public void compileFile(String basePath, String programID, String userId, String filename) throws CompilerException {
 		JavaCompiler compiler = getCompiler();
 		// Basic config
-		List<String> args = basicArgs(basePath, programID, "");
+		List<String> args = basicArgs(basePath, programID, userId, "");
 		// Add file
 		args.add(basePath + filename);
 		// Compilation
@@ -35,10 +35,10 @@ public class JavaCompilerTool extends AbstractCompiler {
 	}
 
 	@Override
-	public void compileFolder(String basePath, String programID, String classpath) throws CompilerException {
+	public void compileFolder(String basePath, String programID, String userId, String classpath) throws CompilerException {
 		JavaCompiler compiler = getCompiler();
 		// Basic config
-		List<String> args = basicArgs(basePath, programID, classpath);
+		List<String> args = basicArgs(basePath, programID, userId, classpath);
 		if (shouldShowDebugOutput())
 			args.add("-g");
 		// Add files
@@ -94,12 +94,12 @@ public class JavaCompilerTool extends AbstractCompiler {
 		return compiler;
 	}
 
-	private List<String> basicArgs(String basePath, String programID, String classpath) {
+	private List<String> basicArgs(String basePath, String programID, String userId, String classpath) {
 		return new ArrayList<>(
 				Arrays.asList(
 						"-cp", getClassPath(basePath, classpath),
 						"-encoding", ENCODING,
-						String.format(getPluginArg(programID), programID, System.getProperty("neo4j.url")), 
+						String.format(getPluginArg(programID, userId), programID, System.getProperty("neo4j.url")), 
 						"-d", basePath, "-nowarn", "-g:none", "-Xlint:none"));
 	}
 

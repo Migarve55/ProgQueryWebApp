@@ -12,7 +12,9 @@
 		<div class="wb-cont mt-2 mb-2">
 			<div th:each="result : ${resultsList}">
 				<div class="resultHeader">
-					<span class="pTitle" th:text="${result.timestamp}"></span>
+					<a th:href="${'/result/' + result.id}">
+						<span th:text="${#dates.format(result.timestamp, 'HH:MM:ss dd/MM/yyyy')}"></span>
+					</a>
 					<button type="button" class="btn btn-danger btnDelete" data-toggle="modal" data-target="#deleteModal" data-type="result" th:data-id="${result.id}" th:text="#{delete}">Borrar</button>
 				</div>
 				<div class="table-responsive" th:if="${not #lists.isEmpty(result.problems)}">

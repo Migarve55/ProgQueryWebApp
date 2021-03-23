@@ -13,7 +13,7 @@
 		<h4 th:text="#{visibility}">Privacidad:</h4>
 		<span th:if="${query.publicForAll}"  th:text="#{public}">Pública</span>
 		<span th:if="${!query.publicForAll}" th:text="#{private}">Privada</span>
-		<h3 th:if="${canModify}">Opciones</h3>
+		<h3 th:if="${canModify}" th:text="#{query.detail.options}">Opciones</h3>
 		<a class="btn btn-primary" th:if="${canModify}" th:href="${'/query/edit/' + query.id}" th:text="#{edit}">Editar</a>
 		<button th:if="${canModify}" type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-type="query" th:data-id="${query.id}" th:text="#{delete}">Borrar</button>
 		<h3 th:if="${canModify}" th:text="#{query.detail.edit}">Editar quien puede verla</h3>

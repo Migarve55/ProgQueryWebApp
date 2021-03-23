@@ -1,5 +1,6 @@
 package es.uniovi.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -9,10 +10,13 @@ import javax.persistence.ManyToOne;
 @Entity
 public class Problem {
 	
+	public final static int MSG_LENGTH = 2048;
+	
 	@Id
 	@GeneratedValue
 	private long id;
 	
+	@Column(length = MSG_LENGTH)
 	private String msg;
 	
 	@ManyToOne

@@ -42,7 +42,7 @@ public class SettingsController {
 			return "redirect:/settings";
 		}
 		if (usersService.validateUserPassword(newPass)) {
-			redir.addFlashAttribute("passChangeError", "error.settings.newPassword");
+			redir.addFlashAttribute("passChangeError", "error.password");
 			return "redirect:/settings";
 		}
 		if (!newPass.equals(newPassConf)) {

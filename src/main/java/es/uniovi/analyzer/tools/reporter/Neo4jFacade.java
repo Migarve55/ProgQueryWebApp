@@ -1,5 +1,6 @@
 package es.uniovi.analyzer.tools.reporter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,73 +13,69 @@ import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.Transaction;
 import org.neo4j.driver.TransactionWork;
-
 import es.uniovi.reflection.processing.CypherAdapter;
 
 public class Neo4jFacade implements AutoCloseable {
 
 	private final Driver driver;
-	
-	private final static String DELETE_PROGRAM_QUERY = "MATCH (p:PROGRAM) WHERE p.ID=$programID CALL apoc.path.subgraphNodes(p,{minLevel:0}) YIELD node DETACH DELETE node";
-	private final static String MODIFY_PROGRAM_NODE_QUERY = "MATCH (p:PROGRAM) WHERE p.ID=$programID SET p.USER_ID = $userID";
-	
-    public Neo4jFacade(String url) {
-    	url = "neo4j://" + url;
-    	driver = GraphDatabase.driver( url, AuthTokens.basic( System.getProperty("neo4j.user"), System.getProperty("neo4j.password") ) );
-    }
 
-    /**
-     * Run a query
-     * @param query
-     * @param programID the ID of the program to analyze
-     * @return
-     */
-    public List<Record> runQuery(String database, String query, String programID) {
-		try ( Session session = driver.session() )
-        {
-            Map<String, Object> params = new HashMap<>();
-        	params.put("programID", programID);
-        	String modifiedQuery = limitQuery(query, programID);
-            return session.writeTransaction(new TransactionWork<List<Record>>() {
-            	@Override
-            	public List<Record> execute(Transaction tx) {
-	            	 Result result = tx.run(modifiedQuery, params);
-	            	 return result.list();
-            	}
-			});
-        }
-    }
-    
-    /**
-     * Deletes a program from the database
-     * @param programID
-     */
-    public void removeProgram(String programID) {
-    	try ( Session session = driver.session() )
-        {
-            Map<String, Object> params = new HashMap<>();
-        	params.put("programID", programID);
-            session.writeTransaction(tx -> tx.run(DELETE_PROGRAM_QUERY, params));
-        }
-    }
-    
-    public void modifyProgram(String programID, String userId) {
-    	try ( Session session = driver.session() )
-        {
-            Map<String, Object> params = new HashMap<>();
-        	params.put("programID", programID);
-        	params.put("userID", userId);
-            session.writeTransaction(tx -> tx.run(MODIFY_PROGRAM_NODE_QUERY, params));
-        }
-    }
-    
-	@Override
-    public void close() {
-    	driver.close();
-    }
-	
-	private String limitQuery(String query, String programId) {
-		return CypherAdapter.limitQuery(query, programId);
+	private final static String DELETE_PROGRAM_QUERY = "MATCH (p:PROGRAM) WHERE p.ID=$programID CALL apoc.path.subgraphNodes(p,{minLevel:0}) YIELD node DETACH DELETE node";
+
+	public Neo4jFacade(String url) {
+		url = "neo4j://" + url;
+		driver = GraphDatabase.driver(url,
+				AuthTokens.basic(System.getProperty("neo4j.user"), System.getProperty("neo4j.password")));
 	}
-    
+
+	/**
+	 * Run a query
+	 * 
+	 * @param query
+	 * @param programID the ID of the program to analyze
+	 * @return
+	 */
+	public List<Record> runQuery(String database, String query, String programID) {
+		try (Session session = driver.session()) {
+			Map<String, Object> params = new HashMap<>();
+			params.put("programID", programID);
+			String modifiedQuery = limitQuery(query, programID);
+			if (modifiedQuery == null) {
+				return new ArrayList<Record>();
+			}
+			return session.writeTransaction(new TransactionWork<List<Record>>() {
+				@Override
+				public List<Record> execute(Transaction tx) {
+					Result result = tx.run(modifiedQuery, params);
+					return result.list();
+				}
+			});
+		}
+	}
+
+	/**
+	 * Deletes a program from the database
+	 * 
+	 * @param programID
+	 */
+	public void removeProgram(String programID) {
+		try (Session session = driver.session()) {
+			Map<String, Object> params = new HashMap<>();
+			params.put("programID", programID);
+			session.writeTransaction(tx -> tx.run(DELETE_PROGRAM_QUERY, params));
+		}
+	}
+
+	@Override
+	public void close() {
+		driver.close();
+	}
+
+	private String limitQuery(String query, String programId) {
+		try {
+			return CypherAdapter.limitQuery(query, programId);
+		} catch (Throwable t) {
+			return null;
+		}
+	}
+
 }

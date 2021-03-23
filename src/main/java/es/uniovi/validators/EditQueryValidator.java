@@ -1,14 +1,19 @@
 package es.uniovi.validators;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import es.uniovi.entities.Query;
+import es.uniovi.services.QueryService;
 
 @Component
 public class EditQueryValidator implements Validator {
+	
+	@Autowired
+	private QueryService queryService;
 	
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -27,6 +32,12 @@ public class EditQueryValidator implements Validator {
 		}
 		if (query.getQueryText().length() > Query.QUERY_LENGTH) {
 			errors.rejectValue("queryText", "error.query.length");
+		}
+		if (query.getQueryText().length() > Query.QUERY_LENGTH) {
+			errors.rejectValue("queryText", "error.query.length");
+		}
+		if (!queryService.isQueryOk(query.getQueryText())) {
+			errors.rejectValue("queryText", "error.query.text");
 		}
 	}
 

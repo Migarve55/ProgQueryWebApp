@@ -67,6 +67,9 @@
 				<i class="fa fa-sign-in"></i> <span th:text="#{login.message}">Login</span>  
 			</a>
 		</li>
+		<li class="active" sec:authorize="isAuthenticated()">
+			<span class="navbar-text" th:text="${session.currentUser.email}"></span>
+		</li>
 		<li id="logout" class="active" sec:authorize="isAuthenticated()">
 			<a class="nav-link" href="/logout"> 
 				<i class="fa fa-sign-out"></i> <span th:text="#{logout.message}">Logout</span>

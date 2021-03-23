@@ -30,7 +30,6 @@ import es.uniovi.analyzer.tasks.program.ProgramAnalyzerCallable;
 import es.uniovi.analyzer.tasks.zip.ZipAnalizerCallable;
 import es.uniovi.analyzer.tools.ToolFactory;
 import es.uniovi.analyzer.tools.compilators.CompilerTool;
-import es.uniovi.analyzer.tools.reporter.Neo4jFacade;
 import es.uniovi.analyzer.tools.reporter.dto.ProblemDto;
 import es.uniovi.analyzer.tools.reporter.dto.QueryDto;
 import es.uniovi.entities.Problem;
@@ -104,7 +103,7 @@ public class AnalyzerService {
 	 * @throws IOException if the java file could not be saved
 	 */
 	public void analyzeFile(User user, MultipartFile file, String classpath, String[] queries) throws IOException {
-		launchAnalyzerTask(user, file.getOriginalFilename(), "java", new FileAnalyzerCallable(classpath, file.getOriginalFilename(), file.getInputStream()), queries);
+		launchAnalyzerTask(user, file.getOriginalFilename(), "java", new FileAnalyzerCallable(classpath, user.getEmail(), file.getOriginalFilename(), file.getInputStream()), queries);
 	}
 	
 	/**
@@ -117,7 +116,7 @@ public class AnalyzerService {
 	 * @throws IOException if the zip file could not be saved
 	 */
 	public void analyzeZip(User user, MultipartFile zip, String compOp, String classpath, String[] queries) throws IOException {
-		launchAnalyzerTask(user, zip.getOriginalFilename(), compOp, new ZipAnalizerCallable(classpath, zip.getInputStream()), queries);
+		launchAnalyzerTask(user, zip.getOriginalFilename(), compOp, new ZipAnalizerCallable(classpath, user.getEmail(), zip.getInputStream()), queries);
 	}
 
 	/**
@@ -129,7 +128,7 @@ public class AnalyzerService {
 	 * @param queries
 	 */
 	public void analyzeGitRepo(User user, String repoUrl, String compOp, String classpath, String[] queries) {
-		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(classpath, repoUrl), queries);
+		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(classpath, user.getEmail(), repoUrl), queries);
 	}
 	
 	/**
@@ -141,7 +140,7 @@ public class AnalyzerService {
 	 */
 	public void uploadGitRepo(User user, String repoUrl, String compOp, String classpath) {
 		String[] queries = new String[0]; //Empty array with no queries
-		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(classpath, repoUrl), queries);
+		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(classpath, user.getEmail(), repoUrl), queries);
 	}
 	
 	/**
@@ -155,7 +154,7 @@ public class AnalyzerService {
 	public void reuploadGitRepo(Long id, User user, String repoUrl, String compOp, String classpath) {
 		String[] queries = new String[0]; //Empty array with no queries
 		programRepository.deleteById(id);
-		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(classpath, repoUrl), queries);
+		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(classpath, user.getEmail(), repoUrl), queries);
 	}
 	
 	/**
@@ -165,7 +164,7 @@ public class AnalyzerService {
 	 * @param program
 	 */
 	public void analyzeProgramWithQueryText(User user, String queryText, Program program) {
-		AbstractAnalyzerCallable callable = new ProgramAnalyzerCallable(program.getProgramIdentifier(), true);
+		AbstractAnalyzerCallable callable = new ProgramAnalyzerCallable(program.getProgramIdentifier(), user.getEmail(), true);
 		callable.setQueries(getSimpleQueryList(queryText));
 		replaceTasks(user, callable, (errors, task) -> {
 			createReport(user, program, errors);
@@ -181,7 +180,7 @@ public class AnalyzerService {
 	 * @param programSource
 	 */
 	public void analyzeSourceWithQueryText(User user, String queryText, String programSource) {
-		AbstractAnalyzerCallable callable = new PlaygroundSourceAnalyzerCallable(programSource);
+		AbstractAnalyzerCallable callable = new PlaygroundSourceAnalyzerCallable(programSource, user.getEmail());
 		callable.setQueries(getSimpleQueryList(queryText));
 		callable.setCompiler(ToolFactory.getJavaCompilerTool());
 		replaceTasks(user, callable, (errors, task) -> {
@@ -208,7 +207,7 @@ public class AnalyzerService {
 	 * @param queries 
 	 */
 	public void analyzeProgram(User user, Program program, String[] queries) {
-		AbstractAnalyzerCallable callable = new ProgramAnalyzerCallable(program.getProgramIdentifier());
+		AbstractAnalyzerCallable callable = new ProgramAnalyzerCallable(program.getProgramIdentifier(), user.getEmail());
 		List<Query> queriesList = getQueries(queries, user);
 		callable.setQueries(toQueryDto(queriesList));
 		
@@ -280,7 +279,6 @@ public class AnalyzerService {
 			problem.setMsg(problemDto.getMsg());
 			problemsRepository.save(problem);
 		}
-		modifyProgramNode(program.getProgramIdentifier(), user.getEmail());
 	}
 	
 	private Program createProgram(User user, String name, String programID) {
@@ -290,13 +288,6 @@ public class AnalyzerService {
 		program.setProgramIdentifier(programID);
 		program.setName(name);
 		return programRepository.save(program);
-	}
-	
-	private void modifyProgramNode(String programId, String userId) {
-		try (Neo4jFacade neo4jFacade = new Neo4jFacade(System.getProperty("neo4j.url"))) {
-			neo4jFacade.modifyProgram(programId, userId);
-			logger.info("Modified program node for program '{}' of user '{}'", programId, userId);
-		}
 	}
 	
 	/**

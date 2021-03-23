@@ -12,13 +12,13 @@ public class ProgramAnalyzerCallable extends AbstractAnalyzerCallable {
 	
 	private boolean isPlayground;
 
-	public ProgramAnalyzerCallable(String programID) {
-		super(null);
+	public ProgramAnalyzerCallable(String programID, String userId) {
+		super(null, userId);
 		this.programID = programID;
 	}
 	
-	public ProgramAnalyzerCallable(String programID, boolean isPlayground) {
-		super(null);
+	public ProgramAnalyzerCallable(String programID, String userId, boolean isPlayground) {
+		super(null, userId);
 		this.programID = programID;
 		this.isPlayground = isPlayground;
 	}

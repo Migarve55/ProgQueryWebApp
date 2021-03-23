@@ -20,15 +20,17 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 	protected String classpath;
 	protected String basePath;
 	protected String programID;
+	protected String userId;
 	protected AnalyzerTask task;
 	protected CompilerTool compiler;
 	protected List<QueryDto> queries = new ArrayList<QueryDto>();
 	
 	private Consumer<List<ProblemDto>> callback;
 
-	public AbstractAnalyzerCallable(String classpath) {
+	public AbstractAnalyzerCallable(String classpath, String userId) {
 		this.classpath = classpath;
 		this.programID = UUID.randomUUID().toString();
+		this.userId = userId;
 	}
 
 	@Override

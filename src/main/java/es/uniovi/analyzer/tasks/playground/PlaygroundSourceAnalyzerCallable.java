@@ -6,30 +6,41 @@ import es.uniovi.analyzer.tasks.AbstractAnalyzerCallable;
 import es.uniovi.analyzer.tools.ToolFactory;
 
 public class PlaygroundSourceAnalyzerCallable extends AbstractAnalyzerCallable {
-
-	private final static String JAVA_SOURCE_FILENAME = "source.java";
 	
 	private String source;
+	private String javaSourceFilename;
 	
-	public PlaygroundSourceAnalyzerCallable(String source) {
-		super(null);
+	public PlaygroundSourceAnalyzerCallable(String source, String userId) {
+		super(null, userId);
 		this.source = source;
+		this.javaSourceFilename = getJavaFilename(source);
 	}
 	
 	protected void prepareEnviroment() throws EnviromentException {
 		super.prepareEnviroment();
 		// Create source file
-		ToolFactory.getEnviromentTool().createSourceFile(basePath + "/" + JAVA_SOURCE_FILENAME, source);
+		ToolFactory.getEnviromentTool().createSourceFile(basePath + "/" + javaSourceFilename, source);
 	}
 
 	protected void compile() throws CompilerException {
 		super.compile();
-		compiler.compileFile(basePath, programID, JAVA_SOURCE_FILENAME);
+		compiler.compileFile(basePath, programID, userId, javaSourceFilename);
 	}
 	
 	@Override
 	public boolean isPlayground() {
 		return true;
+	}
+	
+	private String getJavaFilename(String source) {
+		String src = source.toLowerCase().trim();
+		if (!src.startsWith("public"))
+			return "source.java";
+		// Encontrar nombre de la clase
+		int startIndex = src.indexOf("class");
+		int endIndex = src.indexOf("{");
+		String name = src.substring(startIndex + 5, endIndex).trim();
+		return name + ".java";
 	}
 	
 }

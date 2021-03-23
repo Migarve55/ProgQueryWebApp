@@ -34,15 +34,15 @@ public class MavenCompilerTool extends AbstractCompiler {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Override
-	public void compileFile(String basePath, String programID, String filename) throws CompilerException {
+	public void compileFile(String basePath, String programID, String userId, String filename) throws CompilerException {
 		throw new CompilerException();
 	}
 	 
 	@Override
-	public void compileFolder(String basePath, String programID, String classpath) throws CompilerException {
+	public void compileFolder(String basePath, String programID, String userId, String classpath) throws CompilerException {
 	    //Configure model
 	    try {
-			configurePOMFIle(new File(basePath + "pom.xml"), basePath, programID);
+			configurePOMFIle(new File(basePath + "pom.xml"), basePath, programID, userId);
 		} catch (CompilerException e) {
 			e.printStackTrace();
 			throw e;
@@ -78,13 +78,13 @@ public class MavenCompilerTool extends AbstractCompiler {
 	    }
 	}
 	
-	private void configurePOMFIle(File pom, String basepath, String programID) throws CompilerException {
+	private void configurePOMFIle(File pom, String basepath, String programID, String userId) throws CompilerException {
 		Model model = null;
 		//Read model
 		try (FileReader fr = new FileReader(pom)) {
 			MavenXpp3Reader reader = new MavenXpp3Reader();
 			model = reader.read(fr);
-			modifyCompilerArgs(model, basepath, programID);
+			modifyCompilerArgs(model, basepath, programID, userId);
 			addDependencies(model);
 			//addRepo(model);
 		} catch (FileNotFoundException e) {
@@ -114,7 +114,7 @@ public class MavenCompilerTool extends AbstractCompiler {
 		model.addDependency(pluginDependency);
 	}
 	
-	private void modifyCompilerArgs(Model model, String basepath, String programID) throws CompilerException {
+	private void modifyCompilerArgs(Model model, String basepath, String programID, String userId) throws CompilerException {
 		Plugin plugin = model.getBuild().getPluginsAsMap()
 			.get("org.apache.maven.plugins:maven-compiler-plugin");
 		if (plugin == null) {
@@ -149,7 +149,7 @@ public class MavenCompilerTool extends AbstractCompiler {
 		} 
 		target.setValue("1.8");
 		//Xplugin argument
-		addArg(compArgs, getPluginArg(programID));
+		addArg(compArgs, getPluginArg(programID, userId));
 		plugin.setConfiguration(configuration);
 	}
 	
