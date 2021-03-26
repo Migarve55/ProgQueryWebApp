@@ -10,7 +10,7 @@ import es.uniovi.entities.User;
 import es.uniovi.services.UsersService;
 
 @Component
-public class SignUpFormValidator implements Validator {
+public class AddUserValidator implements Validator {
 
 	private final static String EMAIL_REGEX = ".+@.+\\..+";
 	

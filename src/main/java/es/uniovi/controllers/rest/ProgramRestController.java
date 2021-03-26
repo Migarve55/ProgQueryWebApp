@@ -4,8 +4,6 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,7 +36,7 @@ public class ProgramRestController extends BaseRestController {
 
 	// /api/programs?user={email}
 	@GetMapping("/api/programs")
-	public List<Map<String, Object>> list(Principal principal, @RequestParam(value = "email", required = true) String email) {
+	public List<Map<String, Object>> list(Principal principal, @RequestParam(value = "user", required = true) String email) {
 		User user = usersService.getUserByEmail(email);
 		return programToMapList(user.getPrograms());
 	}
@@ -49,14 +47,14 @@ public class ProgramRestController extends BaseRestController {
 		Program program = programService.findProgram(id);
 		if (program == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Program not Found");
-		} else if (!program.getUser().equals(user)) {
+		} 
+		if (!program.getUser().equals(user)) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Program can not be accessed");
-		} else {
-			return loadProgramIntoMap(program);
-		}
+		} 
+		return loadProgramIntoMap(program);
 	}
 	
-	@PostMapping("/api/program")
+	@PostMapping("/api/programs")
 	@ResponseStatus(HttpStatus.OK)
 	public void postProgram(@RequestParam("url") String url, 
 			@RequestParam(value = "args", required = false) String args, 
@@ -65,7 +63,7 @@ public class ProgramRestController extends BaseRestController {
 		analyzerService.uploadGitRepo(user, url, compOpt, args);
 	}
 	
-	@PutMapping("/api/program/{id}")
+	@PutMapping("/api/programs/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public void putProgram(
 			@PathVariable(value = "id") Long id,
@@ -84,16 +82,17 @@ public class ProgramRestController extends BaseRestController {
 
 	@DeleteMapping("/api/programs/{id}")
 	@ResponseStatus(HttpStatus.OK)
-	public void delete(@PathVariable(value = "id") Long id, Principal principal, HttpServletResponse response) {
+	public void delete(@PathVariable(value = "id") Long id, Principal principal) {
 		User user = usersService.getUserByEmail(principal.getName());
 		Program program = programService.findProgram(id);
 		if (program == null) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-		} else if (!program.getUser().equals(user)) {
-			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-		} else {
-			programService.deleteProgram(program.getId());
-		}
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Program not Found");
+		} 
+		if (!program.getUser().equals(user)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have access to this program");
+		} 
+		programService.deleteProgram(program.getId());
+		
 	}
 
 }

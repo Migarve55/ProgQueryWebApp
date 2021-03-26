@@ -8,14 +8,14 @@ import org.junit.Test;
 import es.uniovi.entities.Query;
 import es.uniovi.tests.util.AbstractRestApiTest;
 
-public class QueryRestApiTest extends AbstractRestApiTest {
+public class QueriesRestApiTest extends AbstractRestApiTest {
 
 	@Test
 	public void CP_ANL_01() throws Exception {
 		Query newQuery = new Query();
 		newQuery.setName("created");
 		newQuery.setDescription("...");
-		newQuery.setQueryText("...");
+		newQuery.setQueryText("MATCH (n) RETURN n");
 		newQuery.setPublicForAll(false);
 		given()
 	        .spec(getRequestSpecification())
@@ -118,7 +118,7 @@ public class QueryRestApiTest extends AbstractRestApiTest {
 	public void CP_ANL_03() throws Exception {
 		Query query = new Query();
 		query.setDescription("new description");
-		query.setQueryText("new query text");
+		query.setQueryText("MATCH (n) RETURN n as msg");
 		query.setPublicForAll(false);
 		given()
 	        .spec(getRequestSpecification())
@@ -139,7 +139,7 @@ public class QueryRestApiTest extends AbstractRestApiTest {
         	.statusCode(200)
         	.body("name", equalTo("test1"))
         	.body("description", equalTo("new description"))
-        	.body("query", equalTo("new query text"));
+        	.body("query", equalTo("MATCH (n) RETURN n as msg"));
 	}
 	
 	@Test
@@ -159,7 +159,7 @@ public class QueryRestApiTest extends AbstractRestApiTest {
 		
 		query = new Query();
 		query.setDescription("new query description");
-		query.setQueryText("");
+		query.setQueryText("MATCH (n RETURN n");
 		query.setPublicForAll(false);
 		given()
 	        .spec(getRequestSpecification())

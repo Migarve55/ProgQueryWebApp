@@ -36,12 +36,16 @@ public class UsersService {
 		return usersRepository.findById(id).orElse(null);
 	}
 
-	@Transactional
 	public void addUser(User user) {
 		if (user.getPassword() != null)
 			user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 		User newUser = usersRepository.save(user);
 		logger.info("User {} has been added", newUser.getEmail());
+	}
+	
+	public void modifyUser(User user) {
+		usersRepository.save(user);
+		logger.info("User {} has been modified", user.getEmail());
 	}
 	
 	public boolean checkUserPassword(User user, String password) {

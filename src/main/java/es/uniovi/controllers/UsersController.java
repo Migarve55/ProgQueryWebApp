@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import es.uniovi.entities.User;
 import es.uniovi.services.SecurityService;
 import es.uniovi.services.UsersService;
-import es.uniovi.validators.SignUpFormValidator;
+import es.uniovi.validators.AddUserValidator;
 
 @Controller
 public class UsersController {
@@ -23,7 +23,7 @@ public class UsersController {
 	private SecurityService securityService;
 
 	@Autowired
-	private SignUpFormValidator signUpFormValidator;
+	private AddUserValidator signUpFormValidator;
 	
 	@RequestMapping(value = "/signup", method = RequestMethod.GET)
 	public String signup(Model model) {

@@ -80,7 +80,7 @@ public class ResultRestController extends BaseRestController {
 		}
 	}
 	
-	@PostMapping("/api/result")
+	@PostMapping("/api/results")
 	@ResponseStatus(HttpStatus.OK)
 	public void analyzeProgram(Principal principal, @RequestParam String programId, @RequestParam String[] queries) {
 		User user = usersService.getUserByEmail(principal.getName());
@@ -96,7 +96,7 @@ public class ResultRestController extends BaseRestController {
 		}
 	}
 
-	@DeleteMapping("/api/result/{id}")
+	@DeleteMapping("/api/results/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public void delete(@PathVariable(value = "id") Long id, Principal principal, HttpServletResponse response) {
 		User user = usersService.getUserByEmail(principal.getName());
