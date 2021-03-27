@@ -20,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import es.uniovi.analyzer.tasks.AnalyzerTask;
 import es.uniovi.entities.User;
 import es.uniovi.services.AnalyzerService;
+import es.uniovi.services.ProgramService;
 import es.uniovi.services.QueryService;
 import es.uniovi.services.UsersService;
 
@@ -34,6 +35,9 @@ public class AnalyzerController {
 	
 	@Autowired
 	private QueryService queryService;
+	
+	@Autowired
+	private ProgramService programService;
 
 	@RequestMapping(path = "/analyzer/file", method = RequestMethod.GET)
 	public String getAnalizeFile(Model model, Principal principal) {
@@ -46,14 +50,24 @@ public class AnalyzerController {
 	}
 
 	@RequestMapping(path = "/analyzer/file", method = RequestMethod.POST, consumes = { "multipart/form-data" })
-	public String postAnalizeFile(@RequestParam("file") MultipartFile file, @RequestParam(value = "classpath", required = false) String classpath
-			, @RequestParam(value = "queries", required = false) String[] queries, Principal principal
-			, RedirectAttributes redirect) {
+	public String postAnalizeFile(
+			@RequestParam("file") MultipartFile file, 
+			@RequestParam(value = "programName") String name,
+			@RequestParam(value = "queries[]", required = false) String[] queries,
+			Principal principal, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
+		if (!programService.validateProgramName(name)) {
+			redirect.addFlashAttribute("error", "error.program.regex");
+			return "redirect:/analyzer/file";
+		}
+		if (programService.isProgramNameDuplicated(name)) {
+			redirect.addFlashAttribute("error", "error.program.name");
+			return "redirect:/analyzer/file";
+		}
 		try {
 			if (isTaskDone(user))
-				analyzerService.analyzeFile(user, file, classpath, queries);
+				analyzerService.analyzeFile(user, name, file, queries);
 		} catch (IOException e) {
 			e.printStackTrace();
 			redirect.addFlashAttribute("error", "error.fileError");
@@ -73,14 +87,26 @@ public class AnalyzerController {
 	}
 
 	@RequestMapping(path = "/analyzer/zip", method = RequestMethod.POST, consumes = { "multipart/form-data" })
-	public String postAnalizeZip(@RequestParam("zip") MultipartFile zip, @RequestParam("compOpt") String compOpt,
-			@RequestParam(value = "classpath", required = false) String classpath, @RequestParam(value = "queries", required = false) String[] queries, 
+	public String postAnalizeZip(
+			@RequestParam("zip") MultipartFile zip, 
+			@RequestParam(value = "programName") String name,
+			@RequestParam("compOpt") String compOpt,
+			@RequestParam(value = "classpath", required = false) String classpath, 
+			@RequestParam(value = "queries", required = false) String[] queries, 
             Principal principal, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
+		if (!programService.validateProgramName(name)) {
+			redirect.addFlashAttribute("error", "error.program.regex");
+			return "redirect:/analyzer/zip";
+		}
+		if (programService.isProgramNameDuplicated(name)) {
+			redirect.addFlashAttribute("error", "error.program.name");
+			return "redirect:/analyzer/zip";
+		}
 		try {
 			if (isTaskDone(user))
-				analyzerService.analyzeZip(user, zip, compOpt, classpath, queries);
+				analyzerService.analyzeZip(user, name, zip, compOpt, classpath, queries);
 		} catch (IOException e) {
 			e.printStackTrace();
 			redirect.addFlashAttribute("error", "error.fileError");
@@ -100,12 +126,24 @@ public class AnalyzerController {
 	}
 
 	@RequestMapping(path = "/analyzer/git", method = RequestMethod.POST)
-	public String postAnalizeGit(@RequestParam("url") String url, @RequestParam("classpath") String classpath, 
-			@RequestParam("compOpt") String compOpt, @RequestParam(value = "queries", required = false) String[] queries, Principal principal) {
+	public String postAnalizeGit(@RequestParam("url") String url, 
+			@RequestParam("classpath") String classpath, 
+			@RequestParam(value = "programName") String name,
+			@RequestParam("compOpt") String compOpt, 
+			@RequestParam(value = "queries", required = false) String[] queries, 
+			Principal principal, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
+		if (!programService.validateProgramName(name)) {
+			redirect.addFlashAttribute("error", "error.program.regex");
+			return "redirect:/analyzer/git";
+		}
+		if (programService.isProgramNameDuplicated(name)) {
+			redirect.addFlashAttribute("error", "error.program.name");
+			return "redirect:/analyzer/git";
+		}
 		if (isTaskDone(user))
-			analyzerService.analyzeGitRepo(user, url, compOpt, classpath, queries);
+			analyzerService.analyzeGitRepo(user, name, url, compOpt, classpath, queries);
 		return "redirect:/analyzer/loading";
 	}
 	

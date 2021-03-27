@@ -1,6 +1,7 @@
 package es.uniovi.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +14,8 @@ import es.uniovi.entities.User;
 public interface ProgramRepository extends CrudRepository<Program, Long> {
 	
 	List<Program> findAllByUser(User user);
+	
+	Optional<Program> findByName(String name);
 	
 	@Query("select p from Program p where p.user = ?1 order by timestamp desc")
 	Page<Program> findAllByUser(Pageable pageable, User user);

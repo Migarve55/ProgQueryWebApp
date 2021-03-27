@@ -16,17 +16,20 @@ public class UserSessionHandler extends HandlerInterceptorAdapter {
 
 	@Autowired
 	private HttpSession session;
-	
+
 	@Autowired
 	private UsersService userService;
-	
+
 	@Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+			throws Exception {
 		super.preHandle(request, response, handler);
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		User user = userService.getUserByEmail(auth.getName());
-		session.setAttribute("currentUser", user);
-        return true;
-    }
-	
+		if (auth != null) {
+			User user = userService.getUserByEmail(auth.getName());
+			session.setAttribute("currentUser", user);
+		}
+		return true;
+	}
+
 }

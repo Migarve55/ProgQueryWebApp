@@ -31,6 +31,10 @@
 		</li>
 	</ul>
 	<ul class="nav">
+		<li class="active" sec:authorize="isAuthenticated()">
+			<span class="navbar-text" th:text="${session.currentUser.email}"></span>
+			<span class="navbar-text ml-2">/</span>
+		</li>
 		<!-- Language -->
 		<li class="dropdown"><a class="nav-link dropdown-toggle"
 			data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
@@ -66,9 +70,6 @@
 			<a class="nav-link" href="/login">
 				<i class="fa fa-sign-in"></i> <span th:text="#{login.message}">Login</span>  
 			</a>
-		</li>
-		<li class="active" sec:authorize="isAuthenticated()">
-			<span class="navbar-text" th:text="${session.currentUser.email}"></span>
 		</li>
 		<li id="logout" class="active" sec:authorize="isAuthenticated()">
 			<a class="nav-link" href="/logout"> 

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html th:lang="${#locale}">
 <head th:replace="fragments/head" />
 <body>
 	<nav th:replace="fragments/nav" />
 	<div class="container">
-		<h2 th:text="#{login.title}">Idéntificate</h2>
+		<h2 class="mt-4 mb-4" th:text="#{login.title}">Idéntificate</h2>
 		<div class="alert alert-danger" role="alert" th:if="${param.error}">
  			<span th:text="#{error.login}"></span>
 		</div>

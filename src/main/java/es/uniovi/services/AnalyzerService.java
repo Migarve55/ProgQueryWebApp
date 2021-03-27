@@ -94,75 +94,29 @@ public class AnalyzerService {
 		finalizeUserTask(user, task);
 	}
 	
-	/**
-	 * 
-	 * @param user
-	 * @param file
-	 * @param classpath
-	 * @param queries
-	 * @throws IOException if the java file could not be saved
-	 */
-	public void analyzeFile(User user, MultipartFile file, String classpath, String[] queries) throws IOException {
-		launchAnalyzerTask(user, file.getOriginalFilename(), "java", new FileAnalyzerCallable(classpath, user.getEmail(), file.getOriginalFilename(), file.getInputStream()), queries);
+	public void analyzeFile(User user, String name, MultipartFile file, String[] queries) throws IOException {
+		launchAnalyzerTask(user, name, "java", new FileAnalyzerCallable(user.getEmail(), file.getOriginalFilename(), file.getInputStream()), queries);
 	}
 	
-	/**
-	 * 
-	 * @param user
-	 * @param zip
-	 * @param compOp
-	 * @param classpath
-	 * @param queries
-	 * @throws IOException if the zip file could not be saved
-	 */
-	public void analyzeZip(User user, MultipartFile zip, String compOp, String classpath, String[] queries) throws IOException {
-		launchAnalyzerTask(user, zip.getOriginalFilename(), compOp, new ZipAnalizerCallable(classpath, user.getEmail(), zip.getInputStream()), queries);
+	public void analyzeZip(User user, String name, MultipartFile zip, String compOp, String classpath, String[] queries) throws IOException {
+		launchAnalyzerTask(user, name, compOp, new ZipAnalizerCallable(classpath, user.getEmail(), zip.getInputStream()), queries);
 	}
 
-	/**
-	 * 
-	 * @param user
-	 * @param repoUrl
-	 * @param compOp
-	 * @param classpath
-	 * @param queries
-	 */
-	public void analyzeGitRepo(User user, String repoUrl, String compOp, String classpath, String[] queries) {
-		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(classpath, user.getEmail(), repoUrl), queries);
+	public void analyzeGitRepo(User user, String name, String repoUrl, String compOp, String classpath, String[] queries) {
+		launchAnalyzerTask(user, name, compOp, new GithubCodeAnalyzerCallable(classpath, user.getEmail(), repoUrl), queries);
 	}
-	
-	/**
-	 * 
-	 * @param user
-	 * @param repoUrl
-	 * @param compOp
-	 * @param classpath
-	 */
+
 	public void uploadGitRepo(User user, String repoUrl, String compOp, String classpath) {
 		String[] queries = new String[0]; //Empty array with no queries
 		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(classpath, user.getEmail(), repoUrl), queries);
 	}
 	
-	/**
-	 * 
-	 * @param id
-	 * @param user
-	 * @param repoUrl
-	 * @param compOp
-	 * @param classpath
-	 */
 	public void reuploadGitRepo(Long id, User user, String repoUrl, String compOp, String classpath) {
 		String[] queries = new String[0]; //Empty array with no queries
 		programRepository.deleteById(id);
 		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(classpath, user.getEmail(), repoUrl), queries);
 	}
 	
-	/**
-	 * 
-	 * @param user
-	 * @param queryText
-	 * @param program
-	 */
 	public void analyzeProgramWithQueryText(User user, String queryText, Program program) {
 		AbstractAnalyzerCallable callable = new ProgramAnalyzerCallable(program.getProgramIdentifier(), user.getEmail(), true);
 		callable.setQueries(getSimpleQueryList(queryText));
@@ -173,18 +127,12 @@ public class AnalyzerService {
 		logger.info("User {} started playground analysis of program {} with query: {}...", user.getEmail(), program.getName(), queryText);
 	}
 
-	/**
-	 * 
-	 * @param user
-	 * @param queryText
-	 * @param programSource
-	 */
 	public void analyzeSourceWithQueryText(User user, String queryText, String programSource) {
 		AbstractAnalyzerCallable callable = new PlaygroundSourceAnalyzerCallable(programSource, user.getEmail());
 		callable.setQueries(getSimpleQueryList(queryText));
 		callable.setCompiler(ToolFactory.getJavaCompilerTool());
 		replaceTasks(user, callable, (errors, task) -> {
-			Program program = createProgram(user, "playgroundProgram", callable.getProgramID());
+			Program program = createProgram(user, "playground.program.id_" + task.hashCode(), callable.getProgramID());
 			createReport(user, program, errors);
 			finalizeUserTask(user, task);
 		});
@@ -200,12 +148,6 @@ public class AnalyzerService {
 		return queries;
 	}
 	
-	/**
-	 * Analyzes a program
-	 * @param user
-	 * @param program
-	 * @param queries 
-	 */
 	public void analyzeProgram(User user, Program program, String[] queries) {
 		AbstractAnalyzerCallable callable = new ProgramAnalyzerCallable(program.getProgramIdentifier(), user.getEmail());
 		List<Query> queriesList = getQueries(queries, user);

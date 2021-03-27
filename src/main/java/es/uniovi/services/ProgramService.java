@@ -17,6 +17,8 @@ import es.uniovi.repositories.ProgramRepository;
 
 @Service
 public class ProgramService {
+	
+	private final static String NAME_REGEX = "[a-zA-Z0-9_]+\\.[a-zA-Z0-9_]+\\.[a-zA-Z0-9_]+";
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
@@ -53,6 +55,14 @@ public class ProgramService {
 			programRepository.deleteById(id);
 			logger.info("Program {} was deleted", program.getProgramIdentifier());
 		}
+	}
+	
+	public boolean validateProgramName(String name) {
+		return name.matches(NAME_REGEX);
+	}
+	
+	public boolean isProgramNameDuplicated(String name) {
+		return programRepository.findByName(name).isPresent();
 	}
 	
 }
