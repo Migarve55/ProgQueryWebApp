@@ -59,6 +59,11 @@ public class QueryService {
 			return queriesRepository.findAvailableQueriesForUser(pageable, user, searchText);
 	}
 	
+	public List<Query> findAvailableQueriesForUserByName(User user, String searchText, int limit) {
+		searchText = "%" + searchText + "%";
+		return queriesRepository.findAvailableQueriesForUserByName(user, searchText, limit);
+	}
+	
 	public List<Query> getPublicQueries() {
 		return queriesRepository.findAllPublic();
 	}

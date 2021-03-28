@@ -1,13 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
-<head th:replace="fragments/head" />
+<html th:lang="${#locale}">
+<head th:replace="fragments/head"/>
 <body>
-	<nav th:replace="fragments/nav" />
-	<!-- Options -->
+	<nav th:replace="fragments/nav"/>
 	<div class="container mt-2" th:if="${not #lists.isEmpty(problems)}">
-		<div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-  			<h1 class="display-4" th:text="#{result.detail.title}">Report</h1>
-		</div>
+  		<h1 class="display-4 text-center" th:text="#{result.detail.title}">Report</h1>
 		<p th:text="#{result.detail.legend}"></p>
 		<!-- Report -->
 		<div class="table-responsive">
@@ -37,6 +34,7 @@
 		</div>
 	</div>
 	<div class="container" th:if="${#lists.isEmpty(problems)}">
+		<h1 class="display-4 text-center" th:text="#{result.detail.title}">Report</h1>
 		<h2 class="text-center mt-5" th:text="#{result.detail.empty}">No errors to show</h2>
 	</div>
 	<footer th:replace="fragments/footer" />

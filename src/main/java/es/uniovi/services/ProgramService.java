@@ -29,6 +29,10 @@ public class ProgramService {
 		return programRepository.findById(id).orElse(null);
 	}
 	
+	public Program findProgramByName(String name) {
+		return programRepository.findByName(name).orElse(null);
+	}
+	
 	public void addProgram(Program program) {
 		programRepository.save(program);
 	}
@@ -63,6 +67,11 @@ public class ProgramService {
 	
 	public boolean isProgramNameDuplicated(String name) {
 		return programRepository.findByName(name).isPresent();
+	}
+
+	public List<Program> findAvailableProgramsForUserByName(User user, String searchText, int limit) {
+		searchText = "%" + searchText + "%";
+		return programRepository.findAvailableProgramsForUserByName(user, searchText, limit);
 	}
 	
 }

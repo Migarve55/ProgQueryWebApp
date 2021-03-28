@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html th:lang="${#locale}">
 <head th:replace="fragments/head" />
 <body>
 	<!-- Barra de Navegación superior -->
@@ -14,8 +14,8 @@
 				</div>
 			 </div>
 			 <div class="form-check">
-				<input type="checkbox" th:checked="${onlyOwner}" name="onlyOwner" class="form-check-input" id="ownCb">
-				<label class="form-check-label" for=""ownCb"" th:text="#{query.list.ownCb}">Mostrar solo las propias</label>
+				<input type="checkbox" th:checked="${onlyOwner}" name="onlyOwner" class="form-check-input" id="ownCb" onChange="this.form.submit()">
+				<label class="form-check-label" for="ownCb" th:text="#{query.list.ownCb}">Mostrar solo las propias</label>
 			</div>
 		</form>
 		<h2 th:text="#{query.list.text}">Lista de tus consultas:</h2>

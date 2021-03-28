@@ -14,6 +14,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Program {
 	
@@ -27,12 +29,15 @@ public class Program {
 	private Date timestamp;
 	
 	@Column(unique = true, length = 36)
+	@JsonIgnore
 	private String programIdentifier;
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
+	@JsonIgnore
 	private User user;
 	
+	@JsonIgnore
 	@OneToMany(mappedBy = "program", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Result> results;
 	

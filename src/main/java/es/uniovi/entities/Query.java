@@ -2,6 +2,8 @@ package es.uniovi.entities;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set; 
@@ -29,6 +31,7 @@ public class Query {
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
+	@JsonIgnore
 	private User user;
 	
 	@ManyToMany(cascade = {CascadeType.MERGE})
@@ -36,6 +39,7 @@ public class Query {
 			name="PUBLIC_TO",
 	        joinColumns={@JoinColumn(name="QUERY_ID")},
 	        inverseJoinColumns={@JoinColumn(name="USER_ID")})
+	@JsonIgnore
 	private Set<User> publicTo = new HashSet<User>();
 
 	public Query() {

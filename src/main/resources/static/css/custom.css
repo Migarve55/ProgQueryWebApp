@@ -23,7 +23,7 @@ body {
 	font-size: 1.2em;
 }
 
-.programAnalyzerContainer span {
+.programAnalyzerContainer span, .programAnalyzerContainer .form-check {
 	display: block;
 	margin-top: 0.5em;
 	margin-bottom: 0.5em; 
@@ -114,15 +114,11 @@ td.description {
 }
 
 .resultHeader {
-	padding: 1.2em;
+	padding: 0.8em;
+	display: flex;
 	background: orange;
 	position: relative;
-}
-
-.btnDelete {
-	position: absolute;
-    right: 1em;
-    top: 0.8em;
+	align-items: center;
 }
 
 .pTitle {

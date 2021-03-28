@@ -1,23 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html th:lang="${#locale}">
 <head th:replace="fragments/head" />
 <body>
 	<!-- Barra de Navegación superior -->
 	<nav th:replace="fragments/nav" />
 	<div class="container mt-2" th:if="not ${#lists.isEmpty(resultsList)}">
-		<h2 th:text="#{result.list.title}">Resultados</h2>
-		
+		<h1 class="display-4 text-center" th:text="#{result.list.title}">Resultados</h1>
 		<div class="wb-cont mt-2 mb-2">
 			<div th:each="result : ${resultsList}">
 				<div class="resultHeader">
 					<span class="pTitle" th:text="#{result.list.pTitle}">Programa: </span>
-					<a th:href="${'/result/' + result.id}">
+					<a th:href="${'/program/detail/' + result.program.id}">
 						<span th:text="${result.program.name}"></span>
-						<span>(</span>
-						<span th:text="${#dates.format(result.timestamp, 'HH:MM:ss dd/MM/yyyy')}"></span>
-						<span>)</span>
 					</a>
-					<button type="button" class="btn btn-danger btnDelete" data-toggle="modal" data-target="#deleteModal" data-type="result" th:data-id="${result.id}" th:text="#{delete}">Borrar</button>
+					<a class="btn btn-primary ml-auto mr-2" th:href="${'/result/' + result.id}" th:text="#{detail}">Detail</a>
+					<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-type="result" th:data-id="${result.id}" th:text="#{delete}">Borrar</button>
 				</div>
 				<div class="table-responsive" th:if="${not #lists.isEmpty(result.problems)}">
 					<table class="table table-hover">

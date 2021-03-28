@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import es.uniovi.entities.Query;
@@ -174,6 +175,14 @@ public class QueryController {
 		//Finally delete
 		queryService.deleteQuery(user, query);
 		return "redirect:/query/list";
+	}
+	
+	@ResponseBody
+	@RequestMapping("/query/search")
+	public List<Query> getAutoCompleteQueryList(Principal principal, @RequestParam(value = "q") String searchText) {
+		String email = principal.getName();
+		User user = usersService.getUserByEmail(email);
+		return queryService.findAvailableQueriesForUserByName(user, searchText, 10);
 	}
 	
 }
