@@ -40,8 +40,7 @@
  - PLUGIN_CLASSPATH: path to the plugin 
  - MYSQL_DB_PASSWORD: password of the sql database
  - NEO4J_DB_PASSWORD: password of the neo4j database
- - HIDE_COMPILER_OUTPUT: this is optional, if set all the compilers will hide their output
- - SHOW_DEBUG_OUTPUT: this is optional, if set all the compilers will show the debug info
+ - SHOW_DEBUG_OUTPUT: this is optional, if set all the compilers will show the debug info in the logs
  
  The first two are already set in the docker image, so you do not have to worry about them.
  

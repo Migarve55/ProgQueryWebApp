@@ -78,6 +78,7 @@ public class ResultController {
 			if (exception instanceof AnalyzerException) {
 				AnalyzerException ae = (AnalyzerException) exception;
 				redirect.addFlashAttribute("error", ae.getErrorCode());
+				redirect.addFlashAttribute("errOutput", task.getRecordedOutput());
 				if (task.isPlaygroundTask()) {
 					return "redirect:/program/playground";
 				} else {

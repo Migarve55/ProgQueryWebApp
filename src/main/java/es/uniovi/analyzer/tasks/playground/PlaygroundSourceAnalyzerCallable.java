@@ -24,7 +24,7 @@ public class PlaygroundSourceAnalyzerCallable extends AbstractAnalyzerCallable {
 
 	protected void compile() throws CompilerException {
 		super.compile();
-		compiler.compileFile(basePath, programID, userId, javaSourceFilename);
+		compiler.compileFile(basePath, programID, userId, javaSourceFilename, getOutputStremRecorder());
 	}
 	
 	@Override

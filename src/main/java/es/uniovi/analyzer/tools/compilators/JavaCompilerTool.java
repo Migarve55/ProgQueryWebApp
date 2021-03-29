@@ -24,18 +24,18 @@ public class JavaCompilerTool extends AbstractCompiler {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Override
-	public void compileFile(String basePath, String programID, String userId, String filename) throws CompilerException {
+	public void compileFile(String basePath, String programID, String userId, String filename, OutputStream errStream) throws CompilerException {
 		JavaCompiler compiler = getCompiler();
 		// Basic config
 		List<String> args = basicArgs(basePath, programID, userId, "");
 		// Add file
 		args.add(basePath + filename);
 		// Compilation
-		compile(compiler, args);
+		compile(compiler, args, errStream);
 	}
 
 	@Override
-	public void compileFolder(String basePath, String programID, String userId, String classpath) throws CompilerException {
+	public void compileFolder(String basePath, String programID, String userId, String classpath, OutputStream errStream) throws CompilerException {
 		JavaCompiler compiler = getCompiler();
 		// Basic config
 		List<String> args = basicArgs(basePath, programID, userId, classpath);
@@ -46,7 +46,7 @@ public class JavaCompilerTool extends AbstractCompiler {
 		args.add("@" + basePath + "sources.txt");
 		// Compilation
 		logger.info("Compiling program {} using java", programID);
-		compile(compiler, args);
+		compile(compiler, args, errStream);
 	}
 	
 	/**
@@ -55,21 +55,12 @@ public class JavaCompilerTool extends AbstractCompiler {
 	 * @param args
 	 * @throws CompilerException
 	 */
-	private void compile(JavaCompiler compiler,List<String> args) throws CompilerException {
+	private void compile(JavaCompiler compiler,List<String> args, OutputStream errStream) throws CompilerException {
 		sanitizeArguments(args);
 		String argsArray[] = new String[args.size()];
 		args.toArray(argsArray);
-		OutputStream stream = System.out;
-		if (shouldHideCompilerOutput()) {
-			stream = new OutputStream() {
-				@Override
-				public void write(int b) throws IOException {
-					
-				}
-			};
-		}
 		logger.info("Executing compilation command: javac {}", String.join(" ", args));
-		if(compiler.run(null, stream, stream, argsArray) != 0) {
+		if(compiler.run(null, System.out, errStream, argsArray) != 0) {
 			throw new CompilerException("error.compiler.java");
 		}
 	}

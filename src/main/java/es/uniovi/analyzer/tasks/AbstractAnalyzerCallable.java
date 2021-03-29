@@ -1,5 +1,8 @@
 package es.uniovi.analyzer.tasks;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -88,6 +91,16 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 	protected void cleanEnviroment() throws EnviromentException {
 		nextStep("Cleaning enviroment", 25);
 		ToolFactory.getEnviromentTool().deleteEnviroment(basePath);
+	}
+	
+	private ByteArrayOutputStream errStream = new ByteArrayOutputStream();
+	
+	public String getRecordedOutput() {
+		return errStream.toString(Charset.defaultCharset());
+	}
+	
+	protected OutputStream getOutputStremRecorder() {
+		return errStream;
 	}
 
 	// Setters

@@ -1,5 +1,7 @@
 package es.uniovi.analyzer.tools.compilators;
 
+import java.io.OutputStream;
+
 import es.uniovi.analyzer.exceptions.CompilerException;
 
 public interface CompilerTool {
@@ -10,9 +12,10 @@ public interface CompilerTool {
 	 * @param programID of the program to compile
 	 * @param userId user universal identifier
 	 * @param filename of the file to compile
+	 * 
 	 * @throws CompilerException
 	 */
-	public void compileFile(String basePath, String programID, String userId, String filename) throws CompilerException;
+	public void compileFile(String basePath, String programID, String userId, String filename, OutputStream errStream) throws CompilerException;
 	
 	/**
 	 * Compiles a project inside the folder
@@ -23,6 +26,6 @@ public interface CompilerTool {
 	 *
 	 * @throws CompilerException 
 	 */
-	public void compileFolder(String basePath, String programID, String userId, String classpath) throws CompilerException;
+	public void compileFolder(String basePath, String programID, String userId, String classpath, OutputStream errStream) throws CompilerException;
 	
 }

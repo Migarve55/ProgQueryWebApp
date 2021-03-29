@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.DefaultInvoker;
+import org.apache.maven.shared.invoker.InvocationOutputHandler;
 import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.Invoker;
@@ -35,12 +37,12 @@ public class MavenCompilerTool extends AbstractCompiler {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Override
-	public void compileFile(String basePath, String programID, String userId, String filename) throws CompilerException {
+	public void compileFile(String basePath, String programID, String userId, String filename, OutputStream errStream) throws CompilerException {
 		throw new CompilerException();
 	}
 	 
 	@Override
-	public void compileFolder(String basePath, String programID, String userId, String classpath) throws CompilerException {
+	public void compileFolder(String basePath, String programID, String userId, String classpath, OutputStream errStream) throws CompilerException {
 	    //Configure model
 	    try {
 			configurePOMFIle(new File(basePath + "pom.xml"), basePath, programID, userId);
@@ -50,16 +52,19 @@ public class MavenCompilerTool extends AbstractCompiler {
 		}
 	    //Execute
 	    logger.info("Compiling program {} using maven", programID);
-	    compileUsingMavenAPI(basePath);
+	    compileUsingMavenAPI(basePath, errStream);
 	}
 	
 	
-	private void compileUsingMavenAPI(String basePath) throws CompilerException {
+	private void compileUsingMavenAPI(String basePath, OutputStream errStream) throws CompilerException {
 		File folder = new File(basePath);
 		Invoker newInvoker = new DefaultInvoker();
-		if (shouldHideCompilerOutput()) {
-			newInvoker.setOutputHandler(null);
-		} 
+		newInvoker.setErrorHandler(new InvocationOutputHandler() {
+			@Override
+			public void consumeLine(String line) throws IOException {
+				errStream.write(line.getBytes());
+			}
+		});
 		//Configure request 
 		InvocationRequest request = new DefaultInvocationRequest();
 	    request.setBaseDirectory(folder);

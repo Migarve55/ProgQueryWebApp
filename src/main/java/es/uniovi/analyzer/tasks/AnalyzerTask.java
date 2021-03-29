@@ -42,6 +42,10 @@ public class AnalyzerTask extends FutureTask<List<ProblemDto>> {
 	public boolean isPlaygroundTask() {
 		return this.callable.isPlayground();
 	}
+	
+	public String getRecordedOutput() {
+		return this.callable.getRecordedOutput();
+	}
 
 	public int getProgress() {
 		return progress;

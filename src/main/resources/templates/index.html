@@ -5,12 +5,14 @@
 	<nav th:replace="fragments/nav" />
 	<!-- Options -->
 	<main class="container">
-		<div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+		<div class="px-3 py-3 mx-auto text-center">
   			<h1 class="display-4" th:text="#{index.title}">Options</h1>
  			<p class="lead" th:text="#{index.title.msg}">Choose an option</p>
 		</div>
 		<!-- Error -->
-		<div class="alert alert-danger" role="alert" th:if=${error} th:text=#{${error}}>
+		<div class="alert alert-danger" role="alert" th:if=${error}>
+			<p th:text=#{${error}}></p>
+			<pre th:text="${errOutput}"></pre>
 		</div>
 		<div class="card-deck mb-3 text-center">
 			<div class="card mb-4 shadow-lg">
