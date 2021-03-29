@@ -11,7 +11,7 @@
 		<form class="wb-cont" method="POST" th:action="${'/program/analyze/' + program.id}">
 			<div class="form-group">
 				<label for="queries"  th:text="#{analyzer.queries.title}">Queries to run:</label>
-				<select required name="queries[]" multiple class="form-control selectpicker" data-live-search="true">
+				<select required name="queries[]" multiple class="form-control selectpicker" data-live-search="true" data-actions-box="true">
 					<option th:each="query : ${queriesList}" th:value="${query.name}" th:text="${query.name}"></option>
 				</select>
 				<script type="text/javascript" src="/script/queries.js"></script>

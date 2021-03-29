@@ -1,7 +1,7 @@
 <!-- Queries -->
 <div class="form-group">
 	<label for="queries"  th:text="#{analyzer.queries.title}">Queries to run:</label>
-	<select name="queries[]" multiple class="form-control selectpicker" data-live-search="true">
+	<select name="queries[]" multiple class="form-control selectpicker" data-live-search="true" data-actions-box="true">
 		<option th:each="query : ${queriesList}" th:value="${query.name}" th:text="${query.name}"></option>
 	</select>
 	<small class="form-text text-muted" th:text="#{analyzer.queries.msg}">This is optional</small>

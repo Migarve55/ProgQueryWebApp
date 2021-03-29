@@ -23,7 +23,7 @@ public interface ProgramRepository extends CrudRepository<Program, Long> {
 	@Query("select p from Program p where p.user = ?1 order by timestamp desc")
 	List<Program> findLastByUser(User user);
 
-	@Query(value = "select p.* from Program p where p.user_id = ?1 and p.name like ?2 order by p.name limit ?3", nativeQuery = true)
+	@Query(value = "select p.* from program p where p.user_id = ?1 and p.name like ?2 order by p.name limit ?3", nativeQuery = true)
 	List<Program> findAvailableProgramsForUserByName(User user, String searchText, int limit);
 	
 }
