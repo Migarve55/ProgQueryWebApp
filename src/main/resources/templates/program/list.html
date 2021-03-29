@@ -5,7 +5,7 @@
 	<!-- Barra de Navegación superior -->
 	<nav th:replace="fragments/nav" />
 	<div class="container mt-2" th:if="${not #lists.isEmpty(programsList)}">
-		<h2 th:text="#{program.list.title}">Programs</h2>
+		<h1 class="display-4 text-center mb-4" th:text="#{program.list.title}">Programs</h1>
 		<div class="table-responsive">
 			<table class="table table-hover" th:fragment="tablePrograms" id="tablePrograms">
 				<thead>

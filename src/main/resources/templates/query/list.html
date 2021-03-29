@@ -5,7 +5,7 @@
 	<!-- Barra de Navegación superior -->
 	<nav th:replace="fragments/nav" />
 	<div class="m-4 mt-3">
-		<h2 th:text="#{query.list.title}">Consultas</h2>
+		<h1 class="display-4 text-center mb-4" th:text="#{query.list.title}">Consultas</h1>
 		<form action="/query/list">
 			 <div class="input-group">
 				<input th:value="${searchText}" type="text" class="form-control" placeholder="es.uniovi.test..." name="searchText">

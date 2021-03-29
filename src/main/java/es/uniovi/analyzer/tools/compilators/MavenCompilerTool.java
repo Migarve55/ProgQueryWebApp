@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.maven.model.Build;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
@@ -115,13 +116,18 @@ public class MavenCompilerTool extends AbstractCompiler {
 	}
 	
 	private void modifyCompilerArgs(Model model, String basepath, String programID, String userId) throws CompilerException {
-		Plugin plugin = model.getBuild().getPluginsAsMap()
+		Build build = model.getBuild();
+		if (build == null) {
+			build = new Build();
+			model.setBuild(build);
+		}
+		Plugin plugin = build.getPluginsAsMap()
 			.get("org.apache.maven.plugins:maven-compiler-plugin");
 		if (plugin == null) {
 			plugin = new Plugin();
 			plugin.setGroupId("org.apache.maven.plugins");
 			plugin.setArtifactId("maven-compiler-plugin");
-			model.getBuild().addPlugin(plugin);
+			build.addPlugin(plugin);
 		}
 		//Change plugin configuration
 		Xpp3Dom configuration = (Xpp3Dom) plugin.getConfiguration();

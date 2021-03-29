@@ -92,7 +92,7 @@ public class AnalyzerController {
 			@RequestParam(value = "programName") String name,
 			@RequestParam("compOpt") String compOpt,
 			@RequestParam(value = "classpath", required = false) String classpath, 
-			@RequestParam(value = "queries", required = false) String[] queries, 
+			@RequestParam(value = "queries[]", required = false) String[] queries, 
             Principal principal, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
@@ -130,7 +130,7 @@ public class AnalyzerController {
 			@RequestParam("classpath") String classpath, 
 			@RequestParam(value = "programName") String name,
 			@RequestParam("compOpt") String compOpt, 
-			@RequestParam(value = "queries", required = false) String[] queries, 
+			@RequestParam(value = "queries[]", required = false) String[] queries, 
 			Principal principal, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);

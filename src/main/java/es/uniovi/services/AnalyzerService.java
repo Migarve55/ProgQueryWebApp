@@ -180,7 +180,7 @@ public class AnalyzerService {
 			createReport(user, program, errors);
 			finalizeUserTask(user, task);
 		});
-		logger.info("User {} started analysis of new program from {} using {}", user.getEmail(), name, compOp);
+		logger.info("User {} started analysis of new program '{}' using {}", user.getEmail(), name, compOp);
 	}
 	
 	private void replaceTasks(User user, AbstractAnalyzerCallable callable, BiConsumer<List<ProblemDto>, AnalyzerTask> callback) {
