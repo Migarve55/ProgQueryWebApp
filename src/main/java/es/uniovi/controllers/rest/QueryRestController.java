@@ -2,7 +2,7 @@ package es.uniovi.controllers.rest;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,7 +42,7 @@ public class QueryRestController extends BaseRestController {
 	private EditQueryValidator editQueryValidator;
 	
 	@GetMapping("/api/analyses")
-	public List<Map<String, Object>> list(Principal principal, @RequestParam(required = false) String user, @RequestParam(required = false) Boolean owner) {
+	public List<Query> list(Principal principal, @RequestParam(required = false) String user, @RequestParam(required = false) Boolean owner) {
 		// Get queries
 		List<Query> queries;
 		if (user != null) { // From user
@@ -57,11 +57,13 @@ public class QueryRestController extends BaseRestController {
 		} else { // All public queries
 			queries = queryService.getPublicQueries();
 		}
-		return queriesToMapList(queries);
+		return queries
+				.stream()
+				.collect(Collectors.toList());
 	}
 	
 	@GetMapping("/api/analyses/{id}")
-	public Map<String, Object> get(@PathVariable(value = "id") String name, Principal principal) {
+	public Query get(@PathVariable(value = "id") String name, Principal principal) {
 		Query query = queryService.findQueryByName(name);
 		User user = usersService.getUserByEmail(principal.getName());
  		if (query == null) {
@@ -69,12 +71,12 @@ public class QueryRestController extends BaseRestController {
 		} else if (!queryService.canSeeQuery(user, query)) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can not access this query");
 		} else {
-			return loadQueryIntoMap(query);
+			return query;
 		}
 	}
 	
 	@PostMapping("/api/analyses")
-	public Map<String, Object> post(@Validated @RequestBody Query query, BindingResult result, Principal principal) {
+	public Query post(@Validated @RequestBody Query query, BindingResult result, Principal principal) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		//Prepare query
@@ -85,11 +87,11 @@ public class QueryRestController extends BaseRestController {
 		}
 		//Add it
 		queryService.saveQuery(user, query);
-		return loadQueryIntoMap(query);
+		return query;
 	}
 
 	@PutMapping("/api/analyses/{id}")
-	public Map<String, Object> edit(@PathVariable(value = "id") String name, @Validated @RequestBody Query query, BindingResult result, Principal principal) {
+	public Query edit(@PathVariable(value = "id") String name, @Validated @RequestBody Query query, BindingResult result, Principal principal) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		Query original = queryService.findQueryByName(name);
@@ -109,7 +111,7 @@ public class QueryRestController extends BaseRestController {
 		original.setPublicForAll(query.isPublicForAll());
 		original.setPublicTo(query.getPublicTo());
 		queryService.saveQuery(user, original);
-		return loadQueryIntoMap(original);
+		return original;
 	}
 	
 	@DeleteMapping("/api/analyses/{id}")

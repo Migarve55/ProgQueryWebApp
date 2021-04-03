@@ -6,13 +6,16 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +44,11 @@ public class QueryController {
 	
 	@Autowired
 	private EditQueryValidator editQueryValidator;
+	
+	@InitBinder
+	public void initBinder(WebDataBinder dataBinder) {
+		dataBinder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+	}
 
 	@GetMapping("/query/add")
 	public String addGet(Model model, Principal principal) {
@@ -54,12 +62,13 @@ public class QueryController {
 	}
 	
 	@PostMapping("/query/add")
-	public String addPost(@Validated Query query, BindingResult result, Principal principal) {
+	public String addPost(Model model, @Validated Query query, BindingResult result, Principal principal) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		query.setUser(user);
 		addQueryValidator.validate(query, result);
 		if (result.hasErrors()) {
+			model.addAttribute("query", query);
 			return "query/add";
 		}
 		//Add it
@@ -145,12 +154,13 @@ public class QueryController {
 	}
 	
 	@PostMapping("/query/edit/{id}")
-	public String editPost(@Validated Query query, @PathVariable Long id, BindingResult result, Principal principal) {
+	public String editPost(Model model, @Validated Query query, @PathVariable Long id, BindingResult result, Principal principal) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		editQueryValidator.validate(query, result);
 		Query original = queryService.findQuery(id);
 		if (result.hasErrors()) {
+			model.addAttribute("query", query);
 			return "/query/edit";
 		}
 		if (original == null) {

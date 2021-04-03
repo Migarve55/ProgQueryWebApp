@@ -3,10 +3,10 @@
 <head th:replace="fragments/head" />
 <body>
 	<nav th:replace="fragments/nav" />
-	<header class="container mt-2">
-		<h1 th:text="#{settings.title}"></h1>
-		<h2 th:text="${user.name + ' ' + user.lastName}"></h2>
-	</header>
+	<div class="px-3 py-3 mx-auto text-center">
+  		<h1 class="display-4" th:text="#{settings.title}">Options</h1>
+ 		<p class="lead" th:text="${user.name + ' ' + user.lastName}"></p>
+	</div>
 	<main class="container wb-cont">
 		<section class="mt-1">
 			<h2 th:text="#{settings.changePassword}">Change password</h2>

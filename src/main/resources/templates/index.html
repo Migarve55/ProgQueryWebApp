@@ -9,11 +9,6 @@
   			<h1 class="display-4" th:text="#{index.title}">Options</h1>
  			<p class="lead" th:text="#{index.title.msg}">Choose an option</p>
 		</div>
-		<!-- Error -->
-		<div class="alert alert-danger" role="alert" th:if=${error}>
-			<p th:text=#{${error}}></p>
-			<pre th:text="${errOutput}"></pre>
-		</div>
 		<div class="card-deck mb-3 text-center">
 			<div class="card mb-4 shadow-lg">
 				<div class="card-header">
@@ -22,7 +17,7 @@
 				<div class="card-body">
 					<i class="fa fa-file-o bigIcon"></i>
 					<p th:text="#{index.file.msg}">Upload a Single File</p>
-					<a type="button" id="file" class="btn btn-block btn-primary" href="/analyzer/file/" th:text="#{index.go}">Go</a>
+					<a class="btn btn-block mt-auto btn-primary" href="/program/playground" th:text="#{index.go}">Go</a>
 				</div>
 			</div>
 			<div class="card mb-4 shadow-lg">
@@ -32,7 +27,7 @@
 				<div class="card-body">
 					<i class="fa fa-file-archive-o bigIcon"></i>
 					<p th:text="#{index.zip.msg}">Upload a Zip File</p>
-					<a type="button" id="zip" class="btn btn-block btn-primary" href="/analyzer/zip/" th:text="#{index.go}">Go</a>
+					<a class="btn btn-block mt-auto btn-primary" href="/analyzer/zip/" th:text="#{index.go}">Go</a>
 				</div>
 			</div>
 			<div class="card mb-4 shadow-lg">
@@ -42,9 +37,14 @@
 				<div class="card-body">
 					<i class="fa fa-github bigIcon"></i>
 					<p th:text="#{index.gh.msg}">Upload from a GitHub repository URL</p>
-					<a type="button" id="git" class="btn btn-block btn-primary" href="/analyzer/git/" th:text="#{index.go}">Go</a>
+					<a class="btn btn-block mt-auto btn-primary" href="/analyzer/git/" th:text="#{index.go}">Go</a>
 				</div>
 			</div>
+		</div>
+		<!-- Error -->
+		<div class="alert alert-danger" role="alert" th:if=${error}>
+			<p th:text=#{${error}}></p>
+			<pre th:text="${errOutput}"></pre>
 		</div>
 	</main>
 	<footer th:replace="fragments/footer" />

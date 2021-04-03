@@ -1,10 +1,13 @@
 package es.uniovi.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -25,6 +28,11 @@ public class UsersController {
 	@Autowired
 	private AddUserValidator signUpFormValidator;
 	
+	@InitBinder
+	public void initBinder(WebDataBinder dataBinder) {
+		dataBinder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+	}
+	
 	@RequestMapping(value = "/signup", method = RequestMethod.GET)
 	public String signup(Model model) {
 		model.addAttribute("user", new User());
@@ -32,9 +40,10 @@ public class UsersController {
 	}
 
 	@RequestMapping(value = "/signup", method = RequestMethod.POST)
-	public String signup(@Validated User user, BindingResult result) {
+	public String signup(Model model, @Validated User user, BindingResult result) {
 		signUpFormValidator.validate(user, result);
 		if (result.hasErrors()) {
+			model.addAttribute("user", user);
 			return "signup";
 		}
 		usersService.addUser(user);

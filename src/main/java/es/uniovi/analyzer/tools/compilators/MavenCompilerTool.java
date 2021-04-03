@@ -59,9 +59,10 @@ public class MavenCompilerTool extends AbstractCompiler {
 	private void compileUsingMavenAPI(String basePath, OutputStream errStream) throws CompilerException {
 		File folder = new File(basePath);
 		Invoker newInvoker = new DefaultInvoker();
-		newInvoker.setErrorHandler(new InvocationOutputHandler() {
+		newInvoker.setOutputHandler(new InvocationOutputHandler() {
 			@Override
 			public void consumeLine(String line) throws IOException {
+				line += "\n";
 				errStream.write(line.getBytes());
 			}
 		});

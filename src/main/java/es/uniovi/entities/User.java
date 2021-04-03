@@ -1,6 +1,9 @@
 package es.uniovi.entities;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Set; //A collection that contains no duplicate elements
 
 @Entity
@@ -23,15 +26,19 @@ public class User {
 	//Stores the hash, not the actual password
 	@Column(length = 60)
 	private String password;
+	@JsonIgnore
 	@Transient 
 	private String passwordConfirm;
 	
+	@JsonIgnore
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Query> queries;
 	
+	@JsonIgnore
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private Set<Program> programs;
 	
+	@JsonIgnore
 	@ManyToMany(cascade = {CascadeType.MERGE})
 	@JoinTable(
 			name="PUBLIC_TO",

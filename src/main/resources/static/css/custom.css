@@ -1,7 +1,17 @@
-@CHARSET "ISO-8859-1";
 
 body {
 	background: radial-gradient(circle, rgba(43,43,43,1) 0%, rgba(237,234,234,1) 0%, rgba(155,237,254,1) 100%);
+}
+
+@media (max-width: 767px) {
+	.card-deck {
+	    flex-flow: column;
+	}
+}
+
+.card-body {
+	display: flex;
+    flex-direction: column;
 }
 
 .navbar-text {
@@ -52,11 +62,8 @@ table {
 	padding: 0.2em;
 }
 
-footer {
-	position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 2em;
+td {
+	white-space: nowrap;
 }
 
 .title {

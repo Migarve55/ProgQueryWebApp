@@ -5,35 +5,30 @@
 	<!-- Barra de Navegación superior -->
 	<nav th:replace="fragments/nav" />
 	<div class="container mt-3">
-		<h2 th:text="#{query.edit.title} + ' ' + ${query.name}">Editar consulta</h2>
+		<div class="px-3 py-3 mx-auto text-center">
+  			<h1 class="display-4" th:text="#{query.edit.title}">Editar consulta</h1>
+ 			<p class="lead" th:text="*{query.name}"></p>
+		</div>
 		<form class="form-horizontal wb-cont" method="post" th:action="${'/query/edit/' + query.id}" th:object="${query}">
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="description" th:text="#{description}">Descripción:</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" name="description"
-						placeholder="..." required="true" th:value="*{description}"/> <span
-						class="text-danger" th:if="${#fields.hasErrors('description')}"
+					<input type="text" class="form-control" name="description" th:title="#{tooltip.required}"
+						placeholder="..." required="true" th:value="*{description}"/> 
+					<span class="text-danger" th:if="${#fields.hasErrors('description')}"
 						th:errors="*{description}" />
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="queryText" th:text="#{query}">Query:</label>
 				<div class="col-sm-10">
-					<textarea class="form-control" name="queryText" rows="10" spellcheck="false" th:text="*{queryText}"></textarea>
+					<textarea class="form-control" name="queryText" rows="10" spellcheck="false" th:text="*{queryText}" th:title="#{tooltip.required}"></textarea>
 					<span class="text-danger" th:if="${#fields.hasErrors('queryText')}" th:errors="*{queryText}" />
 				</div>
 			</div>
-			<div class="form-group">
-				<label class="control-label col-sm-2" for="publicForAll" th:text="#{visibility}">Visibilidad:</label>
-				<div class="col-sm-1">
-					<input id="togglePublic" type="checkbox" class="form-control" name="publicForAll" data-toggle="toggle" th:data-on="#{public}" th:data-off="#{private}">
-				</div>
-				<script th:inline="javascript">
-					/*<![CDATA[*/
-					var publicForAll = [[*{publicForAll}]]; 
-					$('#togglePublic').bootstrapToggle(publicForAll ? 'on' : 'off');
-					/*]]>*/
-				</script>
+			<div class="form-check mb-3 ml-3">
+				<input class="form-check-input" type="checkbox" id="publicForAll" name="publicForAll" th:checked="*{publicForAll}" >
+				<label class="form-check-label" for="publicForAll" th:text="#{public}">Pública</label>
 			</div>
 			<div class="form-group">
 				<div class="col-sm-offset-2 col-sm-10">

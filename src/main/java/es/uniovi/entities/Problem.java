@@ -7,6 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Problem {
 	
@@ -21,10 +23,12 @@ public class Problem {
 	
 	@ManyToOne
 	@JoinColumn(name = "query_id")
+	@JsonIgnore
 	private Query query;
 	
 	@ManyToOne
 	@JoinColumn(name = "result_id")
+	@JsonIgnore
 	private Result result;
 	
 	public Problem() {

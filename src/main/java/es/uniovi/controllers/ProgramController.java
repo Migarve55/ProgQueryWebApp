@@ -87,8 +87,7 @@ public class ProgramController {
 	}
 
 	@GetMapping("/program/playground")
-	public String getPlaygroundAnalyze(
-			Principal principal, Model model,
+	public String getPlaygroundAnalyze(Model model,
 			@RequestParam Map<String,String> params) {
 		String programSource = params.get("programSource");
 		// Load source

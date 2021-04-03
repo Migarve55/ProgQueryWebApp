@@ -2,7 +2,7 @@ package es.uniovi.controllers.rest;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,22 +36,24 @@ public class ProgramRestController extends BaseRestController {
 
 	// /api/programs?user={email}
 	@GetMapping("/api/programs")
-	public List<Map<String, Object>> list(Principal principal, @RequestParam(value = "user", required = true) String email) {
+	public List<Program> list(Principal principal, @RequestParam(value = "user", required = true) String email) {
 		User user = usersService.getUserByEmail(email);
-		return programToMapList(user.getPrograms());
+		return user.getPrograms()
+				.stream()
+				.collect(Collectors.toList());
 	}
 
 	@GetMapping("/api/programs/{id}")
-	public Map<String, Object> get(@PathVariable(value = "id") Long id, Principal principal) {
+	public Program get(@PathVariable(value = "id") String id, Principal principal) {
 		User user = usersService.getUserByEmail(principal.getName());
-		Program program = programService.findProgram(id);
+		Program program = programService.findProgramByName(id);
 		if (program == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Program not Found");
 		} 
 		if (!program.getUser().equals(user)) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Program can not be accessed");
 		} 
-		return loadProgramIntoMap(program);
+		return program;
 	}
 	
 	@PostMapping("/api/programs")

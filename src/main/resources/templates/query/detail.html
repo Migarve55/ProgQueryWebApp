@@ -3,9 +3,12 @@
 <head th:replace="fragments/head" />
 <body>
 	<nav th:replace="fragments/nav" />
-	<div class="container mt-3 wb-cont">
-		<h2 th:text="${query.name}">es.uniovi.test</h2>
-		
+	<main class="container">
+		<div class="px-3 py-1 mx-auto text-center">
+  			<h1 class="display-4" th:text="#{query}">Query</h1>
+ 			<p class="lead" th:text="*{query.name}"></p>
+		</div>
+		<div class="mt-3 wb-cont">
 		<h4 th:text="#{description}">Descripción:</h4>
 		<section th:text="${query.description}"></section>
 		<h4 th:text="#{query}">Consulta cipher:</h4>
@@ -21,7 +24,7 @@
 		<div class="container">
 			<form th:if="${canModify}" method="post">
 				<div class="row">
-					<input class="col-sm-4 form-control" type="email" name="user" placeholder="user@email.com" required="true"/> 
+					<input class="col-sm-4 form-control" type="email" name="user" placeholder="user@email.com" required="true" th:title="#{tooltip.emailPattern}"/> 
 					<button class="btn btn-primary col-sm-1 ml-2" type="submit" th:text="#{query.detail.add}" th:formaction="${'/query/addUser/' + query.id}">Añadir</button>
 				</div>
 				<span class="text-danger" th:if=${error} th:text=#{${error}} />
@@ -52,6 +55,7 @@
 			</table>
 		</div>
 	</div>
+	</main>
 	<div th:replace="fragments/deleteDialog"/>
 	<footer th:replace="fragments/footer" />
 </body>

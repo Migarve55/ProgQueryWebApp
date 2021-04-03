@@ -3,7 +3,6 @@ package es.uniovi.controllers.rest;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
@@ -43,7 +42,7 @@ public class ResultRestController extends BaseRestController {
 	private AnalyzerService analyzerService;
 	
 	@GetMapping("/api/results")
-	public List<Map<String, Object>> list(
+	public List<Result> list(
 			@RequestParam(required = false) Long programId,
 			@RequestParam(required = false) Long analysisId,
 			@RequestParam(required = false) String user) {		
@@ -63,11 +62,11 @@ public class ResultRestController extends BaseRestController {
 		} else if (analysisId != null) {
 			results = resultService.getByQuery(analysisId);
 		} 
-		return resultsToMapList(results);
+		return results;
 	}
 
 	@GetMapping("/api/results/{id}")
-	public Map<String, Object> get(@PathVariable(value = "id") Long id, Principal principal,
+	public Result get(@PathVariable(value = "id") Long id, Principal principal,
 			HttpServletResponse response) {
 		User user = usersService.getUserByEmail(principal.getName());
 		Result result = resultService.getResult(id);
@@ -76,7 +75,7 @@ public class ResultRestController extends BaseRestController {
 		} else if (!result.getProgram().getUser().equals(user)) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Result cannot be accessed");
 		} else {
-			return loadResultIntoMap(result);
+			return result;
 		}
 	}
 	

@@ -13,6 +13,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Result {
 
@@ -28,6 +30,7 @@ public class Result {
 	
 	@ManyToOne
 	@JoinColumn(name = "program_id")
+	@JsonIgnore
 	private Program program;
 	
 	public Result() {

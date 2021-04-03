@@ -4,41 +4,36 @@
 <body>
 	<nav th:replace="fragments/nav" />
 	<div class="container mt-3">
-		<h2 th:text="#{query.add.title}">Agregar consulta</h2>
+		<h1 class="display-4 text-center mt-4 mb-4" th:text="#{query.add.title}">Agregar consulta</h1>
 		<form class="form-horizontal wb-cont" method="post" action="/query/add" th:object="${query}">
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="name" th:text="#{name}">Nombre:</label>
 				<div class="col-sm-12">
-					<input type="text" class="form-control" name="name"
-						placeholder="..." required="true" /> <span
-						class="text-danger" th:if="${#fields.hasErrors('name')}"
+					<input type="text" class="form-control" name="name" th:value="*{name}"
+						placeholder="..." required="true" th:title="#{tooltip.namePattern}"/> 
+					<span class="text-danger" th:if="${#fields.hasErrors('name')}"
 						th:errors="*{name}"></span>
-						<a th:if="${#fields.hasErrors('name')}" href="/help">
-							<i class="fa fa-question-circle"></i> <span th:text="#{nav.help}">Help</span>
-						</a>
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="description" th:text="#{description}">Descripción:</label>
 				<div class="col-sm-12">
-					<input type="text" class="form-control" name="description"
-						placeholder="..." required="true" /> <span
-						class="text-danger" th:if="${#fields.hasErrors('description')}"
-						th:errors="*{description}" />
+					<input type="text" class="form-control" name="description" th:value="*{description}"
+						placeholder="..." required="true" th:title="#{tooltip.required}"/> 
+					<span class="text-danger" th:if="${#fields.hasErrors('description')}"
+						th:errors="*{description}"/>
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="queryText" th:text="#{query}">Query:</label>
 				<div class="col-sm-12">
-					<textarea class="form-control" name="queryText" rows="10" spellcheck="false"></textarea>
-					<span class="text-danger" th:if="${#fields.hasErrors('queryText')}" th:errors="*{queryText}" />
+					<textarea class="form-control" name="queryText" rows="10" spellcheck="false" th:text="*{queryText}" th:title="#{tooltip.required}"></textarea>
+					<span class="text-danger" th:if="${#fields.hasErrors('queryText')}" th:errors="*{queryText}"/>
 				</div>
 			</div>
-			<div class="form-group">
-				<label class="control-label col-sm-2" for="publicForAll" th:text="#{visibility}">Visibilidad:</label>
-				<div class="col-sm-1">
-					<input type="checkbox" class="form-control" name="publicForAll" data-toggle="toggle" th:data-on="#{public}" th:data-off="#{private}">
-				</div>
+			<div class="form-check mb-3 ml-3">
+				<input class="form-check-input" type="checkbox" id="publicForAll" name="publicForAll" th:checked="*{publicForAll}">
+				<label class="form-check-label" for="publicForAll" th:text="#{public}">Pública</label>
 			</div>
 			<div class="form-group">
 				<div class="col-sm-offset-2 col-sm-10">
