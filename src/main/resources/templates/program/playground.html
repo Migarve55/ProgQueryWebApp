@@ -6,7 +6,10 @@
 	<form method="POST" action="/program/playground">
 	<div class="container">
 		<div class="mx-auto my-4 wb-cont programAnalyzerContainer">
-			<div class="alert alert-danger" role="alert" th:if="${error}" th:text="#{${error}}"></div>
+			<div class="alert alert-danger" role="alert" th:if="${error}">
+				<p th:text="#{${error}}"></p>
+				<pre th:if="${queryError}" th:text="${queryError}"></pre>
+			</div>
   			<div class="row">
   				<div class="col-md-6">
   					<h2 class="analysisTitle" th:text="#{playground.program}">Program</h2>
@@ -24,7 +27,7 @@
 						<label class="form-check-label" for="srcCb" th:text="#{playground.program.option}"></label>
 					</div>
   					<div class="form-group">
-  						<textarea id="programSource" class="form-control textAreaAnalyzer" name="programSource" spellcheck="false" th:text="${programSource}"></textarea>
+  						<textarea id="programSource" class="form-control textAreaAnalyzer" name="programSource" spellcheck="false"></textarea>
   					</div>
   				</div>
   				<div class="col-md-6">

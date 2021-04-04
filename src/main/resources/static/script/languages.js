@@ -24,7 +24,7 @@ var custom_defaults = {
 })(jQuery);
 
 $( document ).ready(function() {
-    $('input[required]').on('change invalid', function() {
+    $('[required]').on('change invalid', function() {
 		var textfield = $(this).get(0);
 		$(this).prop('title', errorEmpty);
 		textfield.setCustomValidity('');

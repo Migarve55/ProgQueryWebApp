@@ -111,13 +111,17 @@ public class ProgramController {
 		String programId = params.get("programId_text");
 		String programSource = params.getOrDefault("programSource", "");
 		String useSource = params.get("useSource");
-		if (!queryService.isQueryOk(queryText)) {
+		String querySyntaxError = queryService.checkQuerySyntax(queryText);
+		if (querySyntaxError != null) {
+			redirect.addFlashAttribute("queryText", queryText);
 			redirect.addFlashAttribute("error", "error.query.text");
+			redirect.addFlashAttribute("queryError", querySyntaxError);
 			return "redirect:/program/playground";
 		}
 		// Analyze
 		if (useSource != null) {
 			if (programSource.trim().isEmpty()) {
+				redirect.addFlashAttribute("queryText", queryText);
 				redirect.addFlashAttribute("error", "program.playground.noSource");
 				return "redirect:/program/playground";
 			}
@@ -125,6 +129,7 @@ public class ProgramController {
 		} else if (programId != null) {
 			Program program = programService.findProgramByName(programId);
 			if (program == null) {
+				redirect.addFlashAttribute("queryText", queryText);
 				redirect.addFlashAttribute("error", "program.playground.noProgram");
 				return "redirect:/program/playground";
 			}

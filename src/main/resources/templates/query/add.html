@@ -10,7 +10,7 @@
 				<label class="control-label col-sm-2" for="name" th:text="#{name}">Nombre:</label>
 				<div class="col-sm-12">
 					<input type="text" class="form-control" name="name" th:value="*{name}"
-						placeholder="..." required="true" th:title="#{tooltip.namePattern}"/> 
+						 required="true" th:title="#{tooltip.namePattern}"/> 
 					<span class="text-danger" th:if="${#fields.hasErrors('name')}"
 						th:errors="*{name}"></span>
 				</div>
@@ -19,7 +19,7 @@
 				<label class="control-label col-sm-2" for="description" th:text="#{description}">Descripción:</label>
 				<div class="col-sm-12">
 					<input type="text" class="form-control" name="description" th:value="*{description}"
-						placeholder="..." required="true" th:title="#{tooltip.required}"/> 
+						 required="true" th:title="#{tooltip.required}"/> 
 					<span class="text-danger" th:if="${#fields.hasErrors('description')}"
 						th:errors="*{description}"/>
 				</div>

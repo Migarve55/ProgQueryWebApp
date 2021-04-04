@@ -13,7 +13,7 @@ import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.Transaction;
 import org.neo4j.driver.TransactionWork;
-import es.uniovi.reflection.processing.CypherAdapter;
+import es.uniovi.reflection.codeanalysis.cypheradapter.processing.CypherAdapter;
 
 public class Neo4jFacade implements AutoCloseable {
 
@@ -72,7 +72,7 @@ public class Neo4jFacade implements AutoCloseable {
 
 	private String limitQuery(String query, String programId) {
 		try {
-			return CypherAdapter.limitQuery(query, programId);
+			return CypherAdapter.limitQuery(query, new String[0], programId);
 		} catch (Throwable t) {
 			return null;
 		}

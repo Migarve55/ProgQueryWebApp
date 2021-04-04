@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.uniovi.controllers.ForbiddenException;
 import es.uniovi.entities.Query;
 import es.uniovi.entities.User;
-import es.uniovi.reflection.processing.CypherAdapter;
+import es.uniovi.reflection.codeanalysis.cypheradapter.processing.CypherAdapter;
 import es.uniovi.repositories.ProblemsRepository;
 import es.uniovi.repositories.QueriesRepository;
 
@@ -147,12 +147,12 @@ public class QueryService {
 		return query.getUser().equals(user);
 	}
 	
-	public boolean isQueryOk(String query) {
+	public String checkQuerySyntax(String query) {
 		try {
-			CypherAdapter.limitQuery(query, "test");
-			return true;
-		} catch (NullPointerException npe) {
-			return false;
+			CypherAdapter.limitQuery(query, new String[0], "");
+			return null;
+		} catch (Exception e) {
+			return e.getMessage();
 		}
 	}
 	

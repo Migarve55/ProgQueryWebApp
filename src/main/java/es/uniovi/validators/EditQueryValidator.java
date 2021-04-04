@@ -36,8 +36,9 @@ public class EditQueryValidator implements Validator {
 		if (query.getQueryText().length() > Query.QUERY_LENGTH) {
 			errors.rejectValue("queryText", "error.query.length");
 		}
-		if (!queryService.isQueryOk(query.getQueryText())) {
-			errors.rejectValue("queryText", "error.query.text");
+		String querySyntaxError = queryService.checkQuerySyntax(query.getQueryText());
+		if (querySyntaxError != null) {
+			errors.rejectValue("queryText", "queryText$$error", querySyntaxError);
 		}
 	}
 

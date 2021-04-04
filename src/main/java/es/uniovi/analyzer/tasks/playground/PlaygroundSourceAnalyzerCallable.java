@@ -33,14 +33,20 @@ public class PlaygroundSourceAnalyzerCallable extends AbstractAnalyzerCallable {
 	}
 	
 	private String getJavaFilename(String source) {
-		String src = source.trim();
-		if (!src.startsWith("public"))
-			return "source.java";
-		// Encontrar nombre de la clase
-		int startIndex = src.indexOf("class");
-		int endIndex = src.indexOf("{");
-		String name = src.substring(startIndex + 5, endIndex).trim();
+		String name = getClassNameFromCode(source);
 		return name + ".java";
+	}
+	
+	private String getClassNameFromCode(String code) {
+	    String[] splitted = code.split("(\\s+|[{])");
+	    for (int i = 0; i < splitted.length - 3; i++)
+	        if (splitted[i].contentEquals("public")) {
+	            if (splitted[i + 1].contentEquals("class"))
+	                return splitted[i + 2];
+	            if (splitted[i + 2].contentEquals("class"))
+	                return splitted[i + 3];
+	        }
+	    return "source";
 	}
 	
 }

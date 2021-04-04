@@ -6,7 +6,7 @@
 	<nav th:replace="fragments/nav" />
 	<div class="m-4 mt-3">
 		<h1 class="display-4 text-center mb-4" th:text="#{query.list.title}">Consultas</h1>
-		<form action="/query/list">
+		<form action="/query/list" class="mt-2">
 			 <div class="input-group">
 				<input th:value="${searchText}" type="text" class="form-control" placeholder="es.uniovi.test..." name="searchText">
 				<div class="input-group-append">
@@ -18,7 +18,6 @@
 				<label class="form-check-label" for="ownCb" th:text="#{query.list.ownCb}">Mostrar solo las propias</label>
 			</div>
 		</form>
-		<h2 th:text="#{query.list.text}">Lista de tus consultas:</h2>
 		<div class="table-responsive" th:if="${queriesList.size() > 0}">
 			<table class="table table-hover tableQueries" th:fragment="tableQueries" id="tableQueries">
 				<thead>
@@ -46,8 +45,8 @@
 					</tr>
 				</tbody>
 			</table>
-			<div th:replace="fragments/pagination"/>
 		</div>
+		<div th:if="${queriesList.size() > 0}" th:replace="fragments/pagination"/>
 		<div class="container" th:if="${queriesList.size() <= 0}">
 			<h2 class="text-center mt-5" th:text="#{query.list.empty}">No queries to show</h2>
 		</div>

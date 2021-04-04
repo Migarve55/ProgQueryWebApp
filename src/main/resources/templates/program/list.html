@@ -4,10 +4,10 @@
 <body>
 	<!-- Barra de Navegación superior -->
 	<nav th:replace="fragments/nav" />
-	<div class="container mt-2" th:if="${not #lists.isEmpty(programsList)}">
+	<div class="m-4 mt-3">
 		<h1 class="display-4 text-center mb-4" th:text="#{program.list.title}">Programs</h1>
-		<div class="table-responsive">
-			<table class="table table-hover" th:fragment="tablePrograms" id="tablePrograms">
+		<div class="table-responsive" th:if="${not #lists.isEmpty(programsList)}">
+			<table class="table table-hover tablePrograms" th:fragment="tablePrograms" id="tablePrograms">
 				<thead>
 					<tr>
 						<th th:text="#{program.list.name}">Name</th>
@@ -32,10 +32,10 @@
 				</tbody>
 			</table>
 		</div>
-		<div th:replace="fragments/pagination"/>
-	</div>
-	<div class="container" th:if="${#lists.isEmpty(programsList)}">
-		<h2 class="text-center mt-5" th:text="#{program.list.empty}">No programs to show</h2>
+		<div th:if="${not #lists.isEmpty(programsList)}" th:replace="fragments/pagination"/>
+		<div class="container" th:if="${#lists.isEmpty(programsList)}">
+			<h2 class="text-center mt-5" th:text="#{program.list.empty}">No programs to show</h2>
+		</div>
 	</div>
 	<div th:replace="fragments/deleteDialog"/>
 	<footer th:replace="fragments/footer" />
