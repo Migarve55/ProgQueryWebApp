@@ -174,7 +174,7 @@ public class QueryController {
 		return "redirect:/query/detail/" + id;
 	}
 	
-	@RequestMapping("/query/delete/{id}")
+	@RequestMapping("/query/{id}/delete")
 	public String delete(@PathVariable Long id, Principal principal) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);

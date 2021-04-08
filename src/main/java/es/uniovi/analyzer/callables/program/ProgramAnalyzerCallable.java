@@ -1,26 +1,17 @@
-package es.uniovi.analyzer.tasks.program;
+package es.uniovi.analyzer.callables.program;
 
 import java.util.List;
 
+import es.uniovi.analyzer.callables.AbstractAnalyzerCallable;
 import es.uniovi.analyzer.exceptions.CompilerException;
 import es.uniovi.analyzer.exceptions.EnviromentException;
 import es.uniovi.analyzer.exceptions.ReportException;
-import es.uniovi.analyzer.tasks.AbstractAnalyzerCallable;
 import es.uniovi.analyzer.tools.reporter.dto.ProblemDto;
 
 public class ProgramAnalyzerCallable extends AbstractAnalyzerCallable {
-	
-	private boolean isPlayground;
 
-	public ProgramAnalyzerCallable(String programID, String userId) {
-		super(null, userId);
-		this.programID = programID;
-	}
-	
-	public ProgramAnalyzerCallable(String programID, String userId, boolean isPlayground) {
-		super(null, userId);
-		this.programID = programID;
-		this.isPlayground = isPlayground;
+	public ProgramAnalyzerCallable(String programId, String userId) {
+		super(null, programId, userId);
 	}
 
 	protected void prepareEnviroment() throws EnviromentException {
@@ -36,13 +27,8 @@ public class ProgramAnalyzerCallable extends AbstractAnalyzerCallable {
 		super.createReport(result);
 	}
 
-	protected void cleanEnviroment() throws EnviromentException {
+	public void cleanEnviroment() throws EnviromentException {
 		// Nothing to do here
 	}
 	
-	@Override
-	public boolean isPlayground() {
-		return this.isPlayground;
-	}
-
 }

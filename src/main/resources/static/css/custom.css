@@ -33,14 +33,10 @@ body {
 	font-size: 1.2em;
 }
 
-.programAnalyzerContainer span, .programAnalyzerContainer .form-check {
+.programAnalyzerContainer .pacText {
 	display: block;
 	margin-top: 0.5em;
 	margin-bottom: 0.5em; 
-}
-
-.textAreaAnalyzer {
-	height: 20em !important; 
 }
 
 .form-hor {
@@ -70,20 +66,6 @@ td {
 	overflow-wrap: break-word;
 }
 
-.codeSegment {
-	background: #00000012;
-    display: block;
-    padding: 0.4em;
-}
-
-.queryText {
-	word-break: break-word;
-    overflow-wrap: break-word;
-    white-space: normal;
-    font-family: "Courier New", Courier, monospace;
-    font-size: medium;
-}
-
 .bigIcon {
 	font-size: 9em;
 }
@@ -101,10 +83,6 @@ td {
 
 td.description {
     width: 50%;
-}
-
-.queryOp:checked {
-	font-weight: bolder;
 }
 
 .errorCode {
@@ -133,8 +111,7 @@ td.description {
 	margin-right: 1em;
 }
 
-.userListItem {
-	margin: 0.25em;
-	display: flex;
-    align-items: center;
+.CodeMirror {
+	border: 1px solid #ced4da;
 }
+

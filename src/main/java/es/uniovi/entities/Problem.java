@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 public class Problem {
 	
-	public final static int MSG_LENGTH = 2048;
+	public final static int MSG_LENGTH = 1024 * 3;
 	
 	@Id
 	@GeneratedValue

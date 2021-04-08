@@ -19,13 +19,13 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import es.uniovi.analyzer.exceptions.AnalyzerException;
-import es.uniovi.analyzer.tasks.AnalyzerTask;
 import es.uniovi.entities.Problem;
 import es.uniovi.entities.Result;
 import es.uniovi.entities.User;
 import es.uniovi.services.AnalyzerService;
 import es.uniovi.services.ResultService;
 import es.uniovi.services.UsersService;
+import es.uniovi.tasks.AbstractTask;
 
 @Controller
 public class ResultController {
@@ -58,7 +58,7 @@ public class ResultController {
 	public String last(Principal principal, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
-		AnalyzerTask task = analyzerService.getCurrentTask(user);
+		AbstractTask task = analyzerService.getCurrentTask(user);
 		// No task, return
 		if (task == null) {
 			redirect.addFlashAttribute("error", "error.noTask");
@@ -79,11 +79,7 @@ public class ResultController {
 				AnalyzerException ae = (AnalyzerException) exception;
 				redirect.addFlashAttribute("error", ae.getErrorCode());
 				redirect.addFlashAttribute("errOutput", task.getRecordedOutput());
-				if (task.isPlaygroundTask()) {
-					return "redirect:/program/playground";
-				} else {
-					return "redirect:/";
-				}
+				return "redirect:" + task.getKoUrl();
 			} else {
 				logger.error("Unexpected exception for report of user '{}'", user.getEmail());
 				e.printStackTrace();
@@ -93,17 +89,12 @@ public class ResultController {
 			// Clear user task
 			analyzerService.clearUserTask(user);
 		}
-		// Get result
-		Result result = resultService.getLastFromUser(user);
-		if (result == null) {
-			redirect.addFlashAttribute("error", "error.noReport");
-			return "redirect:/";
-		}
-		if (!task.isPlaygroundTask()) {
-			return "redirect:/result/" + result.getId();
-		} else {
-			return "redirect:/program/playground?resultId=" + result.getId();
-		}
+		return "redirect:" + task.getOkUrl();
+//		if (!task.isPlaygroundTask()) {
+//			return "redirect:/result/" + result.getId();
+//		} else {
+//			return "redirect:/program/playground?resultId=" + result.getId();
+//		}
 	}
 	
 	private Throwable getRootCause(Throwable t) {
@@ -129,7 +120,7 @@ public class ResultController {
 		return "result/detail";
 	}
 	
-	@RequestMapping("/result/delete/{id}") 
+	@RequestMapping("/result/{id}/delete") 
 	public String delete(@PathVariable Long id, Principal principal, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);

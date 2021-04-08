@@ -1,36 +1,41 @@
-package es.uniovi.analyzer.tasks;
+package es.uniovi.tasks;
 
 import java.util.List;
 import java.util.concurrent.FutureTask;
 import java.util.function.Consumer;
 
+import es.uniovi.analyzer.callables.AbstractAnalyzerCallable;
 import es.uniovi.analyzer.exceptions.EnviromentException;
 import es.uniovi.analyzer.tools.reporter.dto.ProblemDto;
 
-public class AnalyzerTask extends FutureTask<List<ProblemDto>> {
-	
-	private int progress = 0;
-	private String status = "In progress...";
+public abstract class AbstractTask extends FutureTask<List<ProblemDto>> {
 
 	private AbstractAnalyzerCallable callable;
 	
-	public AnalyzerTask(AbstractAnalyzerCallable callable) {
+	private Long resultId;
+	
+	private Long programId;
+	
+	public AbstractTask(AbstractAnalyzerCallable callable) {
 		super(callable);
-		callable.setTask(this);
 		this.callable = callable;
 	}
+	
+	public abstract String getOkUrl();
+	
+	public abstract String getKoUrl();
 	
 	@Override
 	protected void done() {
 		super.done();
-		progress = 100;
-		status = "Done";
+		callable.setProgress(100);
+		callable.setStatus("Done");
 	}
 
 	@Override
 	public boolean cancel(boolean mayInterruptIfRunning) {
-		progress = 100;
-		status = "Cancelled";
+		callable.setProgress(100);
+		callable.setStatus("Cancelled");
 		try {
 			callable.cleanEnviroment();
 		} catch (EnviromentException e) {
@@ -39,34 +44,18 @@ public class AnalyzerTask extends FutureTask<List<ProblemDto>> {
 		return super.cancel(mayInterruptIfRunning);
 	}
 	
-	public boolean isPlaygroundTask() {
-		return this.callable.isPlayground();
-	}
-	
 	public String getRecordedOutput() {
 		return this.callable.getRecordedOutput();
 	}
 
 	public int getProgress() {
-		return progress;
-	}
-
-	public void setProgress(int progress) {
-		this.progress = progress;
-	}
-	
-	public void incrementProgress(int increment) {
-		this.progress = Math.min(this.progress + increment, 100);
+		return callable.getProgress();
 	}
 
 	public String getStatus() {
-		return status;
+		return callable.getStatus();
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
-	
 	public void setCallback(Consumer<List<ProblemDto>> callback) {
 		this.callable.setCallback(callback);
 	}
@@ -76,4 +65,21 @@ public class AnalyzerTask extends FutureTask<List<ProblemDto>> {
 		return "Task-" + this.hashCode();
 	}
 
+	public Long getResultId() {
+		return resultId;
+	}
+
+	public void setResultId(Long resultId) {
+		this.resultId = resultId;
+	}
+
+	public Long getProgramId() {
+		return programId;
+	}
+
+	public void setProgramId(Long programId) {
+		this.programId = programId;
+	}
+
 }
+

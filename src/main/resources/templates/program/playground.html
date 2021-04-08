@@ -8,12 +8,12 @@
 		<div class="mx-auto my-4 wb-cont programAnalyzerContainer">
 			<div class="alert alert-danger" role="alert" th:if="${error}">
 				<p th:text="#{${error}}"></p>
-				<pre th:if="${queryError}" th:text="${queryError}"></pre>
+				<pre th:if="${errOutput}" th:text="${errOutput}"></pre>
 			</div>
   			<div class="row">
   				<div class="col-md-6">
   					<h2 class="analysisTitle" th:text="#{playground.program}">Program</h2>
-  					<span th:text="#{playground.program.search}">Escoger programa: </span>
+  					<span class="pacText" th:text="#{playground.program.search}">Escoger programa: </span>
   					<div class="input-group">
 					    <select class="form-control" id="programSelect" name="programId" 
 					     th:data-noresults-text="#{playground.program.search.noResult}">
@@ -22,35 +22,36 @@
 					    	<div class="input-group-text"><i class="fa fa-search"></i></div>
 						</div>
 					</div>
-  					<div class="form-check">
-						<input type="checkbox" name="useSource" th:checked="${onlyOwner}" class="form-check-input" id="srcCb">
+  					<div class="form-check pacText">
+						<input type="checkbox" name="useSource" th:checked="${programSource != ''}" class="form-check-input" id="srcCb">
 						<label class="form-check-label" for="srcCb" th:text="#{playground.program.option}"></label>
 					</div>
   					<div class="form-group">
-  						<textarea id="programSource" class="form-control textAreaAnalyzer" name="programSource" spellcheck="false"></textarea>
+  						<textarea id="programSource" name="programSource" th:text="${programSource}"></textarea>
   					</div>
   				</div>
   				<div class="col-md-6">
   					<h2 class="analysisTitle" th:text="#{playground.query}">Analysis</h2>
-  					<span th:text="#{playground.query.search}">Search an existing query: </span>
+  					<span class="pacText" th:text="#{playground.query.search}">Search an existing query: </span>
   					<div class="input-group">
-					    <select class="form-control" id="querySelect" 
+					    <select class="form-control" id="querySelect" name="queryId"
 					     th:data-noresults-text="#{playground.query.search.noResult}">
 					    </select>
 					    <div class="input-group-append">
 					    	<div class="input-group-text"><i class="fa fa-search"></i></div>
 						</div>
 					</div>
-  					<span th:text="#{playground.query.option}">Or enter its Cypher code: </span>
+  					<span class="pacText" th:text="#{playground.query.option}">Or enter its Cypher code: </span>
   					<div class="form-group">
-  						<textarea required id="querySource" class="form-control textAreaAnalyzer" name="queryText" spellcheck="false" th:text="${queryText}"></textarea>
+  						<textarea id="querySource" name="querySource" th:text="${querySource}"></textarea>
   					</div>
   				</div>
   			</div>
   			<input class="form-control btn btn-primary" type="submit" th:value="#{analyze}"/>
-  			<span th:text="#{playground.result}">Result:</span>
-  			<div class="form-group">
-  				<textarea disabled th:text="${results}" class="form-control" spellcheck="false" rows="6"></textarea>
+  			<span class="pacText" th:text="#{playground.result}">Result:</span>
+  			<div class="form-group"> 
+  				<textarea th:if="${!noResult}" disabled th:text="${results}" class="form-control" spellcheck="false" rows="6"></textarea>
+  				<textarea th:if="${noResult}" disabled th:text="#{result.detail.empty}" class="form-control" spellcheck="false" rows="6"></textarea>
   			</div>
 		</div>
 		<script src="/script/playground.js"></script>

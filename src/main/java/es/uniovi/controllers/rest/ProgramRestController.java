@@ -60,9 +60,10 @@ public class ProgramRestController extends BaseRestController {
 	@ResponseStatus(HttpStatus.OK)
 	public void postProgram(@RequestParam("url") String url, 
 			@RequestParam(value = "args", required = false) String args, 
+			@RequestParam(value = "programId") String programId,
 			@RequestParam(value = "compOpt", required = false) String compOpt, Principal principal) {
 		User user = usersService.getUserByEmail(principal.getName());
-		analyzerService.uploadGitRepo(user, url, compOpt, args);
+		analyzerService.uploadGitRepo(user, programId, url, compOpt, args);
 	}
 	
 	@PutMapping("/api/programs/{id}")
@@ -73,7 +74,8 @@ public class ProgramRestController extends BaseRestController {
 			@RequestParam(value = "args", required = false) String args, 
 			@RequestParam(value = "compOpt", required = false) String compOpt, Principal principal) {
 		User user = usersService.getUserByEmail(principal.getName());
-		analyzerService.reuploadGitRepo(id, user, url, compOpt, args);
+		// TODO: revisar
+		//analyzerService.reuploadGitRepo(id, user, url, compOpt, args);
 	}
 	
 	/**

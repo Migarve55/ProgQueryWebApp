@@ -18,7 +18,7 @@ import es.uniovi.repositories.ProgramRepository;
 @Service
 public class ProgramService {
 	
-	private final static String NAME_REGEX = "[a-zA-Z0-9_]+\\.[a-zA-Z0-9_]+\\.[a-zA-Z0-9_]+";
+	private final static String NAME_REGEX = "\\w+\\.\\w+\\.\\w+(\\.\\w+)*";
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
@@ -54,10 +54,9 @@ public class ProgramService {
 	public void deleteProgram(Long id) {
 		try (Neo4jFacade neo4jFacade = new Neo4jFacade(System.getProperty("neo4j.url"))) {
 			Program program = programRepository.findById(id).orElse(null);
-			if (program.getProgramIdentifier() != null)
-				neo4jFacade.removeProgram(program.getProgramIdentifier());
+			neo4jFacade.removeProgram(program.getName());
 			programRepository.deleteById(id);
-			logger.info("Program {} was deleted", program.getProgramIdentifier());
+			logger.info("Program {} was deleted", program.getName());
 		}
 	}
 	

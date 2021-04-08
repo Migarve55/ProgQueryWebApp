@@ -21,13 +21,12 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import es.uniovi.analyzer.tasks.AbstractAnalyzerCallable;
-import es.uniovi.analyzer.tasks.AnalyzerTask;
-import es.uniovi.analyzer.tasks.file.FileAnalyzerCallable;
-import es.uniovi.analyzer.tasks.github.GithubCodeAnalyzerCallable;
-import es.uniovi.analyzer.tasks.playground.PlaygroundSourceAnalyzerCallable;
-import es.uniovi.analyzer.tasks.program.ProgramAnalyzerCallable;
-import es.uniovi.analyzer.tasks.zip.ZipAnalizerCallable;
+import es.uniovi.analyzer.callables.AbstractAnalyzerCallable;
+import es.uniovi.analyzer.callables.file.FileAnalyzerCallable;
+import es.uniovi.analyzer.callables.github.GithubCodeAnalyzerCallable;
+import es.uniovi.analyzer.callables.program.ProgramAnalyzerCallable;
+import es.uniovi.analyzer.callables.source.SourceAnalyzerCallable;
+import es.uniovi.analyzer.callables.zip.ZipAnalizerCallable;
 import es.uniovi.analyzer.tools.ToolFactory;
 import es.uniovi.analyzer.tools.compilators.CompilerTool;
 import es.uniovi.analyzer.tools.reporter.dto.ProblemDto;
@@ -41,12 +40,15 @@ import es.uniovi.repositories.ProblemsRepository;
 import es.uniovi.repositories.ProgramRepository;
 import es.uniovi.repositories.QueriesRepository;
 import es.uniovi.repositories.ResultsRepository;
+import es.uniovi.tasks.AbstractTask;
+import es.uniovi.tasks.AnalyzerTask;
+import es.uniovi.tasks.PlaygroundTask;
 
 @Service
 public class AnalyzerService {
 	
-	private Map<User,AnalyzerTask> usersTasks = new ConcurrentHashMap<User,AnalyzerTask>();
-	private ExecutorService executor = Executors.newFixedThreadPool(4); 
+	private Map<User,AbstractTask> usersTasks = new ConcurrentHashMap<User,AbstractTask>();
+	private ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()); 
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
@@ -62,11 +64,11 @@ public class AnalyzerService {
 	@Autowired
 	private QueriesRepository queriesRepository;
 	
-	public AnalyzerTask getCurrentTask(User user) {
+	public AbstractTask getCurrentTask(User user) {
 		return usersTasks.get(user);
 	}
 	
-	private void setCurrentTask(User user, AnalyzerTask task) {
+	private void setCurrentTask(User user, AbstractTask task) {
 		logger.info("User {} was assigned a new task {}", user.getEmail(), task);
 		usersTasks.put(user, task);
 	}
@@ -77,7 +79,7 @@ public class AnalyzerService {
 	 * @param user
 	 * @param task
 	 */
-	private void finalizeUserTask(User user, AnalyzerTask task) {
+	private void finalizeUserTask(User user, AbstractTask task) {
 		logger.info("Task {} of user {} has ended", task, user.getEmail());
 	}
 	
@@ -86,7 +88,7 @@ public class AnalyzerService {
 	}
 	
 	public void cancelCurrentTask(User user) {
-		AnalyzerTask task = getCurrentTask(user);
+		AbstractTask task = getCurrentTask(user);
 		if (task.cancel(false))
 			logger.info("User {} cancelled their task {} succesfully", user.getEmail(), task);
 		else
@@ -94,49 +96,61 @@ public class AnalyzerService {
 		finalizeUserTask(user, task);
 	}
 	
-	public void analyzeFile(User user, String name, MultipartFile file, String[] queries) throws IOException {
-		launchAnalyzerTask(user, name, "java", new FileAnalyzerCallable(user.getEmail(), file.getOriginalFilename(), file.getInputStream()), queries);
+	public void analyzeFile(User user, String programId, MultipartFile file, String[] queries) throws IOException {
+		launchAnalyzerTask(user, programId, "java", new FileAnalyzerCallable(programId, user.getEmail(), file.getOriginalFilename(), file.getInputStream()), queries);
 	}
 	
-	public void analyzeZip(User user, String name, MultipartFile zip, String compOp, String classpath, String[] queries) throws IOException {
-		launchAnalyzerTask(user, name, compOp, new ZipAnalizerCallable(classpath, user.getEmail(), zip.getInputStream()), queries);
+	public void analyzeZip(User user, String programId, MultipartFile zip, String compOp, String classpath, String[] queries) throws IOException {
+		launchAnalyzerTask(user, programId, compOp, new ZipAnalizerCallable(classpath, programId, user.getEmail(), zip.getInputStream()), queries);
 	}
 
-	public void analyzeGitRepo(User user, String name, String repoUrl, String compOp, String classpath, String[] queries) {
-		launchAnalyzerTask(user, name, compOp, new GithubCodeAnalyzerCallable(classpath, user.getEmail(), repoUrl), queries);
+	public void analyzeGitRepo(User user, String programId, String repoUrl, String compOp, String classpath, String[] queries) {
+		launchAnalyzerTask(user, programId, compOp, new GithubCodeAnalyzerCallable(classpath, programId, user.getEmail(), repoUrl), queries);
 	}
 
-	public void uploadGitRepo(User user, String repoUrl, String compOp, String classpath) {
+	public void uploadGitRepo(User user, String programId, String repoUrl, String compOp, String classpath) {
 		String[] queries = new String[0]; //Empty array with no queries
-		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(classpath, user.getEmail(), repoUrl), queries);
-	}
-	
-	public void reuploadGitRepo(Long id, User user, String repoUrl, String compOp, String classpath) {
-		String[] queries = new String[0]; //Empty array with no queries
-		programRepository.deleteById(id);
-		launchAnalyzerTask(user, repoUrl, compOp, new GithubCodeAnalyzerCallable(classpath, user.getEmail(), repoUrl), queries);
+		launchAnalyzerTask(user, programId, compOp, new GithubCodeAnalyzerCallable(classpath, programId, user.getEmail(), repoUrl), queries);
 	}
 	
 	public void analyzeProgramWithQueryText(User user, String queryText, Program program) {
-		AbstractAnalyzerCallable callable = new ProgramAnalyzerCallable(program.getProgramIdentifier(), user.getEmail(), true);
+		AbstractAnalyzerCallable callable = new ProgramAnalyzerCallable(program.getName(), user.getEmail());
 		callable.setQueries(getSimpleQueryList(queryText));
-		replaceTasks(user, callable, (errors, task) -> {
-			createReport(user, program, errors);
+		AbstractTask newTask = new PlaygroundTask(callable, queryText);
+		replaceTasks(user, newTask, callable, (errors, task) -> {
+			task.setProgramId(program.getId());
+			if (errors.size() > 0) {
+				Result result = createResult(user, program, errors);
+				task.setResultId(result.getId());
+			}
 			finalizeUserTask(user, task);
 		});
 		logger.info("User {} started playground analysis of program {} with query: {}...", user.getEmail(), program.getName(), queryText);
 	}
 
 	public void analyzeSourceWithQueryText(User user, String queryText, String programSource) {
-		AbstractAnalyzerCallable callable = new PlaygroundSourceAnalyzerCallable(programSource, user.getEmail());
+		String programId = getPlaygroundProgramId(user);
+		AbstractAnalyzerCallable callable = new SourceAnalyzerCallable(programSource, programId, user.getEmail());
 		callable.setQueries(getSimpleQueryList(queryText));
 		callable.setCompiler(ToolFactory.getJavaCompilerTool());
-		replaceTasks(user, callable, (errors, task) -> {
-			Program program = createProgram(user, "playground.program.id_" + task.hashCode(), callable.getProgramID());
-			createReport(user, program, errors);
+		AbstractTask newTask = new PlaygroundTask(callable, queryText, programSource);
+		replaceTasks(user, newTask, callable, (errors, task) -> {
+			Program program = createProgram(user, programId);
+			task.setProgramId(program.getId());
+			if (errors.size() > 0) {
+				Result result = createResult(user, program, errors);
+				task.setResultId(result.getId());
+			}
 			finalizeUserTask(user, task);
 		});
 		logger.info("User {} started playground analysis of program source with query: {}", user.getEmail(), queryText);
+	}
+	
+	private String getPlaygroundProgramId(User user) {
+		int hash = 17;
+		hash = hash * 31 + user.hashCode();
+		hash = hash * 31 + new Date().hashCode();
+		return "playground.program.id_" + Integer.toHexString(hash);
 	}
 	
 	private List<QueryDto> getSimpleQueryList(String queryText) {
@@ -149,52 +163,58 @@ public class AnalyzerService {
 	}
 	
 	public void analyzeProgram(User user, Program program, String[] queries) {
-		AbstractAnalyzerCallable callable = new ProgramAnalyzerCallable(program.getProgramIdentifier(), user.getEmail());
+		AbstractAnalyzerCallable callable = new ProgramAnalyzerCallable(program.getName(), user.getEmail());
 		List<Query> queriesList = getQueries(queries, user);
 		callable.setQueries(toQueryDto(queriesList));
-		
-		replaceTasks(user, callable, (errors, task) -> {
-			createReport(user, program, errors);
+		AbstractTask newTask = new AnalyzerTask(callable);
+		replaceTasks(user, newTask, callable, (errors, task) -> {
+			if (errors.size() > 0) {
+				Result result = createResult(user, program, errors);
+				task.setResultId(result.getId());
+			}
 			finalizeUserTask(user, task);
 		});
-		logger.info("User {} started program {} analysis", user.getEmail(), program.getProgramIdentifier());
+		logger.info("User {} started program {} analysis", user.getEmail(), program.getName());
 	}
 	
 	/**
 	 * Auxiliar method for the git,file and zip analyzers
 	 * @param user User that requested the analysis
-	 * @param name Name of the program
+	 * @param programId Name of the program
 	 * @param compOp What compiler to use
 	 * @param callable what callable to use
 	 * @param queries what queries to use, can be null. If null, it will not create a report.
 	 */
-	private void launchAnalyzerTask(User user, String name, String compOp, AbstractAnalyzerCallable callable, String[] queries) {
+	private void launchAnalyzerTask(User user, String programId, String compOp, AbstractAnalyzerCallable callable, String[] queries) {
 		if (queries != null) {
 			List<Query> queriesList = getQueries(queries, user);
 			callable.setQueries(toQueryDto(queriesList));
 		}
 		callable.setCompiler(getCompilationTool(compOp));
-		
-		replaceTasks(user, callable, (errors, task) -> {
-			Program program = createProgram(user, name, callable.getProgramID());
-			createReport(user, program, errors);
+		AbstractTask newTask = new AnalyzerTask(callable);
+		replaceTasks(user, newTask, callable, (errors, task) -> {
+			Program program = createProgram(user, programId);
+			task.setProgramId(program.getId());
+			if (errors.size() > 0) {
+				Result result = createResult(user, program, errors);
+				task.setResultId(result.getId());
+			}
 			finalizeUserTask(user, task);
 		});
-		logger.info("User {} started analysis of new program '{}' using {}", user.getEmail(), name, compOp);
+		logger.info("User {} started analysis of new program '{}' using {}", user.getEmail(), programId, compOp);
 	}
 	
-	private void replaceTasks(User user, AbstractAnalyzerCallable callable, BiConsumer<List<ProblemDto>, AnalyzerTask> callback) {
-		AnalyzerTask oldTask = getCurrentTask(user);
+	private void replaceTasks(User user, AbstractTask newTask, AbstractAnalyzerCallable callable, BiConsumer<List<ProblemDto>, AbstractTask> callback) {
+		AbstractTask oldTask = getCurrentTask(user);
 		if (oldTask != null) {
 			if (!oldTask.isDone())
 				oldTask.cancel(false);
 		}
-		AnalyzerTask task = new AnalyzerTask(callable);
-		task.setCallback((list) -> {
-			callback.accept(list, task);
+		newTask.setCallback((list) -> {
+			callback.accept(list, newTask);
 		});
-		executor.execute(task);
-		setCurrentTask(user, task);
+		executor.execute(newTask);
+		setCurrentTask(user, newTask);
 	}
 	
 	private CompilerTool getCompilationTool(String compilator) {
@@ -209,7 +229,7 @@ public class AnalyzerService {
 	}
 	
 	@Transactional(isolation=Isolation.READ_COMMITTED)
-	private void createReport(User user, Program program, List<ProblemDto> problems) {
+	private Result createResult(User user, Program program, List<ProblemDto> problems) {
 		Result result = new Result();
 		result.setProgram(program);
 		result.setTimestamp(new Date());
@@ -221,13 +241,13 @@ public class AnalyzerService {
 			problem.setMsg(problemDto.getMsg());
 			problemsRepository.save(problem);
 		}
+		return result;
 	}
 	
-	private Program createProgram(User user, String name, String programID) {
+	private Program createProgram(User user, String name) {
 		Program program = new Program();
 		program.setTimestamp(new Date());
 		program.setUser(user);
-		program.setProgramIdentifier(programID);
 		program.setName(name);
 		return programRepository.save(program);
 	}

@@ -18,8 +18,8 @@
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="description" th:text="#{description}">Descripción:</label>
 				<div class="col-sm-12">
-					<input type="text" class="form-control" name="description" th:value="*{description}"
-						 required="true" th:title="#{tooltip.required}"/> 
+					<textarea type="text" class="form-control" name="description" th:title="#{tooltip.required}" rows="3"
+						 required="true" th:text="*{description}"/></textarea>
 					<span class="text-danger" th:if="${#fields.hasErrors('description')}"
 						th:errors="*{description}"/>
 				</div>
@@ -27,7 +27,7 @@
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="queryText" th:text="#{query}">Query:</label>
 				<div class="col-sm-12">
-					<textarea class="form-control" name="queryText" rows="10" spellcheck="false" th:text="*{queryText}" th:title="#{tooltip.required}"></textarea>
+					<textarea id="queryEditor" class="form-control" name="queryText" rows="10" spellcheck="false" th:text="*{queryText}" th:title="#{tooltip.required}"></textarea>
 					<span class="text-danger" th:if="${#fields.hasErrors('queryText')}" th:errors="*{queryText}"/>
 				</div>
 			</div>
@@ -41,6 +41,7 @@
 				</div>
 			</div>
 		</form>
+		<script src="/script/queryEdit.js" type="text/javascript"></script>
 	</div>
 	<footer th:replace="fragments/footer" />
 </body>

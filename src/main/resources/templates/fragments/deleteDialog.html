@@ -18,13 +18,4 @@
 	    </div>
 	  </div>
 </div>
-
-<script>
-	$('#deleteModal').on('show.bs.modal', function (event) {
-		  var button = $(event.relatedTarget);
-		  var type = button.data('type');
-		  var id = button.data('id');
-		  var modal = $(this);
-		  modal.find('.modal-footer a').attr("href", "/" + type + "/delete/" + id);
-	});
-</script>
+<script src="/script/deleteDialog.js"></script>

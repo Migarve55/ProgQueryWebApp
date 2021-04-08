@@ -40,7 +40,7 @@
 						<td th:text="${query.user.email}"></td>
 						<td>
 							<a class="btn btn-primary" th:href="${'/query/detail/' + query.id}" th:text="#{detail}">Detalles</a>
-							<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-type="query" th:data-id="${query.id}" th:text="#{delete}">Borrar</button>
+							<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" th:data-url="${'/query/' + query.id + '/delete'}" th:text="#{delete}">Borrar</button>
 						</td>
 					</tr>
 				</tbody>

@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -27,10 +26,6 @@ public class Program {
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date timestamp;
-	
-	@Column(unique = true, length = 36)
-	@JsonIgnore
-	private String programIdentifier;
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
@@ -69,14 +64,6 @@ public class Program {
 		this.timestamp = timestamp;
 	}
 
-	public String getProgramIdentifier() {
-		return programIdentifier;
-	}
-
-	public void setProgramIdentifier(String programIdentifier) {
-		this.programIdentifier = programIdentifier;
-	}
-
 	public User getUser() {
 		return user;
 	}
@@ -91,10 +78,6 @@ public class Program {
 
 	public void setResults(Set<Result> results) {
 		this.results = results;
-	}
-	
-	public String getDisplayName() {
-		return String.format("%s (%s)", this.name, this.timestamp);
 	}
 
 }

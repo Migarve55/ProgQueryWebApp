@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.uniovi.controllers.ForbiddenException;
+import es.uniovi.controllers.exceptions.ForbiddenException;
 import es.uniovi.entities.Query;
 import es.uniovi.entities.User;
 import es.uniovi.reflection.codeanalysis.cypheradapter.processing.CypherAdapter;
@@ -22,7 +22,7 @@ import es.uniovi.repositories.QueriesRepository;
 @Service
 public class QueryService {
 	
-	private final static String NAME_REGEX = "[a-zA-Z0-9_]+\\.[a-zA-Z0-9_]+\\.[a-zA-Z0-9_]+";
+	private final static String NAME_REGEX = "\\w+\\.\\w+\\.\\w+(\\.\\w+)*";
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	

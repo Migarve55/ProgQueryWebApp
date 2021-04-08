@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import es.uniovi.analyzer.tasks.AnalyzerTask;
 import es.uniovi.entities.User;
 import es.uniovi.services.AnalyzerService;
 import es.uniovi.services.ProgramService;
 import es.uniovi.services.QueryService;
 import es.uniovi.services.UsersService;
+import es.uniovi.tasks.AbstractTask;
 
 @Controller
 public class AnalyzerController {
@@ -151,7 +151,7 @@ public class AnalyzerController {
 	public String getLoading(Principal principal, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
-		AnalyzerTask task = analyzerService.getCurrentTask(user);
+		AbstractTask task = analyzerService.getCurrentTask(user);
 		if (task == null) {
 			redirect.addFlashAttribute("error", "error.noTask");
 			return "redirect:/";
@@ -169,7 +169,7 @@ public class AnalyzerController {
 	public Map<String, Object> getProgress(Principal principal, HttpServletResponse response) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
-		AnalyzerTask task = analyzerService.getCurrentTask(user);
+		AbstractTask task = analyzerService.getCurrentTask(user);
 		if (task == null) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			return null;
@@ -190,7 +190,7 @@ public class AnalyzerController {
 	 * @return true if no user is being computed for the user
 	 */
 	private boolean isTaskDone(User user) {
-		AnalyzerTask task = analyzerService.getCurrentTask(user);
+		AbstractTask task = analyzerService.getCurrentTask(user);
 		if (task != null) {
 			if (!task.isDone() && !task.isCancelled())
 				return false;

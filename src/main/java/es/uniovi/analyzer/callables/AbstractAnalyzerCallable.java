@@ -1,4 +1,4 @@
-package es.uniovi.analyzer.tasks;
+package es.uniovi.analyzer.callables;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -6,7 +6,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
@@ -20,19 +19,21 @@ import es.uniovi.analyzer.tools.reporter.dto.QueryDto;
 
 public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemDto>> {
 	
+	private int progress = 0;
+	private String status = "In progress...";
+	
 	protected String classpath;
 	protected String basePath;
 	protected String programID;
 	protected String userId;
-	protected AnalyzerTask task;
 	protected CompilerTool compiler;
 	protected List<QueryDto> queries = new ArrayList<QueryDto>();
 	
 	private Consumer<List<ProblemDto>> callback;
 
-	public AbstractAnalyzerCallable(String classpath, String userId) {
+	public AbstractAnalyzerCallable(String classpath, String programId, String userId) {
 		this.classpath = classpath;
-		this.programID = UUID.randomUUID().toString();
+		this.programID = programId;
 		this.userId = userId;
 	}
 
@@ -60,8 +61,8 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 	}
 	
 	public void nextStep(String step, int increment) {
-		task.setStatus(step);
-		task.incrementProgress(increment);
+		setStatus(step);
+		incrementProgress(increment);
 	}
 
 	// Template methods
@@ -88,7 +89,7 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 		}
 	}
 
-	protected void cleanEnviroment() throws EnviromentException {
+	public void cleanEnviroment() throws EnviromentException {
 		nextStep("Cleaning enviroment", 25);
 		ToolFactory.getEnviromentTool().deleteEnviroment(basePath);
 	}
@@ -103,7 +104,7 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 		return errStream;
 	}
 
-	// Setters
+	// Getters and Setters
 
 	public void setCallback(Consumer<List<ProblemDto>> callback) {
 		this.callback = callback;
@@ -112,23 +113,33 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 	public void setQueries(List<QueryDto> queries) {
 		this.queries = queries;
 	}
-	
-	public void setTask(AnalyzerTask task) {
-		this.task = task;
-	}
 
 	public void setCompiler(CompilerTool compiler) {
 		this.compiler = compiler;
 	}
 
-	// Getters
-
 	public String getProgramID() {
 		return programID;
 	}
 	
-	public boolean isPlayground() {
-		return false;
+	public int getProgress() {
+		return progress;
+	}
+
+	public void setProgress(int progress) {
+		this.progress = progress;
+	}
+	
+	public void incrementProgress(int increment) {
+		this.progress = Math.min(this.progress + increment, 100);
+	}
+
+	public String getStatus() {
+		return status;
+	}
+	
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	
 }

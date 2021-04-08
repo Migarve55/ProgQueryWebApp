@@ -1,17 +1,17 @@
-package es.uniovi.analyzer.tasks.playground;
+package es.uniovi.analyzer.callables.source;
 
+import es.uniovi.analyzer.callables.AbstractAnalyzerCallable;
 import es.uniovi.analyzer.exceptions.CompilerException;
 import es.uniovi.analyzer.exceptions.EnviromentException;
-import es.uniovi.analyzer.tasks.AbstractAnalyzerCallable;
 import es.uniovi.analyzer.tools.ToolFactory;
 
-public class PlaygroundSourceAnalyzerCallable extends AbstractAnalyzerCallable {
+public class SourceAnalyzerCallable extends AbstractAnalyzerCallable {
 	
 	private String source;
 	private String javaSourceFilename;
 	
-	public PlaygroundSourceAnalyzerCallable(String source, String userId) {
-		super(null, userId);
+	public SourceAnalyzerCallable(String source, String programId, String userId) {
+		super(null, programId, userId);
 		this.source = source;
 		this.javaSourceFilename = getJavaFilename(source);
 	}
@@ -25,11 +25,6 @@ public class PlaygroundSourceAnalyzerCallable extends AbstractAnalyzerCallable {
 	protected void compile() throws CompilerException {
 		super.compile();
 		compiler.compileFile(basePath, programID, userId, javaSourceFilename, getOutputStremRecorder());
-	}
-	
-	@Override
-	public boolean isPlayground() {
-		return true;
 	}
 	
 	private String getJavaFilename(String source) {

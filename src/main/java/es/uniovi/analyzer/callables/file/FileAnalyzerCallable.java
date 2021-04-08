@@ -1,4 +1,4 @@
-package es.uniovi.analyzer.tasks.file;
+package es.uniovi.analyzer.callables.file;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -7,17 +7,17 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import es.uniovi.analyzer.callables.AbstractAnalyzerCallable;
 import es.uniovi.analyzer.exceptions.CompilerException;
 import es.uniovi.analyzer.exceptions.EnviromentException;
-import es.uniovi.analyzer.tasks.AbstractAnalyzerCallable;
 
 public class FileAnalyzerCallable extends AbstractAnalyzerCallable {
 
 	private InputStream fileIs;
 	private String fileName;
 
-	public FileAnalyzerCallable(String userId, String fileName, InputStream fileIs) {
-		super(null, userId);
+	public FileAnalyzerCallable(String programId, String userId, String fileName, InputStream fileIs) {
+		super(null, programId, userId);
 		this.fileName = fileName;
 		this.fileIs = fileIs;
 	}

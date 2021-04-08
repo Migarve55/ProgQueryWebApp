@@ -57,14 +57,17 @@ public class Neo4jTool {
 	private ProblemDto getProblemDtoFromResult(Record record) {
 		ProblemDto error = new ProblemDto();
 		StringBuilder sb = new StringBuilder();
+		int maxLength = 10;
 		if (record.fields().isEmpty())
 			return error;
 		for (int i = 0; i < record.fields().size() - 1; i++) {
 			Pair<String, ?> pair = record.fields().get(i);
-			sb.append(String.format("%s: %s, ", pair.key(), pair.value()));
+			String key = pair.key();
+			sb.append(String.format("%s: %s, ", key.length() <= maxLength ? key : "result" + i, pair.value()));
 		}
 		Pair<String, ?> pair = record.fields().get(record.fields().size() - 1);
-		sb.append(String.format("%s: %s", pair.key(), pair.value()));
+		String key = pair.key();
+		sb.append(String.format("%s: %s", key.length() <= maxLength ? key : "result", pair.value()));
 		error.setMsg(sb.toString());
 		return error;
 	}

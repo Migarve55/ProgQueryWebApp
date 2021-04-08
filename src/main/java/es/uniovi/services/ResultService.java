@@ -35,18 +35,13 @@ public class ResultService {
 		return resultsRepository.findAllByUser(pageable, user);
 	}
 	
-	public Result getLastFromUser(User user) {
-		List<Result> results = resultsRepository.findLastByUser(user);
-		return results.isEmpty() ? null : results.get(0);
-	}
-	
 	public Result getResult(Long id) {
 		return resultsRepository.findById(id).orElse(null);
 	}
 	
 	public void deleteResult(Result result) {
 		resultsRepository.delete(result);
-		logger.info("Result for program {} was deleted", result.getProgram().getProgramIdentifier());
+		logger.info("Result for program '{}' was deleted", result.getProgram().getName());
 	}
 
 	public Page<Result> listByProgram(Pageable pageable, Program program) {

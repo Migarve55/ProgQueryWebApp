@@ -27,18 +27,43 @@ $('#querySelect').autoComplete({
 	preventEnter: true
 });
 
-$("#querySelect").on("autocomplete.select", function(_, item) {
-	$("#querySource").val(item.queryText);
+const mimeJava = 'text/x-java';
+const mimeCypher = 'application/x-cypher-query';
+
+const textAreaQuery = document.getElementById('querySource');
+var queryVisualizer = CodeMirror.fromTextArea(textAreaQuery, {
+	mode: mimeCypher,
+    indentWithTabs: true,
+    lineNumbers: true,
+    matchBrackets: true,
+    theme: 'neo'
 });
 
-$("#programSource").attr("disabled","disabled");
+const textAreaProgram = document.getElementById('programSource');
+var programVisualizer = CodeMirror.fromTextArea(textAreaProgram, {
+	mode: mimeJava,
+    indentWithTabs: true,
+    lineNumbers: true,
+    matchBrackets: true
+});
+
+$("#querySelect").on("autocomplete.select", function(_, item) {
+	queryVisualizer.setValue(item.queryText);
+});
+
+if (!$("#srcCb").is(':checked')) {
+	programVisualizer.setValue("");
+    programVisualizer.setOption("readOnly", "nocursor");
+    $("#programSelect").removeAttr("disabled");
+}
 
 $("#srcCb").change(function() {
 	if (!$(this).is(':checked')) {
-    	$("#programSource").attr("disabled","disabled");
+		programVisualizer.setValue("");
+    	programVisualizer.setOption("readOnly", "nocursor");
     	$("#programSelect").removeAttr("disabled");
     } else {
+		programVisualizer.setOption("readOnly", false);
 		$("#programSelect").attr("disabled","disabled");
-		$("#programSource").removeAttr("disabled");
 	}
 });
