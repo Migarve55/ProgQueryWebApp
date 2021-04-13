@@ -13,7 +13,7 @@ public class Query {
 	
 	public final static int NAME_LENGTH = 60;
 	public final static int DESCRIPTION_LENGTH = 1000;
-	public final static int QUERY_LENGTH = 16012;
+	public final static int QUERY_LENGTH = 15012;
 	
 	@Id
 	@GeneratedValue

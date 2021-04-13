@@ -46,7 +46,9 @@
 				</tbody>
 			</table>
 		</div>
-		<div th:if="${queriesList.size() > 0}" th:replace="fragments/pagination"/>
+		<th:block th:if="${queriesList.size() > 0}">
+			<div  th:replace="fragments/pagination"/>
+		</th:block>
 		<div class="container" th:if="${queriesList.size() <= 0}">
 			<h2 class="text-center mt-5" th:text="#{query.list.empty}">No queries to show</h2>
 		</div>
