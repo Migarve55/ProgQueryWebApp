@@ -8,7 +8,7 @@
 		<div class="mx-auto my-4 wb-cont programAnalyzerContainer">
 			<div class="alert alert-danger" role="alert" th:if="${error}">
 				<p th:text="#{${error}}"></p>
-				<pre th:if="${errOutput}" th:text="${errOutput}"></pre>
+				<pre th:if="${errOutput != ''}" th:text="${errOutput}"></pre>
 			</div>
   			<div class="row">
   				<div class="col-md-6">

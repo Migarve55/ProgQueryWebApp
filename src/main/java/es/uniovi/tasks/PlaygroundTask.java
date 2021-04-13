@@ -40,13 +40,17 @@ public class PlaygroundTask extends AbstractTask {
 	}
 	
 	public static String getBaseUrl(String programSource, String querySource) {
+		if (programSource == null)
+			programSource = "";
+		if (querySource == null)
+			querySource = "";
 		try {
 			return String.format("/program/playground?programSource=%s&querySource=%s", 
 					URLEncoder.encode(programSource, "UTF-8"),
 					URLEncoder.encode(querySource,   "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
-			return null;
+			return "/program/playground";
 		}
 	}
 

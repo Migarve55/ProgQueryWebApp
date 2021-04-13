@@ -117,6 +117,7 @@ public class ResultController {
 		model.addAttribute("page", problems);
 		model.addAttribute("problems", problems.getContent());
 		model.addAttribute("timestamp", result.getTimestamp());
+		model.addAttribute("queryProblems", result.getQueryExecutionProblems());
 		return "result/detail";
 	}
 	

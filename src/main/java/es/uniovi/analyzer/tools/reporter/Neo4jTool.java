@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import es.uniovi.analyzer.tools.reporter.dto.ProblemDto;
 import es.uniovi.analyzer.tools.reporter.dto.QueryDto;
+import es.uniovi.analyzer.tools.reporter.dto.QueryExecutionProblemDto;
+import es.uniovi.analyzer.tools.reporter.dto.ResultDto;
 
 public class Neo4jTool {
 	
@@ -30,8 +32,9 @@ public class Neo4jTool {
 		this.queries = queries;
 	}
 
-	public List<ProblemDto> generateReport() {
+	public ResultDto generateReport() {
 		List<ProblemDto> errors = new ArrayList<ProblemDto>();
+		List<QueryExecutionProblemDto> queryExecutionProblems = new ArrayList<QueryExecutionProblemDto>();
 		logger.info("Creating report for program {}", programID);
 		try (Neo4jFacade queryRunner = new Neo4jFacade(url)) {
 			for (QueryDto query : queries) {
@@ -44,12 +47,13 @@ public class Neo4jTool {
 					});
 				} catch (Neo4jException qee) {
 					logger.info("Could not execute query {}, error: {}", query.getName(), qee.getMessage());
+					queryExecutionProblems.add(new QueryExecutionProblemDto(query.getName(), qee.getMessage()));
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
-		return errors;
+		return new ResultDto(errors, queryExecutionProblems);
 	}
 	
 	// Auxiliar

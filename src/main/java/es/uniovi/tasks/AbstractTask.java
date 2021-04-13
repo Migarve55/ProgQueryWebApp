@@ -1,14 +1,13 @@
 package es.uniovi.tasks;
 
-import java.util.List;
 import java.util.concurrent.FutureTask;
 import java.util.function.Consumer;
 
 import es.uniovi.analyzer.callables.AbstractAnalyzerCallable;
 import es.uniovi.analyzer.exceptions.EnviromentException;
-import es.uniovi.analyzer.tools.reporter.dto.ProblemDto;
+import es.uniovi.analyzer.tools.reporter.dto.ResultDto;
 
-public abstract class AbstractTask extends FutureTask<List<ProblemDto>> {
+public abstract class AbstractTask extends FutureTask<ResultDto> {
 
 	private AbstractAnalyzerCallable callable;
 	
@@ -56,7 +55,7 @@ public abstract class AbstractTask extends FutureTask<List<ProblemDto>> {
 		return callable.getStatus();
 	}
 
-	public void setCallback(Consumer<List<ProblemDto>> callback) {
+	public void setCallback(Consumer<ResultDto> callback) {
 		this.callable.setCallback(callback);
 	}
 

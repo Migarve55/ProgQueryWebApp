@@ -5,8 +5,29 @@
 	<nav th:replace="fragments/nav"/>
 	<div class="container mt-2" th:if="${not #lists.isEmpty(problems)}">
   		<h1 class="display-4 text-center" th:text="#{result.detail.title}">Report</h1>
-		<p th:text="#{result.detail.legend}"></p>
 		<!-- Report -->
+		<div th:if="${not #lists.isEmpty(queryProblems)}">
+		<h2 class="text-center mt-4 mb-4" th:text="#{result.detail.queryErrors}">Query errors</h2>
+		<div class="table-responsive">
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th th:text="#{query}">Query</th>
+							<th th:text="#{result.detail.msg}">Message</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="qp : ${queryProblems}">
+							<td th:text="${qp.queryName}"></td>
+							<td>
+								<pre th:text="${qp.msg}"></pre>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<p th:text="#{result.detail.legend}"></p>
 		<div class="table-responsive">
 			<table class="table table-hover">
 				<thead>
@@ -32,10 +53,6 @@
 			</table>
 			<div th:replace="fragments/pagination"/>
 		</div>
-	</div>
-	<div class="container" th:if="${#lists.isEmpty(problems)}">
-		<h1 class="display-4 text-center" th:text="#{result.detail.title}">Report</h1>
-		<h2 class="text-center mt-5" th:text="#{result.detail.empty}">No errors to show</h2>
 	</div>
 	<footer th:replace="fragments/footer" />
 </body>

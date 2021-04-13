@@ -10,9 +10,9 @@ import javax.persistence.ManyToOne;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-public class Problem {
-	
-	public final static int MSG_LENGTH = 1024 * 3;
+public class QueryExecutionProblem {
+
+	public final static int MSG_LENGTH = 1024 * 2;
 	
 	@Id
 	@GeneratedValue
@@ -21,22 +21,20 @@ public class Problem {
 	@Column(length = MSG_LENGTH)
 	private String msg;
 	
-	@ManyToOne
-	@JoinColumn(name = "query_id")
-	@JsonIgnore
-	private Query query;
+	@Column(length = Query.NAME_LENGTH)
+	private String queryName;
 	
 	@ManyToOne
 	@JoinColumn(name = "result_id")
 	@JsonIgnore
 	private Result result;
-	
-	public Problem() {
-		
+
+	public long getId() {
+		return id;
 	}
-	
-	public Problem(String msg) {
-		this.msg = msg;
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public String getMsg() {
@@ -47,20 +45,12 @@ public class Problem {
 		this.msg = msg;
 	}
 
-	public long getId() {
-		return id;
+	public String getQueryName() {
+		return queryName;
 	}
 
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public Query getQuery() {
-		return query;
-	}
-
-	public void setQuery(Query query) {
-		this.query = query;
+	public void setQueryName(String queryName) {
+		this.queryName = queryName;
 	}
 
 	public Result getResult() {
@@ -71,4 +61,11 @@ public class Problem {
 		this.result = result;
 	}
 
+	public String getTextSummary() {
+		if (getQueryName().isBlank()) {
+			return this.getMsg();
+		}
+		return String.format("[%s]: %s", getQueryName(), getMsg());
+	}
+	
 }

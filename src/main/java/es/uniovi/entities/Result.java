@@ -28,6 +28,9 @@ public class Result {
 	@OneToMany(mappedBy = "result", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Problem> problems;
 	
+	@OneToMany(mappedBy = "result", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<QueryExecutionProblem> queryExecutionProblems;
+	
 	@ManyToOne
 	@JoinColumn(name = "program_id")
 	@JsonIgnore
@@ -69,10 +72,21 @@ public class Result {
 		this.program = program;
 	}
 
+	public Set<QueryExecutionProblem> getQueryExecutionProblems() {
+		return queryExecutionProblems;
+	}
+
+	public void setQueryExecutionProblems(Set<QueryExecutionProblem> queryExecutionProblems) {
+		this.queryExecutionProblems = queryExecutionProblems;
+	}
+
 	public String getTextSummary() {
 		StringBuilder sb = new StringBuilder();
+		for (QueryExecutionProblem qep : queryExecutionProblems) {
+			sb.append(String.format("%s%n", qep.getTextSummary()));
+		}
 		for (Problem p : problems) {
-			sb.append(p.getTextSummary() + "\n");
+			sb.append(String.format("%s%n", p.getMsg()));
 		}
 		return sb.toString();
 	}

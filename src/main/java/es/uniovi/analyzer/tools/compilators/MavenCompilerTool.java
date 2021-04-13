@@ -51,7 +51,7 @@ public class MavenCompilerTool extends AbstractCompiler {
 			throw e;
 		}
 	    //Execute
-	    logger.info("Compiling program {} using maven", programID);
+	    logger.info("Compiling program folder {} using maven", programID);
 	    compileUsingMavenAPI(basePath, errStream);
 	}
 	

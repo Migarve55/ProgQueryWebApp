@@ -36,7 +36,7 @@ public class ProgramRestController extends BaseRestController {
 
 	// /api/programs?user={email}
 	@GetMapping("/api/programs")
-	public List<Program> list(Principal principal, @RequestParam(value = "user", required = true) String email) {
+	public List<Program> list(Principal principal, @RequestParam(value = "user") String email) {
 		User user = usersService.getUserByEmail(email);
 		return user.getPrograms()
 				.stream()
@@ -44,9 +44,9 @@ public class ProgramRestController extends BaseRestController {
 	}
 
 	@GetMapping("/api/programs/{id}")
-	public Program get(@PathVariable(value = "id") String id, Principal principal) {
+	public Program get(@PathVariable(value = "id") String name, Principal principal) {
 		User user = usersService.getUserByEmail(principal.getName());
-		Program program = programService.findProgramByName(id);
+		Program program = programService.findProgramByName(name);
 		if (program == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Program not Found");
 		} 
@@ -69,13 +69,17 @@ public class ProgramRestController extends BaseRestController {
 	@PutMapping("/api/programs/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public void putProgram(
-			@PathVariable(value = "id") Long id,
+			@PathVariable(value = "id") String name,
 			@RequestParam("url") String url, 
 			@RequestParam(value = "args", required = false) String args, 
 			@RequestParam(value = "compOpt", required = false) String compOpt, Principal principal) {
 		User user = usersService.getUserByEmail(principal.getName());
-		// TODO: revisar
-		//analyzerService.reuploadGitRepo(id, user, url, compOpt, args);
+		Program program = programService.findProgramByName(name);
+		if (program == null) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Program not Found");
+		} 
+		programService.deleteProgram(program.getId());
+		analyzerService.uploadGitRepo(user, program.getName(), url, compOpt, args);
 	}
 	
 	/**
@@ -86,9 +90,9 @@ public class ProgramRestController extends BaseRestController {
 
 	@DeleteMapping("/api/programs/{id}")
 	@ResponseStatus(HttpStatus.OK)
-	public void delete(@PathVariable(value = "id") Long id, Principal principal) {
+	public void delete(@PathVariable(value = "id") String name, Principal principal) {
 		User user = usersService.getUserByEmail(principal.getName());
-		Program program = programService.findProgram(id);
+		Program program = programService.findProgramByName(name);
 		if (program == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Program not Found");
 		} 

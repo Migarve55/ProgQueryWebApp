@@ -1,5 +1,13 @@
 /* neo theme for codemirror */
 
+.CodeMirror {
+	border: 1px solid #ced4da;
+}
+
+.CodeMirror.disabled {
+	background: #e9ecef;
+}
+
 /* Color scheme */
 
 .cm-s-neo.CodeMirror {

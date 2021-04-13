@@ -31,14 +31,18 @@ import es.uniovi.analyzer.tools.ToolFactory;
 import es.uniovi.analyzer.tools.compilators.CompilerTool;
 import es.uniovi.analyzer.tools.reporter.dto.ProblemDto;
 import es.uniovi.analyzer.tools.reporter.dto.QueryDto;
+import es.uniovi.analyzer.tools.reporter.dto.QueryExecutionProblemDto;
+import es.uniovi.analyzer.tools.reporter.dto.ResultDto;
 import es.uniovi.entities.Problem;
 import es.uniovi.entities.Program;
 import es.uniovi.entities.Query;
+import es.uniovi.entities.QueryExecutionProblem;
 import es.uniovi.entities.Result;
 import es.uniovi.entities.User;
 import es.uniovi.repositories.ProblemsRepository;
 import es.uniovi.repositories.ProgramRepository;
 import es.uniovi.repositories.QueriesRepository;
+import es.uniovi.repositories.QueryExecutionProblemRepository;
 import es.uniovi.repositories.ResultsRepository;
 import es.uniovi.tasks.AbstractTask;
 import es.uniovi.tasks.AnalyzerTask;
@@ -54,6 +58,9 @@ public class AnalyzerService {
 	
 	@Autowired 
 	private ResultsRepository resultsRepository;
+	
+	@Autowired 
+	private QueryExecutionProblemRepository queryExecutionProblemRepository;
 	
 	@Autowired
 	private ProblemsRepository problemsRepository;
@@ -117,10 +124,10 @@ public class AnalyzerService {
 		AbstractAnalyzerCallable callable = new ProgramAnalyzerCallable(program.getName(), user.getEmail());
 		callable.setQueries(getSimpleQueryList(queryText));
 		AbstractTask newTask = new PlaygroundTask(callable, queryText);
-		replaceTasks(user, newTask, callable, (errors, task) -> {
+		replaceTasks(user, newTask, callable, (resultDto, task) -> {
 			task.setProgramId(program.getId());
-			if (errors.size() > 0) {
-				Result result = createResult(user, program, errors);
+			if (shouldCreateResult(resultDto)) {
+				Result result = createResult(user, program, resultDto);
 				task.setResultId(result.getId());
 			}
 			finalizeUserTask(user, task);
@@ -134,11 +141,11 @@ public class AnalyzerService {
 		callable.setQueries(getSimpleQueryList(queryText));
 		callable.setCompiler(ToolFactory.getJavaCompilerTool());
 		AbstractTask newTask = new PlaygroundTask(callable, queryText, programSource);
-		replaceTasks(user, newTask, callable, (errors, task) -> {
+		replaceTasks(user, newTask, callable, (resultDto, task) -> {
 			Program program = createProgram(user, programId);
 			task.setProgramId(program.getId());
-			if (errors.size() > 0) {
-				Result result = createResult(user, program, errors);
+			if (shouldCreateResult(resultDto)) {
+				Result result = createResult(user, program, resultDto);
 				task.setResultId(result.getId());
 			}
 			finalizeUserTask(user, task);
@@ -167,9 +174,9 @@ public class AnalyzerService {
 		List<Query> queriesList = getQueries(queries, user);
 		callable.setQueries(toQueryDto(queriesList));
 		AbstractTask newTask = new AnalyzerTask(callable);
-		replaceTasks(user, newTask, callable, (errors, task) -> {
-			if (errors.size() > 0) {
-				Result result = createResult(user, program, errors);
+		replaceTasks(user, newTask, callable, (resultDto, task) -> {
+			if (shouldCreateResult(resultDto)) {
+				Result result = createResult(user, program, resultDto);
 				task.setResultId(result.getId());
 			}
 			finalizeUserTask(user, task);
@@ -192,11 +199,11 @@ public class AnalyzerService {
 		}
 		callable.setCompiler(getCompilationTool(compOp));
 		AbstractTask newTask = new AnalyzerTask(callable);
-		replaceTasks(user, newTask, callable, (errors, task) -> {
+		replaceTasks(user, newTask, callable, (resultDto, task) -> {
 			Program program = createProgram(user, programId);
 			task.setProgramId(program.getId());
-			if (errors.size() > 0) {
-				Result result = createResult(user, program, errors);
+			if (shouldCreateResult(resultDto)) {
+				Result result = createResult(user, program, resultDto);
 				task.setResultId(result.getId());
 			}
 			finalizeUserTask(user, task);
@@ -204,7 +211,7 @@ public class AnalyzerService {
 		logger.info("User {} started analysis of new program '{}' using {}", user.getEmail(), programId, compOp);
 	}
 	
-	private void replaceTasks(User user, AbstractTask newTask, AbstractAnalyzerCallable callable, BiConsumer<List<ProblemDto>, AbstractTask> callback) {
+	private void replaceTasks(User user, AbstractTask newTask, AbstractAnalyzerCallable callable, BiConsumer<ResultDto, AbstractTask> callback) {
 		AbstractTask oldTask = getCurrentTask(user);
 		if (oldTask != null) {
 			if (!oldTask.isDone())
@@ -229,17 +236,26 @@ public class AnalyzerService {
 	}
 	
 	@Transactional(isolation=Isolation.READ_COMMITTED)
-	private Result createResult(User user, Program program, List<ProblemDto> problems) {
+	private Result createResult(User user, Program program, ResultDto resultDto) {
 		Result result = new Result();
 		result.setProgram(program);
 		result.setTimestamp(new Date());
 		result = resultsRepository.save(result);
-		for (ProblemDto problemDto : problems) {
+		// Problems
+		for (ProblemDto problemDto : resultDto.getProblems()) {
 			Problem problem = new Problem();
 			problem.setResult(result);
 			problem.setQuery(queriesRepository.findByName(problemDto.getQueryName()));
 			problem.setMsg(problemDto.getMsg());
 			problemsRepository.save(problem);
+		}
+		// Query execution problems problems
+		for (QueryExecutionProblemDto queryExecutionProblemDto : resultDto.getQueryExecutionProblems()) {
+			QueryExecutionProblem queryExecutionProblem = new QueryExecutionProblem();
+			queryExecutionProblem.setMsg(queryExecutionProblemDto.getMsg());
+			queryExecutionProblem.setQueryName(queryExecutionProblemDto.getName());
+			queryExecutionProblem.setResult(result);
+			queryExecutionProblemRepository.save(queryExecutionProblem);
 		}
 		return result;
 	}
@@ -250,6 +266,11 @@ public class AnalyzerService {
 		program.setUser(user);
 		program.setName(name);
 		return programRepository.save(program);
+	}
+	
+	private boolean shouldCreateResult(ResultDto resultDto) {
+		return !resultDto.getProblems().isEmpty() || 
+			   !resultDto.getQueryExecutionProblems().isEmpty();
 	}
 	
 	/**

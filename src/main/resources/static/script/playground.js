@@ -55,6 +55,7 @@ if (!$("#srcCb").is(':checked')) {
 	programVisualizer.setValue("");
     programVisualizer.setOption("readOnly", "nocursor");
     $("#programSelect").removeAttr("disabled");
+    $(".CodeMirror").addClass("disabled");
 }
 
 $("#srcCb").change(function() {
@@ -62,8 +63,10 @@ $("#srcCb").change(function() {
 		programVisualizer.setValue("");
     	programVisualizer.setOption("readOnly", "nocursor");
     	$("#programSelect").removeAttr("disabled");
+    	$(".CodeMirror").addClass("disabled");
     } else {
 		programVisualizer.setOption("readOnly", false);
+		$(".CodeMirror").removeClass("disabled");
 		$("#programSelect").attr("disabled","disabled");
 	}
 });

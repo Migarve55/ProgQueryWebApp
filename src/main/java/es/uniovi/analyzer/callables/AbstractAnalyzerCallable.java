@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
@@ -14,10 +13,10 @@ import es.uniovi.analyzer.exceptions.EnviromentException;
 import es.uniovi.analyzer.exceptions.ReportException;
 import es.uniovi.analyzer.tools.ToolFactory;
 import es.uniovi.analyzer.tools.compilators.CompilerTool;
-import es.uniovi.analyzer.tools.reporter.dto.ProblemDto;
 import es.uniovi.analyzer.tools.reporter.dto.QueryDto;
+import es.uniovi.analyzer.tools.reporter.dto.ResultDto;
 
-public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemDto>> {
+public abstract class AbstractAnalyzerCallable implements Callable<ResultDto> {
 	
 	private int progress = 0;
 	private String status = "In progress...";
@@ -29,7 +28,9 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 	protected CompilerTool compiler;
 	protected List<QueryDto> queries = new ArrayList<QueryDto>();
 	
-	private Consumer<List<ProblemDto>> callback;
+	protected ResultDto result;
+	
+	private Consumer<ResultDto> callback;
 
 	public AbstractAnalyzerCallable(String classpath, String programId, String userId) {
 		this.classpath = classpath;
@@ -38,23 +39,23 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 	}
 
 	@Override
-	public final List<ProblemDto> call() throws EnviromentException, ReportException, CompilerException {
-		List<ProblemDto> result = new LinkedList<ProblemDto>();
+	public final ResultDto call() throws EnviromentException, ReportException, CompilerException {
+		ResultDto result = null;
 		try {
 			prepareEnviroment();
 			compile();
-			createReport(result);
-			executeCallback(result);
+			createReport();
+			executeCallback();
 		} finally {
 			cleanEnviroment();
 		}
 		return result;
 	}
 	
-	private void executeCallback(List<ProblemDto> result) throws ReportException {
+	private void executeCallback() throws ReportException {
 		try {
 			if (callback != null)
-				callback.accept(result);
+				callback.accept(this.result);
 		} catch (Exception e) {
 			throw new ReportException();
 		}
@@ -76,14 +77,12 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 		nextStep("Compiling...", 25);
 	}
 
-	protected void createReport(List<ProblemDto> result) throws ReportException {
+	protected void createReport() throws ReportException {
 		if (!queries.isEmpty()) {
 			nextStep("Creating report", 25);
-			result.addAll(
-				ToolFactory
+			this.result = ToolFactory
 				.getNeo4jTool(System.getProperty("neo4j.url"), programID, queries)
-				.generateReport()
-			);
+				.generateReport();
 		} else {
 			nextStep("No report will be created", 25);
 		}
@@ -106,7 +105,7 @@ public abstract class AbstractAnalyzerCallable implements Callable<List<ProblemD
 
 	// Getters and Setters
 
-	public void setCallback(Consumer<List<ProblemDto>> callback) {
+	public void setCallback(Consumer<ResultDto> callback) {
 		this.callback = callback;
 	}
 

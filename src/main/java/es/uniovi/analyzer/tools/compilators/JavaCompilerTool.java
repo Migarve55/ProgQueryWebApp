@@ -31,6 +31,7 @@ public class JavaCompilerTool extends AbstractCompiler {
 		// Add file
 		args.add(basePath + filename);
 		// Compilation
+		logger.info("Compiling program file {} using java", programID);
 		compile(compiler, args, errStream);
 	}
 
@@ -45,7 +46,7 @@ public class JavaCompilerTool extends AbstractCompiler {
 		generateSourcesFile(basePath);
 		args.add("@" + basePath + "sources.txt");
 		// Compilation
-		logger.info("Compiling program {} using java", programID);
+		logger.info("Compiling program folder {} using java", programID);
 		compile(compiler, args, errStream);
 	}
 	
@@ -88,10 +89,12 @@ public class JavaCompilerTool extends AbstractCompiler {
 	private List<String> basicArgs(String basePath, String programID, String userId, String classpath) {
 		return new ArrayList<>(
 				Arrays.asList(
-						"-cp", getClassPath(basePath, classpath),
+						"-classpath", getClassPath(basePath, classpath),
+						"-sourcepath", basePath,
+						"-d", basePath,
 						"-encoding", ENCODING,
 						String.format(getPluginArg(programID, userId), programID, System.getProperty("neo4j.url")), 
-						"-d", basePath, "-nowarn", "-g:none", "-Xlint:none"));
+						"-nowarn", "-g"));
 	}
 
 	/**
