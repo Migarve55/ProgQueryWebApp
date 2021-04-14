@@ -1,5 +1,6 @@
 package es.uniovi.analyzer.tools.reporter.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ResultDto {
@@ -7,6 +8,11 @@ public class ResultDto {
 	private List<ProblemDto> problems;
 	
 	private List<QueryExecutionProblemDto> queryExecutionProblems;
+	
+	public ResultDto() {
+		this.problems = new ArrayList<ProblemDto>();
+		this.queryExecutionProblems = new ArrayList<QueryExecutionProblemDto>();
+	}
 	
 	public ResultDto(List<ProblemDto> problems, List<QueryExecutionProblemDto> queryExecutionProblems) {
 		this.problems = problems;

@@ -28,7 +28,7 @@ public abstract class AbstractAnalyzerCallable implements Callable<ResultDto> {
 	protected CompilerTool compiler;
 	protected List<QueryDto> queries = new ArrayList<QueryDto>();
 	
-	protected ResultDto result;
+	protected ResultDto result = new ResultDto();
 	
 	private Consumer<ResultDto> callback;
 

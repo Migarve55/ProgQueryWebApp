@@ -175,6 +175,7 @@ public class AnalyzerService {
 		callable.setQueries(toQueryDto(queriesList));
 		AbstractTask newTask = new AnalyzerTask(callable);
 		replaceTasks(user, newTask, callable, (resultDto, task) -> {
+			task.setProgramId(program.getId());
 			if (shouldCreateResult(resultDto)) {
 				Result result = createResult(user, program, resultDto);
 				task.setResultId(result.getId());

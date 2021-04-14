@@ -90,11 +90,6 @@ public class ResultController {
 			analyzerService.clearUserTask(user);
 		}
 		return "redirect:" + task.getOkUrl();
-//		if (!task.isPlaygroundTask()) {
-//			return "redirect:/result/" + result.getId();
-//		} else {
-//			return "redirect:/program/playground?resultId=" + result.getId();
-//		}
 	}
 	
 	private Throwable getRootCause(Throwable t) {

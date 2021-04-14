@@ -32,22 +32,19 @@
 			<table class="table table-hover">
 				<thead>
 					<tr>
+						<th th:text="#{result.detail.query}">Name</th>
 						<th th:text="#{result.detail.msg}">Message</th>
-						<th th:text="#{result.detail.description}">Description</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr th:each="error : ${problems}" th:class="${error.query?.modified > timestamp} ? outdated">
+						<td class="fitwidth" th:if="${error.query}">
+							<a th:text="${error.query.name}" th:href="${'/query/detail/' + error.query.id}"></a>
+						</td>
+						<td class="fitwidth" th:unless="${error.query}" th:text="#{result.detail.userDeletedQuery}"></td>
 						<td th:if="${error.msg}" th:text="${error.msg}">
 							<span th:text="${error.msg}"></span>
 						</td>
-						<td th:unless="${error.msg}">
-							<span th:text="#{result.detail.noMsg}"></span>
-						</td>
-						<td th:if="${error.query}">
-							<a th:text="${error.query.description}" th:href="${'/query/detail/' + error.query.id}"></a>
-						</td>
-						<td th:unless="${error.query}" th:text="#{result.detail.userDeletedQuery}"></td>
 					</tr>
 				</tbody>
 			</table>
