@@ -15,12 +15,17 @@ EXPOSE 8080/tcp
 RUN adduser --disabled-password app 
 RUN adduser app app
 
-# Install progQuery webApp
+# Install Prog Query Cypher Adapter
 
 COPY . build/
 COPY lib/ProgQueryCypherAdapter.jar PQCA.jar
 RUN mvn install:install-file -DcreateChecksum=true -Dpackaging=jar -Dfile=PQCA.jar -DgroupId=es.uniovi -DartifactId=cypherAdapter -Dversion=1.0 -DgeneratePom=true
 RUN rm PQCA.jar
+
+# Install ProgQuery WebApp
+
+RUN export PKCS12_KEY="$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)";echo $PKCS12_KEY;
+RUN keytool -genkey -noprompt -dname "CN=UO257431, OU=uniovi, O=uniovi, L=Oviedo, S=Asturias, C=ES" -storepass $PKCS12_KEY -alias progquerywebapp -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore build/src/main/resources/https_key.p12 -validity 3650
 COPY deploy/application-prod.properties build/src/main/resources/application.properties
 RUN mvn -Pprod -f build/pom.xml -Dmaven.test.skip=true package
 RUN mkdir -p /opt/webApp
