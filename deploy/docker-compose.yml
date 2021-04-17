@@ -10,7 +10,7 @@ services:
       - sql
       - neo4j
     ports:
-      - "80:8080"
+      - "443:443"
     environment:
       NEO4J_DB_PASSWORD: ${NEO4J_DB_PASSWORD}
       MYSQL_DB_PASSWORD: ${MYSQL_DB_PASSWORD}

@@ -8,7 +8,7 @@ VOLUME /tmp
 RUN apt-get update && apt-get -y install maven netcat-openbsd ca-certificates wget dos2unix
 ENV M2_HOME /usr/
 ENV PLUGIN_CLASSPATH /opt/webApp/plugin/ProgQuery.jar
-EXPOSE 8080/tcp
+EXPOSE 443/tcp
 
 # Add app user and group
 
@@ -24,8 +24,9 @@ RUN rm PQCA.jar
 
 # Install ProgQuery WebApp
 
-RUN export PKCS12_KEY="$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)";echo $PKCS12_KEY;
-RUN keytool -genkey -noprompt -dname "CN=UO257431, OU=uniovi, O=uniovi, L=Oviedo, S=Asturias, C=ES" -storepass $PKCS12_KEY -alias progquerywebapp -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore build/src/main/resources/https_key.p12 -validity 3650
+#RUN export PKCS12_KEY="$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)";echo $PKCS12_KEY;
+RUN export PKCS12_KEY="452352352435435"
+RUN keytool -genkey -noprompt -dname "CN=UO257431, OU=uniovi, O=uniovi, L=Oviedo, S=Asturias, C=ES" -storepass 452352352435435 -alias progquerywebapp -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore build/src/main/resources/https_key.p12 -validity 3650
 COPY deploy/application-prod.properties build/src/main/resources/application.properties
 RUN mvn -Pprod -f build/pom.xml -Dmaven.test.skip=true package
 RUN mkdir -p /opt/webApp
