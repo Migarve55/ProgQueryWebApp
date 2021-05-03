@@ -22,13 +22,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import es.uniovi.analyzer.callables.AbstractAnalyzerCallable;
-import es.uniovi.analyzer.callables.file.FileAnalyzerCallable;
 import es.uniovi.analyzer.callables.github.GithubCodeAnalyzerCallable;
 import es.uniovi.analyzer.callables.program.ProgramAnalyzerCallable;
 import es.uniovi.analyzer.callables.source.SourceAnalyzerCallable;
 import es.uniovi.analyzer.callables.zip.ZipAnalizerCallable;
 import es.uniovi.analyzer.tools.ToolFactory;
 import es.uniovi.analyzer.tools.compilators.CompilerTool;
+import es.uniovi.analyzer.tools.reporter.Neo4jFacade;
 import es.uniovi.analyzer.tools.reporter.dto.ProblemDto;
 import es.uniovi.analyzer.tools.reporter.dto.QueryDto;
 import es.uniovi.analyzer.tools.reporter.dto.QueryExecutionProblemDto;
@@ -103,10 +103,6 @@ public class AnalyzerService {
 		finalizeUserTask(user, task);
 	}
 	
-	public void analyzeFile(User user, String programId, MultipartFile file, String[] queries) throws IOException {
-		launchAnalyzerTask(user, programId, "java", new FileAnalyzerCallable(programId, user.getEmail(), file.getOriginalFilename(), file.getInputStream()), queries);
-	}
-	
 	public void analyzeZip(User user, String programId, MultipartFile zip, String compOp, String classpath, String[] queries) throws IOException {
 		launchAnalyzerTask(user, programId, compOp, new ZipAnalizerCallable(classpath, programId, user.getEmail(), zip.getInputStream()), queries);
 	}
@@ -124,11 +120,10 @@ public class AnalyzerService {
 		AbstractAnalyzerCallable callable = new ProgramAnalyzerCallable(program.getName(), user.getEmail());
 		callable.setQueries(getSimpleQueryList(queryText));
 		AbstractTask newTask = new PlaygroundTask(callable, queryText);
-		replaceTasks(user, newTask, callable, (resultDto, task) -> {
-			task.setProgramId(program.getId());
+		replaceTasks(user, newTask, callable, (resultDto, t) -> {
+			PlaygroundTask task = (PlaygroundTask) t;
 			if (shouldCreateResult(resultDto)) {
-				Result result = createResult(user, program, resultDto);
-				task.setResultId(result.getId());
+				task.setResultMsg(resultDto.getTextSummary());
 			}
 			finalizeUserTask(user, task);
 		});
@@ -141,18 +136,17 @@ public class AnalyzerService {
 		callable.setQueries(getSimpleQueryList(queryText));
 		callable.setCompiler(ToolFactory.getJavaCompilerTool());
 		AbstractTask newTask = new PlaygroundTask(callable, queryText, programSource);
-		replaceTasks(user, newTask, callable, (resultDto, task) -> {
-			Program program = createProgram(user, programId);
-			task.setProgramId(program.getId());
+		replaceTasks(user, newTask, callable, (resultDto, t) -> {
+			PlaygroundTask task = (PlaygroundTask) t;
 			if (shouldCreateResult(resultDto)) {
-				Result result = createResult(user, program, resultDto);
-				task.setResultId(result.getId());
+				task.setResultMsg(resultDto.getTextSummary());
 			}
+			cleanUpProgram(programId);
 			finalizeUserTask(user, task);
 		});
 		logger.info("User {} started playground analysis of program source with query: {}", user.getEmail(), queryText);
 	}
-	
+
 	private String getPlaygroundProgramId(User user) {
 		int hash = 17;
 		hash = hash * 31 + user.hashCode();
@@ -174,7 +168,8 @@ public class AnalyzerService {
 		List<Query> queriesList = getQueries(queries, user);
 		callable.setQueries(toQueryDto(queriesList));
 		AbstractTask newTask = new AnalyzerTask(callable);
-		replaceTasks(user, newTask, callable, (resultDto, task) -> {
+		replaceTasks(user, newTask, callable, (resultDto, t) -> {
+			AnalyzerTask task = (AnalyzerTask) t;
 			task.setProgramId(program.getId());
 			if (shouldCreateResult(resultDto)) {
 				Result result = createResult(user, program, resultDto);
@@ -200,7 +195,8 @@ public class AnalyzerService {
 		}
 		callable.setCompiler(getCompilationTool(compOp));
 		AbstractTask newTask = new AnalyzerTask(callable);
-		replaceTasks(user, newTask, callable, (resultDto, task) -> {
+		replaceTasks(user, newTask, callable, (resultDto, t) -> {
+			AnalyzerTask task = (AnalyzerTask) t;
 			Program program = createProgram(user, programId);
 			task.setProgramId(program.getId());
 			if (shouldCreateResult(resultDto)) {
@@ -267,6 +263,13 @@ public class AnalyzerService {
 		program.setUser(user);
 		program.setName(name);
 		return programRepository.save(program);
+	}
+	
+	private void cleanUpProgram(String programId) {
+		try (Neo4jFacade neo4jFacade = new Neo4jFacade(System.getProperty("neo4j.url"))) {
+			neo4jFacade.removeProgram(programId);
+			logger.info("Cleaned up program '{}'", programId);
+		}
 	}
 	
 	private boolean shouldCreateResult(ResultDto resultDto) {

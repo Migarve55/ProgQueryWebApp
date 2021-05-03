@@ -1,6 +1,7 @@
 package es.uniovi.controllers;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import es.uniovi.analyzer.exceptions.AnalyzerException;
 import es.uniovi.entities.Problem;
+import es.uniovi.entities.Query;
 import es.uniovi.entities.Result;
 import es.uniovi.entities.User;
 import es.uniovi.services.AnalyzerService;
@@ -109,6 +111,8 @@ public class ResultController {
 			return "redirect:/";
 		}
 		Page<Problem> problems = resultService.getProblemsForResult(pageable, result);
+		
+		model.addAttribute("showLegend", shouldShowLegend(problems.getContent(), result));
 		model.addAttribute("page", problems);
 		model.addAttribute("problems", problems.getContent());
 		model.addAttribute("timestamp", result.getTimestamp());
@@ -129,6 +133,15 @@ public class ResultController {
 		}
 		resultService.deleteResult(result);
 		return "redirect:/result/list";
+	}
+	
+	private boolean shouldShowLegend(List<Problem> problems, Result result) {
+		return problems.stream().anyMatch(p -> {
+			Query q = p.getQuery();
+			if (q == null)
+				return false;
+			return q.getModified().after(result.getTimestamp());
+		});
 	}
 
 }

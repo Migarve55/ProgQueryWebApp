@@ -79,16 +79,5 @@ public class Result {
 	public void setQueryExecutionProblems(Set<QueryExecutionProblem> queryExecutionProblems) {
 		this.queryExecutionProblems = queryExecutionProblems;
 	}
-
-	public String getTextSummary() {
-		StringBuilder sb = new StringBuilder();
-		for (QueryExecutionProblem qep : queryExecutionProblems) {
-			sb.append(String.format("%s%n", qep.getTextSummary()));
-		}
-		for (Problem p : problems) {
-			sb.append(String.format("%s%n", p.getMsg()));
-		}
-		return sb.toString();
-	}
 	
 }

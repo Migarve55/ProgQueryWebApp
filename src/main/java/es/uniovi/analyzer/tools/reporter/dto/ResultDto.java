@@ -27,4 +27,15 @@ public class ResultDto {
 		return queryExecutionProblems;
 	}
 
+	public String getTextSummary() {
+		StringBuilder sb = new StringBuilder();
+		for (QueryExecutionProblemDto qep : queryExecutionProblems) {
+			sb.append(String.format("%s%n", qep.getTextSummary()));
+		}
+		for (ProblemDto p : problems) {
+			sb.append(String.format("%s%n", p.getMsg()));
+		}
+		return sb.toString();
+	}
+
 }

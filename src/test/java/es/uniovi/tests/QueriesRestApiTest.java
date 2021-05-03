@@ -13,7 +13,7 @@ public class QueriesRestApiTest extends AbstractRestApiTest {
 	@Test
 	public void CP_ANL_01() throws Exception {
 		Query newQuery = new Query();
-		newQuery.setName("created");
+		newQuery.setName("test.query.created");
 		newQuery.setDescription("...");
 		newQuery.setQueryText("MATCH (n) RETURN n");
 		newQuery.setPublicForAll(false);
@@ -25,7 +25,7 @@ public class QueriesRestApiTest extends AbstractRestApiTest {
 	        	.post("/api/analyses")
 	        .then()
 	        	.statusCode(200)
-	        	.body("name", equalTo("created"));
+	        	.body("name", equalTo("test.query.created"));
 		
 		given()
 	        .spec(getRequestSpecification())
@@ -36,7 +36,7 @@ public class QueriesRestApiTest extends AbstractRestApiTest {
 	        	.get("/api/analyses")
 	        .then()
 	        	.statusCode(200)
-	        	.body("[0].name", equalTo("created"))
+	        	.body("[0].name", equalTo("test.query.created"))
 	        	.body("[1].name", equalTo("test1"))
 	        	.body("[2].name", equalTo("test2"));
 	}
@@ -86,7 +86,7 @@ public class QueriesRestApiTest extends AbstractRestApiTest {
 	        	.statusCode(400);
 		
 		newQuery = new Query();
-		newQuery.setName("test.name");
+		newQuery.setName("test.name.query");
 		newQuery.setDescription("");
 		newQuery.setQueryText("...");
 		newQuery.setPublicForAll(false);
@@ -100,7 +100,7 @@ public class QueriesRestApiTest extends AbstractRestApiTest {
 	        	.statusCode(400);
 		
 		newQuery = new Query();
-		newQuery.setName("test.name");
+		newQuery.setName("test.name.query");
 		newQuery.setDescription("...");
 		newQuery.setQueryText("");
 		newQuery.setPublicForAll(false);
@@ -130,16 +130,16 @@ public class QueriesRestApiTest extends AbstractRestApiTest {
 	        	.statusCode(200);
 		
 		given()
-        .spec(getRequestSpecification())
-        .contentType("application/json")
-        .params("user", "miguel@email.com")
-        .when()
-        	.get("/api/analyses/test1")
-        .then()
-        	.statusCode(200)
-        	.body("name", equalTo("test1"))
-        	.body("description", equalTo("new description"))
-        	.body("query", equalTo("MATCH (n) RETURN n as msg"));
+	        .spec(getRequestSpecification())
+	        .contentType("application/json")
+	        .params("user", "miguel@email.com")
+	        .when()
+	        	.get("/api/analyses/test1")
+	        .then()
+	        	.statusCode(200)
+	        	.body("name", equalTo("test1"))
+	        	.body("description", equalTo("new description"))
+	        	.body("queryText", equalTo("MATCH (n) RETURN n as msg"));
 	}
 	
 	@Test

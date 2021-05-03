@@ -99,8 +99,7 @@ public class ProgramRestController extends BaseRestController {
 		if (!program.getUser().equals(user)) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have access to this program");
 		} 
-		programService.deleteProgram(program.getId());
-		
+		programService.deleteProgram(program.getId());	
 	}
 
 }

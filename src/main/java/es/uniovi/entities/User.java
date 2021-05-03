@@ -26,7 +26,6 @@ public class User {
 	//Stores the hash, not the actual password
 	@Column(length = 60)
 	private String password;
-	@JsonIgnore
 	@Transient 
 	private String passwordConfirm;
 	

@@ -21,4 +21,10 @@ public interface ResultsRepository extends CrudRepository<Result, Long> {
 
 	Page<Result> findAllByProgram(Pageable pageable, Program program);
 	
+	@Query(value = "select r.* from Result r, Problem p where p.result_id = r.id and p.query_id = ?2 and r.program_id = ?1", nativeQuery = true)
+	List<Result> findAllByProgramAndQuery(Long programId, Long analysisId);
+
+	@Query(value = "select r.* from Result r, Problem p where p.result_id = r.id and p.query_id = ?1", nativeQuery = true)
+	List<Result> findAllByQuery(Long analysisId);
+	
 }

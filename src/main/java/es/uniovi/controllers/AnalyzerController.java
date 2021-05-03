@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,12 +19,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import es.uniovi.entities.Program;
 import es.uniovi.entities.User;
 import es.uniovi.services.AnalyzerService;
 import es.uniovi.services.ProgramService;
 import es.uniovi.services.QueryService;
 import es.uniovi.services.UsersService;
 import es.uniovi.tasks.AbstractTask;
+import es.uniovi.tasks.PlaygroundTask;
 
 @Controller
 public class AnalyzerController {
@@ -38,41 +42,53 @@ public class AnalyzerController {
 	
 	@Autowired
 	private ProgramService programService;
-
-	@RequestMapping(path = "/analyzer/file", method = RequestMethod.GET)
-	public String getAnalizeFile(Model model, Principal principal) {
-		String email = principal.getName();
-		User user = usersService.getUserByEmail(email);
-		if (!isTaskDone(user))
-			return "redirect:/analyzer/loading";
-		model.addAttribute("queriesList", queryService.getAvailableQueriesForUser(user));
-		return "analyzer/file";
+	
+	@GetMapping("/analyzer/playground")
+	public String getPlaygroundAnalyze(Model model, @RequestParam Map<String,String> params) {
+		String querySource = params.get("querySource");
+		String programSource = params.get("programSource");
+		String noResult = params.get("noResult");
+		model.addAttribute("querySource", querySource != null ? querySource : "");
+		model.addAttribute("programSource", programSource != null ? programSource : "");
+		// Load result 
+		String results = "";
+		if (params.containsKey("resultMsg")) {
+			results = params.get("resultMsg");
+		}
+		model.addAttribute("noResult", noResult != null);
+		model.addAttribute("results", results);
+		return "analyzer/playground";
 	}
-
-	@RequestMapping(path = "/analyzer/file", method = RequestMethod.POST, consumes = { "multipart/form-data" })
-	public String postAnalizeFile(
-			@RequestParam("file") MultipartFile file, 
-			@RequestParam(value = "programName") String name,
-			@RequestParam(value = "queries[]", required = false) String[] queries,
-			Principal principal, RedirectAttributes redirect) {
+	
+	@PostMapping("/analyzer/playground")
+	public String postPlaygroundAnalyze(Principal principal, @RequestParam Map<String,String> params, RedirectAttributes redirect) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
-		if (!programService.validateProgramName(name)) {
-			redirect.addFlashAttribute("error", "error.program.regex");
-			return "redirect:/analyzer/file";
+		String querySource = params.getOrDefault("querySource", "");
+		String programId = params.get("programId_text");
+		String programSource = params.getOrDefault("programSource", "");
+		String useSource = params.get("useSource");
+		String querySyntaxError = queryService.checkQuerySyntax(querySource);
+		if (querySyntaxError != null) {
+			redirect.addFlashAttribute("error", "error.query.text");
+			redirect.addFlashAttribute("errOutput", querySyntaxError);
+			return "redirect:" + PlaygroundTask.getBaseUrl(programSource, querySource);
 		}
-		if (programService.isProgramNameDuplicated(name)) {
-			redirect.addFlashAttribute("error", "error.program.name");
-			return "redirect:/analyzer/file";
-		}
-		try {
-			if (isTaskDone(user))
-				analyzerService.analyzeFile(user, name, file, queries);
-		} catch (IOException e) {
-			e.printStackTrace();
-			redirect.addFlashAttribute("error", "error.fileError");
-			return "redirect:/";
-		}
+		// Analyze
+		if (useSource != null) {
+			if (programSource.trim().isEmpty()) {
+				redirect.addFlashAttribute("error", "program.playground.noSource");
+				return "redirect:" + PlaygroundTask.getBaseUrl(programSource, querySource);
+			}
+			analyzerService.analyzeSourceWithQueryText(user, querySource, programSource);
+		} else if (programId != null) {
+			Program program = programService.findProgramByName(programId);
+			if (program == null) {
+				redirect.addFlashAttribute("error", "program.playground.noProgram");
+				return "redirect:" + PlaygroundTask.getBaseUrl(programSource, querySource);
+			}
+			analyzerService.analyzeProgramWithQueryText(user, querySource, program);
+		} 
 		return "redirect:/analyzer/loading";
 	}
 

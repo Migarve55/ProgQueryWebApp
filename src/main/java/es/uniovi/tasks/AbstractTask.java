@@ -11,10 +11,6 @@ public abstract class AbstractTask extends FutureTask<ResultDto> {
 
 	private AbstractAnalyzerCallable callable;
 	
-	private Long resultId;
-	
-	private Long programId;
-	
 	public AbstractTask(AbstractAnalyzerCallable callable) {
 		super(callable);
 		this.callable = callable;
@@ -62,22 +58,6 @@ public abstract class AbstractTask extends FutureTask<ResultDto> {
 	@Override
 	public String toString() {
 		return "Task-" + this.hashCode();
-	}
-
-	public Long getResultId() {
-		return resultId;
-	}
-
-	public void setResultId(Long resultId) {
-		this.resultId = resultId;
-	}
-
-	public Long getProgramId() {
-		return programId;
-	}
-
-	public void setProgramId(Long programId) {
-		this.programId = programId;
 	}
 
 }

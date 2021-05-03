@@ -32,15 +32,15 @@
 				<tbody>
 					<tr th:each="query : ${queriesList}">
 						<td th:text="${query.name}"></td>
-						<td class="description tcWrapText" th:text="${query.description}"></td>
+						<td th:text="${query.description}"></td>
 						<td>
 							<span th:if="${query.publicForAll}" th:text="#{public}">Pública</span>
 							<span th:if="${!query.publicForAll}" th:text="#{private}">Privada</span>
 						</td>
 						<td th:text="${query.user.email}"></td>
-						<td>
-							<a class="btn btn-primary" th:href="${'/query/detail/' + query.id}" th:text="#{detail}">Detalles</a>
-							<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" th:data-url="${'/query/' + query.id + '/delete'}" th:text="#{delete}">Borrar</button>
+						<td class="nowrap">
+							<a class="btn btn-primary" th:href="${'/query/detail/' + query.id}" th:text="#{detail}"></a>
+							<button th:if="${session.currentUser.email == query.user.email}" type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" th:data-url="${'/query/' + query.id + '/delete'}" th:text="#{delete}">Borrar</button>
 						</td>
 					</tr>
 				</tbody>

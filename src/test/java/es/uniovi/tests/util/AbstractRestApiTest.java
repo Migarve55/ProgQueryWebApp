@@ -52,7 +52,9 @@ public abstract class AbstractRestApiTest {
 		user.setPassword(password);
 
 		String token = given()
+						.relaxedHTTPSValidation()
 						.port(portNumber)
+						.baseUri("https://localhost")
 						.contentType("application/json")
 						.body(user)
 					.when()
@@ -62,9 +64,11 @@ public abstract class AbstractRestApiTest {
 
 		specification = new RequestSpecBuilder()
 				.addHeader(JwtSecurityConstants.HEADER, token)
+				.setBaseUri("https://localhost")
 				.setPort(portNumber)
 				.addFilter(new RequestLoggingFilter(LogDetail.PARAMS))
 				.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
+				.setRelaxedHTTPSValidation()
 				.build();
 	}
 	

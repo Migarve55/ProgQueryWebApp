@@ -58,7 +58,7 @@ table {
 	padding: 0.2em;
 }
 
-td {
+td.nowrap {
 	white-space: nowrap;
 }
 
@@ -78,17 +78,6 @@ td.fitwidth {
     width: 100%;
 }
 
-.tcWrapText {
-    max-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-td.description {
-    width: 50%;
-}
-
 .errorCode {
 	font-weight: bolder;
 	font-size: 5em;
@@ -105,6 +94,7 @@ td.description {
 .resultHeader {
 	padding: 0.8em;
 	display: flex;
+	flex-wrap: wrap;
 	background: orange;
 	position: relative;
 	align-items: center;

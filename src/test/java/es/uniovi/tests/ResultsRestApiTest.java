@@ -1,7 +1,7 @@
 package es.uniovi.tests;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 
 import org.junit.Test;
 
@@ -14,12 +14,12 @@ public class ResultsRestApiTest extends AbstractRestApiTest {
 		given()
 	        .spec(getRequestSpecification())
 	        .contentType("application/json")
-	        	.params("programId", "12")
+	        	.params("programName", "program1")
 	        .when()
 	        	.get("/api/results")
 	        .then()
 	        	.statusCode(200)
-	        	.body("[0].program", equalTo("program1"));
+	        	.body("size()", is(1));
 	}
 	
 	@Test
@@ -27,12 +27,12 @@ public class ResultsRestApiTest extends AbstractRestApiTest {
 		given()
 	        .spec(getRequestSpecification())
 	        .contentType("application/json")
-	        	.params("analysisId", "9")
+	        	.params("analysisName", "test1")
 	        .when()
 	        	.get("/api/results")
 	        .then()
 	        	.statusCode(200)
-	        	.body("[0].program", equalTo("program1"));
+	        	.body("size()", is(2));
 	}
 	
 	@Test
@@ -45,7 +45,7 @@ public class ResultsRestApiTest extends AbstractRestApiTest {
 	        	.get("/api/results")
 	        .then()
 	        	.statusCode(200)
-	        	.body("[0].program", equalTo("program1"));
+	        	.body("size()", is(1));
 	}
 	
 	@Test
@@ -53,13 +53,13 @@ public class ResultsRestApiTest extends AbstractRestApiTest {
 		given()
 	        .spec(getRequestSpecification())
 	        .contentType("application/json")
-	        	.params("programId", "12")
-	        	.params("analysisId", "9")
+	        	.params("programName", "program1")
+	        	.params("analysisName", "test1")
 	        .when()
 	        	.get("/api/results")
 	        .then()
 	        	.statusCode(200)
-	        	.body("[0].program", equalTo("program1"));
+	        	.body("size()", is(1));
 	}
 	
 	@Test

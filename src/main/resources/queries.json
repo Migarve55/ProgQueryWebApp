@@ -1,24 +1,14 @@
 {
 	"queries": [
 		{
-			"name": "es.uniovi.test1",
-			"description": "Warning [CMU-MET50], you must avoid confusing overloadings ",
-			"query": "MATCH (enclosingCU)-[:HAS_TYPE_DEC | :HAS_INDIRECT_TYPE_DEC]->(class)-[:DECLARES_METHOD | :DECLARES_CONSTRUCTOR]->(md)-[:HAS_METHODDECL_PARAMETERS]->(p:PARAMETER_DEC) WITH enclosingCU, md, class, COLLECT(p.actualType) as params MATCH (class)-[:DECLARES_METHOD | :DECLARES_CONSTRUCTOR]->(md2)-[:HAS_METHODDECL_PARAMETERS]->(p2) WHERE md.name = md2.name AND md <> md2 WITH  enclosingCU, md, md2, params, COLLECT(p2.actualType) as params2 WHERE ALL(p IN params WHERE p IN params2) AND all(p IN params2 WHERE p IN params) AND ((SIZE(params)>=4 AND SIZE(params2)>=4) OR SIZE(params)=SIZE(params2)) RETURN 'Methods are at (' + md.lineNumber + ',' + 0 + ') and at ('  + md2.lineNumber + ',' + 0 + ') in ' + enclosingCU.fileName as msg"
+			"name": "sample.list.methods",
+			"description": "List all methods",
+			"query": "MATCH (m:METHOD_DEF) RETURN m.name as msg"
 		},
 		{
-			"name": "es.uniovi.test2",
-			"description": "Warning [CMU-MET52], You must not use the clone method to copy untrusted parameters",
-			"query": "MATCH (enclosingCU)-[:HAS_TYPE_DEC | :HAS_INDIRECT_TYPE_DEC]->(typeDec{accessLevel:'public'})-[:DECLARES_METHOD]->(method{accessLevel:'public'})-[:HAS_METHODDECL_PARAMETERS]->(param)-[:USED_BY]->(id), (mInv:METHOD_INVOCATION)-[:METHODINVOCATION_METHOD_SELECT]->(mSelect:MEMBER_SELECTION{memberName:'clone'})-[:MEMBER_SELECT_EXPR]->(id), (mInv)-[:HAS_DEC]->(dec), (param)-[:HAS_VARIABLEDECL_TYPE]->()-[:PARAMETERIZEDTYPE_TYPE*0..1]->()-[:ITS_TYPE_IS]->(pType) WHERE dec.fullyQualifiedName CONTAINS '()' AND NOT pType.isFinal AND (NOT pType.isDeclared OR pType.accessLevel='public') RETURN mInv.lineNumber as line, mInv.column as column , enclosingCU.fileName as file"
-		},
-		{
-			"name": "es.uniovi.test3",
-			"description": "Warning [CMU-MET55], you must not return null when you can return an empty collection or array",
-			"query": "MATCH (md)-[:HAS_METHODDECL_RETURNS]->(rt) OPTIONAL MATCH (rt)-[:ITS_TYPE_IS |:PARAMETERIZEDTYPE_TYPE]->()-[:ITS_TYPE_IS*0..1]->()-[:IS_SUBTYPE_EXTENDS | :IS_SUBTYPE_IMPLEMENTS*0..]->(collection) WITH md,rt,collection  WHERE  NOT collection IS NULL AND (collection.fullyQualifiedName='java.util.Collection' OR collection.fullyQualifiedName STARTS WITH 'java.util.Collection<' AND NOT collection.fullyQualifiedName CONTAINS '$') OR rt:ARRAY_TYPE WITH DISTINCT md  MATCH (enclosingCU)-[:HAS_TYPE_DEC |  :HAS_INDIRECT_TYPE_DEC]->()-[:DECLARES_METHOD]->(md)<-[:CFG_END_OF]-(normalEnd)<-[:CFG_NEXT_STATEMENT]-(return:RETURN_STATEMENT)-[:RETURN_EXPR]->(retExpr) OPTIONAL MATCH (retExpr)-[:CONDITIONAL_EXPR_THEN |  :CONDITIONAL_EXPR_ELSE*]->(auxRet{typetag:'NULL_LITERAL'}) WITH enclosingCU, retExpr, auxRet WHERE auxRet IS NOT NULL OR retExpr.typetag='NULL_LITERAL' RETURN retExpr.lineNumber as line, retExpr.column as column , enclosingCU.fileName as file"
-		},
-		{
-			"name": "es.uniovi.test4",
-			"description": "Warning [CMU-DEC56], you should not attach significance to the ordinal of an enum",
-			"query": "MATCH (enclosingCU)-[:HAS_TYPE_DEC | :HAS_INDIRECT_TYPE_DEC]->()-[:DECLARES_METHOD | :DECLARES_CONSTRUCTOR]->(enclosingM)-[:CALLS]->(inv)-[:HAS_DEC]->(md) WHERE md.fullyQualifiedName ='java.lang.Enum:ordinal()int' RETURN inv.lineNumber as line, inv.column as column, enclosingCU.fileName as file"
+			"name": "sample.list.classes",
+			"description": "List all classes",
+			"query": "MATCH (c:CLASS_DEF) RETURN c.simpleName as msg"
 		}
 	]
 }

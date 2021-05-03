@@ -2,7 +2,6 @@ package es.uniovi.controllers;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import es.uniovi.controllers.exceptions.ForbiddenException;
 import es.uniovi.controllers.exceptions.NotFoundException;
@@ -28,7 +26,6 @@ import es.uniovi.services.QueryService;
 import es.uniovi.services.ResultService;
 import es.uniovi.services.UsersService;
 import es.uniovi.tasks.AbstractTask;
-import es.uniovi.tasks.PlaygroundTask;
 
 @Controller
 public class ProgramController {
@@ -86,62 +83,6 @@ public class ProgramController {
 			throw new ForbiddenException();
 		if (isTaskDone(user))
 			analyzerService.analyzeProgram(user, program, queries);
-		return "redirect:/analyzer/loading";
-	}
-
-	@GetMapping("/program/playground")
-	public String getPlaygroundAnalyze(Principal principal, Model model, @RequestParam Map<String,String> params) {
-		String email = principal.getName();
-		User user = usersService.getUserByEmail(email);
-		String querySource = params.get("querySource");
-		String programSource = params.get("programSource");
-		String noResult = params.get("noResult");
-		model.addAttribute("querySource", querySource != null ? querySource : "");
-		model.addAttribute("programSource", programSource != null ? programSource : "");
-		// Load result 
-		String results = "";
-		if (params.containsKey("resultId")) {
-			Long resultId = Long.parseLong(params.get("resultId"));
-			Result result = resultService.getResult(resultId);
-			if (!result.getProgram().getUser().equals(user)) {
-				throw new ForbiddenException();
-			}
-			results = result.getTextSummary();
-		}
-		model.addAttribute("noResult", noResult != null);
-		model.addAttribute("results", results);
-		return "program/playground";
-	}
-	
-	@PostMapping("/program/playground")
-	public String postPlaygroundAnalyze(Principal principal, @RequestParam Map<String,String> params, RedirectAttributes redirect) {
-		String email = principal.getName();
-		User user = usersService.getUserByEmail(email);
-		String querySource = params.getOrDefault("querySource", "");
-		String programId = params.get("programId_text");
-		String programSource = params.getOrDefault("programSource", "");
-		String useSource = params.get("useSource");
-		String querySyntaxError = queryService.checkQuerySyntax(querySource);
-		if (querySyntaxError != null) {
-			redirect.addFlashAttribute("error", "error.query.text");
-			redirect.addFlashAttribute("errOutput", querySyntaxError);
-			return "redirect:" + PlaygroundTask.getBaseUrl(programSource, querySource);
-		}
-		// Analyze
-		if (useSource != null) {
-			if (programSource.trim().isEmpty()) {
-				redirect.addFlashAttribute("error", "program.playground.noSource");
-				return "redirect:" + PlaygroundTask.getBaseUrl(programSource, querySource);
-			}
-			analyzerService.analyzeSourceWithQueryText(user, querySource, programSource);
-		} else if (programId != null) {
-			Program program = programService.findProgramByName(programId);
-			if (program == null) {
-				redirect.addFlashAttribute("error", "program.playground.noProgram");
-				return "redirect:" + PlaygroundTask.getBaseUrl(programSource, querySource);
-			}
-			analyzerService.analyzeProgramWithQueryText(user, querySource, program);
-		} 
 		return "redirect:/analyzer/loading";
 	}
 	

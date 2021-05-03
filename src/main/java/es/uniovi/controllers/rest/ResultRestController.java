@@ -19,10 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import es.uniovi.entities.Program;
+import es.uniovi.entities.Query;
 import es.uniovi.entities.Result;
 import es.uniovi.entities.User;
 import es.uniovi.services.AnalyzerService;
 import es.uniovi.services.ProgramService;
+import es.uniovi.services.QueryService;
 import es.uniovi.services.ResultService;
 import es.uniovi.services.UsersService;
 
@@ -41,17 +43,22 @@ public class ResultRestController extends BaseRestController {
 	@Autowired
 	private AnalyzerService analyzerService;
 	
+	@Autowired
+	private QueryService queryService;
+	
 	@GetMapping("/api/results")
 	public List<Result> list(
-			@RequestParam(required = false) Long programId,
-			@RequestParam(required = false) Long analysisId,
+			@RequestParam(required = false) String programName,
+			@RequestParam(required = false) String analysisName,
 			@RequestParam(required = false) String user) {		
 		// Get results
 		List<Result> results = new ArrayList<Result>();
-		if (programId != null && analysisId != null) {
-			results = resultService.getByProgramAndQuery(programId, analysisId);
-		} else if (programId != null) {
-			Program program = programService.findProgram(programId);
+		if (programName != null && analysisName != null) {
+			Program program = programService.findProgramByName(programName);
+			Query query = queryService.findQueryByName(analysisName);
+			results = resultService.getByProgramAndQuery(program.getId(), query.getId());
+		} else if (programName != null) {
+			Program program = programService.findProgramByName(programName);
 			if (program == null) {
 				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Program not Found");
 			}
@@ -59,8 +66,9 @@ public class ResultRestController extends BaseRestController {
 		} else if (user != null) {
 			User u = usersService.getUserByEmail(user);
 			results = resultService.getResultsByUser(u);
-		} else if (analysisId != null) {
-			results = resultService.getByQuery(analysisId);
+		} else if (analysisName != null) {
+			Query query = queryService.findQueryByName(analysisName);
+			results = resultService.getByQuery(query.getId());
 		} 
 		return results;
 	}

@@ -19,9 +19,7 @@ public class ProgramsRestApiTest extends AbstractRestApiTest {
 	        	.get("/api/programs")
 	        .then()
 	        	.statusCode(200)
-	        	.body("[0].id", is(12))
 	        	.body("[0].name", is("program1"))
-	        	.body("[0].results", is(1))
 	        	.body("size()", is(1));
 	}
 	
@@ -31,7 +29,7 @@ public class ProgramsRestApiTest extends AbstractRestApiTest {
 	        .spec(getRequestSpecification())
 	        .contentType("application/json")
 	        .when()
-	        	.delete("/api/programs/12")
+	        	.delete("/api/programs/program1")
 	        .then()
 	        	.statusCode(200);
 		

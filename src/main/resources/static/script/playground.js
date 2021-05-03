@@ -51,22 +51,29 @@ $("#querySelect").on("autocomplete.select", function(_, item) {
 	queryVisualizer.setValue(item.queryText);
 });
 
-if (!$("#srcCb").is(':checked')) {
+function setUseSource() {
 	programVisualizer.setValue("");
     programVisualizer.setOption("readOnly", "nocursor");
     $("#programSelect").removeAttr("disabled");
     $(".CodeMirror").addClass("disabled");
 }
 
+function setUseProgram() {
+	programVisualizer.setOption("readOnly", false);
+	$(".CodeMirror").removeClass("disabled");
+	$("#programSelect").attr("disabled","disabled");
+}
+
+if (!$("#srcCb").is(':checked')) {
+	setUseSource();
+} else {
+	setUseProgram();
+}
+
 $("#srcCb").change(function() {
 	if (!$(this).is(':checked')) {
-		programVisualizer.setValue("");
-    	programVisualizer.setOption("readOnly", "nocursor");
-    	$("#programSelect").removeAttr("disabled");
-    	$(".CodeMirror").addClass("disabled");
+		setUseSource();
     } else {
-		programVisualizer.setOption("readOnly", false);
-		$(".CodeMirror").removeClass("disabled");
-		$("#programSelect").attr("disabled","disabled");
+		setUseProgram();
 	}
 });

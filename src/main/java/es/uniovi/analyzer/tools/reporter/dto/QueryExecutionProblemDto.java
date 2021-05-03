@@ -19,4 +19,11 @@ public class QueryExecutionProblemDto {
 		return msg;
 	}
 
+	public String getTextSummary() {
+		if (name.isBlank()) {
+			return this.getMsg();
+		}
+		return String.format("[%s]: %s", name, getMsg());
+	}
+
 }

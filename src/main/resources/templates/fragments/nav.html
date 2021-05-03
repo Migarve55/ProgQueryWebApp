@@ -48,12 +48,6 @@
 				</a>
 			</div>
 		</li>
-		<!-- User options -->
-		<li class="active">
-			<a class="nav-link" href="https://github.com/Migarve55/ProgQueryWebApp/wiki">
-				<i class="fa fa-question-circle"></i> <span th:text="#{nav.help}">Help</span>
-			</a>
-		</li>
 		<li class="active" sec:authorize="isAuthenticated()">
 			<a class="nav-link" href="/settings"> 
 				<i class="fa fa-sliders"></i> <span th:text="#{nav.settings}">Settings</span>

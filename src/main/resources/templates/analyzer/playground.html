@@ -3,8 +3,8 @@
 <head th:replace="fragments/head" />
 <body>
 	<nav th:replace="fragments/nav" />
-	<form method="POST" action="/program/playground">
-	<div class="container">
+	<form method="POST" action="/analyzer/playground">
+	<div class="mt-2 m-5">
 		<div class="mx-auto my-4 wb-cont programAnalyzerContainer">
 			<div class="alert alert-danger" role="alert" th:if="${error}">
 				<p th:text="#{${error}}"></p>

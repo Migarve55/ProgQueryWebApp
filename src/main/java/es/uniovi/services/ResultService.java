@@ -53,11 +53,11 @@ public class ResultService {
 	}
 
 	public List<Result> getByProgramAndQuery(Long programId, Long analysisId) {
-		return problemsRepository.findAllByProgramAndQuery(programId, analysisId);
+		return resultsRepository.findAllByProgramAndQuery(programId, analysisId);
 	}
 
 	public List<Result> getByQuery(Long analysisId) {
-		return problemsRepository.findAllByQuery(analysisId);
+		return resultsRepository.findAllByQuery(analysisId);
 	}
 	
 }

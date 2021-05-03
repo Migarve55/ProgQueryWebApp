@@ -10,6 +10,8 @@ public class PlaygroundTask extends AbstractTask {
 	private String querySource;
 	
 	private String programSource;
+	
+	private String resultMsg;
 
 	public PlaygroundTask(AbstractAnalyzerCallable callable, String querySource) {
 		super(callable);
@@ -23,10 +25,14 @@ public class PlaygroundTask extends AbstractTask {
 
 	@Override
 	public String getOkUrl() {
-		if (this.getResultId() != null) {
-			return getBaseUrl() + "&resultId=" + this.getResultId();
-		} else {
-			return getBaseUrl() + "&noResult";
+		try {
+			if (this.getResultMsg() != null) {
+				return getBaseUrl() + "&resultMsg=" + URLEncoder.encode(getResultMsg(), "UTF-8");
+			} else {
+				return getBaseUrl() + "&noResult";
+			}
+		} catch (UnsupportedEncodingException uee) {
+			throw new RuntimeException(uee);
 		}
 	}
 
@@ -45,12 +51,12 @@ public class PlaygroundTask extends AbstractTask {
 		if (querySource == null)
 			querySource = "";
 		try {
-			return String.format("/program/playground?programSource=%s&querySource=%s", 
+			return String.format("/analyzer/playground?programSource=%s&querySource=%s", 
 					URLEncoder.encode(programSource, "UTF-8"),
 					URLEncoder.encode(querySource,   "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
-			return "/program/playground";
+			return "/analyzer/playground";
 		}
 	}
 
@@ -61,6 +67,14 @@ public class PlaygroundTask extends AbstractTask {
 
 	public String getProgramSource() {
 		return programSource;
+	}
+
+	public String getResultMsg() {
+		return resultMsg;
+	}
+
+	public void setResultMsg(String resultMsg) {
+		this.resultMsg = resultMsg;
 	}
 
 }

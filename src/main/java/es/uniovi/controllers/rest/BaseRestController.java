@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 
-
 public abstract class BaseRestController {
 	
 	protected String toErrorList(BindingResult result) {
