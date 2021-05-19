@@ -4,7 +4,7 @@ public class ProblemDto {
 
 	private String msg;
 	
-	private String queryName;
+	private String analysisName;
 	
 	public ProblemDto() {
 		
@@ -18,12 +18,12 @@ public class ProblemDto {
 		this.msg = msg;
 	}
 
-	public String getQueryName() {
-		return queryName;
+	public String getAnalysisName() {
+		return analysisName;
 	}
 
-	public void setQueryName(String queryName) {
-		this.queryName = queryName;
+	public void setAnalysisName(String analysisName) {
+		this.analysisName = analysisName;
 	}
 
 }

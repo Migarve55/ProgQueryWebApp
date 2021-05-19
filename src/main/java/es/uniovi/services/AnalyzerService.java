@@ -30,19 +30,19 @@ import es.uniovi.analyzer.tools.ToolFactory;
 import es.uniovi.analyzer.tools.compilators.CompilerTool;
 import es.uniovi.analyzer.tools.reporter.Neo4jFacade;
 import es.uniovi.analyzer.tools.reporter.dto.ProblemDto;
-import es.uniovi.analyzer.tools.reporter.dto.QueryDto;
-import es.uniovi.analyzer.tools.reporter.dto.QueryExecutionProblemDto;
+import es.uniovi.analyzer.tools.reporter.dto.AnalysisDto;
+import es.uniovi.analyzer.tools.reporter.dto.AnalysisExecutionProblemDto;
 import es.uniovi.analyzer.tools.reporter.dto.ResultDto;
 import es.uniovi.entities.Problem;
 import es.uniovi.entities.Program;
-import es.uniovi.entities.Query;
-import es.uniovi.entities.QueryExecutionProblem;
+import es.uniovi.entities.Analysis;
+import es.uniovi.entities.AnalysisExecutionProblem;
 import es.uniovi.entities.Result;
 import es.uniovi.entities.User;
 import es.uniovi.repositories.ProblemsRepository;
 import es.uniovi.repositories.ProgramRepository;
-import es.uniovi.repositories.QueriesRepository;
-import es.uniovi.repositories.QueryExecutionProblemRepository;
+import es.uniovi.repositories.AnalysisRepository;
+import es.uniovi.repositories.AnalysisExecutionProblemRepository;
 import es.uniovi.repositories.ResultsRepository;
 import es.uniovi.tasks.AbstractTask;
 import es.uniovi.tasks.AnalyzerTask;
@@ -60,7 +60,7 @@ public class AnalyzerService {
 	private ResultsRepository resultsRepository;
 	
 	@Autowired 
-	private QueryExecutionProblemRepository queryExecutionProblemRepository;
+	private AnalysisExecutionProblemRepository analysisExecutionProblemRepository;
 	
 	@Autowired
 	private ProblemsRepository problemsRepository;
@@ -69,7 +69,7 @@ public class AnalyzerService {
 	private ProgramRepository programRepository;
 	
 	@Autowired
-	private QueriesRepository queriesRepository;
+	private AnalysisRepository analysisService;
 	
 	public AbstractTask getCurrentTask(User user) {
 		return usersTasks.get(user);
@@ -116,10 +116,10 @@ public class AnalyzerService {
 		launchAnalyzerTask(user, programId, compOp, new GithubCodeAnalyzerCallable(classpath, programId, user.getEmail(), repoUrl), queries);
 	}
 	
-	public void analyzeProgramWithQueryText(User user, String queryText, Program program) {
+	public void analyzeProgramWithAnalysisText(User user, String analysisText, Program program) {
 		AbstractAnalyzerCallable callable = new ProgramAnalyzerCallable(program.getName(), user.getEmail());
-		callable.setQueries(getSimpleQueryList(queryText));
-		AbstractTask newTask = new PlaygroundTask(callable, queryText);
+		callable.setQueries(getSimpleAnalysisList(analysisText));
+		AbstractTask newTask = new PlaygroundTask(callable, analysisText);
 		replaceTasks(user, newTask, callable, (resultDto, t) -> {
 			PlaygroundTask task = (PlaygroundTask) t;
 			if (shouldCreateResult(resultDto)) {
@@ -127,15 +127,15 @@ public class AnalyzerService {
 			}
 			finalizeUserTask(user, task);
 		});
-		logger.info("User {} started playground analysis of program {} with query: {}...", user.getEmail(), program.getName(), queryText);
+		logger.info("User {} started playground analysis of program {} with analysis: {}...", user.getEmail(), program.getName(), analysisText);
 	}
 
-	public void analyzeSourceWithQueryText(User user, String queryText, String programSource) {
+	public void analyzeSourceWithAnalysisText(User user, String analysisText, String programSource) {
 		String programId = getPlaygroundProgramId(user);
 		AbstractAnalyzerCallable callable = new SourceAnalyzerCallable(programSource, programId, user.getEmail());
-		callable.setQueries(getSimpleQueryList(queryText));
+		callable.setQueries(getSimpleAnalysisList(analysisText));
 		callable.setCompiler(ToolFactory.getJavaCompilerTool());
-		AbstractTask newTask = new PlaygroundTask(callable, queryText, programSource);
+		AbstractTask newTask = new PlaygroundTask(callable, analysisText, programSource);
 		replaceTasks(user, newTask, callable, (resultDto, t) -> {
 			PlaygroundTask task = (PlaygroundTask) t;
 			if (shouldCreateResult(resultDto)) {
@@ -144,7 +144,7 @@ public class AnalyzerService {
 			cleanUpProgram(programId);
 			finalizeUserTask(user, task);
 		});
-		logger.info("User {} started playground analysis of program source with query: {}", user.getEmail(), queryText);
+		logger.info("User {} started playground analysis of program source with analysis: {}", user.getEmail(), analysisText);
 	}
 
 	private String getPlaygroundProgramId(User user) {
@@ -154,19 +154,19 @@ public class AnalyzerService {
 		return "playground.program.id_" + Integer.toHexString(hash);
 	}
 	
-	private List<QueryDto> getSimpleQueryList(String queryText) {
-		List<QueryDto> queries = new ArrayList<QueryDto>();
-		QueryDto query = new QueryDto();
-		query.setName("");
-		query.setQueryText(queryText);
-		queries.add(query);
+	private List<AnalysisDto> getSimpleAnalysisList(String queryText) {
+		List<AnalysisDto> queries = new ArrayList<AnalysisDto>();
+		AnalysisDto analysis = new AnalysisDto();
+		analysis.setName("");
+		analysis.setQueryText(queryText);
+		queries.add(analysis);
 		return queries;
 	}
 	
 	public void analyzeProgram(User user, Program program, String[] queries) {
 		AbstractAnalyzerCallable callable = new ProgramAnalyzerCallable(program.getName(), user.getEmail());
-		List<Query> queriesList = getQueries(queries, user);
-		callable.setQueries(toQueryDto(queriesList));
+		List<Analysis> queriesList = getQueries(queries, user);
+		callable.setQueries(toAnalysisDto(queriesList));
 		AbstractTask newTask = new AnalyzerTask(callable);
 		replaceTasks(user, newTask, callable, (resultDto, t) -> {
 			AnalyzerTask task = (AnalyzerTask) t;
@@ -190,8 +190,8 @@ public class AnalyzerService {
 	 */
 	private void launchAnalyzerTask(User user, String programId, String compOp, AbstractAnalyzerCallable callable, String[] queries) {
 		if (queries != null) {
-			List<Query> queriesList = getQueries(queries, user);
-			callable.setQueries(toQueryDto(queriesList));
+			List<Analysis> queriesList = getQueries(queries, user);
+			callable.setQueries(toAnalysisDto(queriesList));
 		}
 		callable.setCompiler(getCompilationTool(compOp));
 		AbstractTask newTask = new AnalyzerTask(callable);
@@ -242,17 +242,17 @@ public class AnalyzerService {
 		for (ProblemDto problemDto : resultDto.getProblems()) {
 			Problem problem = new Problem();
 			problem.setResult(result);
-			problem.setQuery(queriesRepository.findByName(problemDto.getQueryName()));
+			problem.setAnalysis(analysisService.findByName(problemDto.getAnalysisName()));
 			problem.setMsg(problemDto.getMsg());
 			problemsRepository.save(problem);
 		}
-		// Query execution problems problems
-		for (QueryExecutionProblemDto queryExecutionProblemDto : resultDto.getQueryExecutionProblems()) {
-			QueryExecutionProblem queryExecutionProblem = new QueryExecutionProblem();
-			queryExecutionProblem.setMsg(queryExecutionProblemDto.getMsg());
-			queryExecutionProblem.setQueryName(queryExecutionProblemDto.getName());
-			queryExecutionProblem.setResult(result);
-			queryExecutionProblemRepository.save(queryExecutionProblem);
+		// Analysis execution problems problems
+		for (AnalysisExecutionProblemDto analysisExecutionProblemDto : resultDto.getAnalysisExecutionProblems()) {
+			AnalysisExecutionProblem analysisExecutionProblem = new AnalysisExecutionProblem();
+			analysisExecutionProblem.setMsg(analysisExecutionProblemDto.getMsg());
+			analysisExecutionProblem.setAnalysisName(analysisExecutionProblemDto.getName());
+			analysisExecutionProblem.setResult(result);
+			analysisExecutionProblemRepository.save(analysisExecutionProblem);
 		}
 		return result;
 	}
@@ -274,28 +274,28 @@ public class AnalyzerService {
 	
 	private boolean shouldCreateResult(ResultDto resultDto) {
 		return !resultDto.getProblems().isEmpty() || 
-			   !resultDto.getQueryExecutionProblems().isEmpty();
+			   !resultDto.getAnalysisExecutionProblems().isEmpty();
 	}
 	
 	/**
 	 * Extracts all the necesary queries.
-	 * If a query ends in '*' it gets all the 'family' of queries.
+	 * If a analysis ends in '*' it gets all the 'family' of queries.
 	 * @param queriesIds
 	 * @param user the user that requested the queries
 	 * @return
 	 */
-	private List<Query> getQueries(String[] queriesIds, User user) {
-		List<Query> result = new ArrayList<Query>();
-		for (String queryId : queriesIds) {
-			if (queryId.endsWith("*")) {
-			    String regex = queryId.replace(".", "\\.");
-			    regex = queryId.replace("*", "");
+	private List<Analysis> getQueries(String[] queriesIds, User user) {
+		List<Analysis> result = new ArrayList<Analysis>();
+		for (String analysisId : queriesIds) {
+			if (analysisId.endsWith("*")) {
+			    String regex = analysisId.replace(".", "\\.");
+			    regex = analysisId.replace("*", "");
 			    regex = String.format("^%s[^\\.]*", regex);
-				result.addAll(queriesRepository.findAllByFamily(regex, user));
+				result.addAll(analysisService.findAllByFamily(regex, user));
 			} else {
-				Query query = queriesRepository.findAvailableByNameAndUser(queryId, user);
-				if (query != null)
-					result.add(query);
+				Analysis analysis = analysisService.findAvailableByNameAndUser(analysisId, user);
+				if (analysis != null)
+					result.add(analysis);
 			}
 		}
 		//Return only  the distinct queries
@@ -304,17 +304,17 @@ public class AnalyzerService {
 				.collect(Collectors.toList());
 	}
 	
-	private List<QueryDto> toQueryDto(List<Query> queries) {
-		return queries.stream()
-				.map((q) -> toQueryDto(q))
+	private List<AnalysisDto> toAnalysisDto(List<Analysis> analyses) {
+		return analyses.stream()
+				.map((q) -> toAnalysisDto(q))
 				.collect(Collectors.toList());
 	}
 	
-	private QueryDto toQueryDto(Query query) {
-		QueryDto queryDto = new QueryDto();
-		queryDto.setName(query.getName());
-		queryDto.setQueryText(query.getQueryText());
-		return queryDto;
+	private AnalysisDto toAnalysisDto(Analysis analysis) {
+		AnalysisDto analysisDto = new AnalysisDto();
+		analysisDto.setName(analysis.getName());
+		analysisDto.setQueryText(analysis.getQueryText());
+		return analysisDto;
 	}
 
 	@PreDestroy

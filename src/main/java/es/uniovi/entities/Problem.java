@@ -22,9 +22,9 @@ public class Problem {
 	private String msg;
 	
 	@ManyToOne
-	@JoinColumn(name = "query_id")
+	@JoinColumn(name = "analysis_id")
 	@JsonIgnore
-	private Query query;
+	private Analysis analysis;
 	
 	@ManyToOne
 	@JoinColumn(name = "result_id")
@@ -55,12 +55,12 @@ public class Problem {
 		this.id = id;
 	}
 
-	public Query getQuery() {
-		return query;
+	public Analysis getAnalysis() {
+		return analysis;
 	}
 
-	public void setQuery(Query query) {
-		this.query = query;
+	public void setAnalysis(Analysis analysis) {
+		this.analysis = analysis;
 	}
 
 	public Result getResult() {

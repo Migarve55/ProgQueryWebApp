@@ -22,7 +22,7 @@ import es.uniovi.entities.Result;
 import es.uniovi.entities.User;
 import es.uniovi.services.AnalyzerService;
 import es.uniovi.services.ProgramService;
-import es.uniovi.services.QueryService;
+import es.uniovi.services.AnalysisService;
 import es.uniovi.services.ResultService;
 import es.uniovi.services.UsersService;
 import es.uniovi.tasks.AbstractTask;
@@ -37,7 +37,7 @@ public class ProgramController {
 	private ResultService resultService;
 	
 	@Autowired
-	private QueryService queryService;
+	private AnalysisService analysisService;
 	
 	@Autowired
 	private AnalyzerService analyzerService;
@@ -68,7 +68,7 @@ public class ProgramController {
 			return "redirect:/analyzer/loading";
 		// Finally analyze
 		model.addAttribute("program", program);
-		model.addAttribute("queriesList", queryService.getAvailableQueriesForUser(user));
+		model.addAttribute("queriesList", analysisService.getAvailableAnalysesForUser(user));
 		return "program/analyze";
 	}
 	

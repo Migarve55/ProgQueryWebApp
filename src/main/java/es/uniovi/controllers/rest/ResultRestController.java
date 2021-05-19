@@ -19,12 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import es.uniovi.entities.Program;
-import es.uniovi.entities.Query;
+import es.uniovi.entities.Analysis;
 import es.uniovi.entities.Result;
 import es.uniovi.entities.User;
 import es.uniovi.services.AnalyzerService;
 import es.uniovi.services.ProgramService;
-import es.uniovi.services.QueryService;
+import es.uniovi.services.AnalysisService;
 import es.uniovi.services.ResultService;
 import es.uniovi.services.UsersService;
 
@@ -44,7 +44,7 @@ public class ResultRestController extends BaseRestController {
 	private AnalyzerService analyzerService;
 	
 	@Autowired
-	private QueryService queryService;
+	private AnalysisService queryService;
 	
 	@GetMapping("/api/results")
 	public List<Result> list(
@@ -55,8 +55,8 @@ public class ResultRestController extends BaseRestController {
 		List<Result> results = new ArrayList<Result>();
 		if (programName != null && analysisName != null) {
 			Program program = programService.findProgramByName(programName);
-			Query query = queryService.findQueryByName(analysisName);
-			results = resultService.getByProgramAndQuery(program.getId(), query.getId());
+			Analysis query = queryService.findAnalysisByName(analysisName);
+			results = resultService.getByProgramAndAnalysis(program.getId(), query.getId());
 		} else if (programName != null) {
 			Program program = programService.findProgramByName(programName);
 			if (program == null) {
@@ -67,8 +67,8 @@ public class ResultRestController extends BaseRestController {
 			User u = usersService.getUserByEmail(user);
 			results = resultService.getResultsByUser(u);
 		} else if (analysisName != null) {
-			Query query = queryService.findQueryByName(analysisName);
-			results = resultService.getByQuery(query.getId());
+			Analysis query = queryService.findAnalysisByName(analysisName);
+			results = resultService.getByAnalysis(query.getId());
 		} 
 		return results;
 	}

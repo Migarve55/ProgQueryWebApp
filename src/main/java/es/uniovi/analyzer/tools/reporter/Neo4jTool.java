@@ -10,8 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import es.uniovi.analyzer.tools.reporter.dto.ProblemDto;
-import es.uniovi.analyzer.tools.reporter.dto.QueryDto;
-import es.uniovi.analyzer.tools.reporter.dto.QueryExecutionProblemDto;
+import es.uniovi.analyzer.tools.reporter.dto.AnalysisDto;
+import es.uniovi.analyzer.tools.reporter.dto.AnalysisExecutionProblemDto;
 import es.uniovi.analyzer.tools.reporter.dto.ResultDto;
 
 public class Neo4jTool {
@@ -19,7 +19,7 @@ public class Neo4jTool {
 	private String url;
 	private String database;
 	private String programID;
-	private List<QueryDto> queries = new ArrayList<QueryDto>();
+	private List<AnalysisDto> queries = new ArrayList<AnalysisDto>();
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
@@ -28,26 +28,26 @@ public class Neo4jTool {
 		this.programID = programID;
 	}
 	
-	public void setQueries(List<QueryDto> queries) {
+	public void setQueries(List<AnalysisDto> queries) {
 		this.queries = queries;
 	}
 
 	public ResultDto generateReport() {
 		List<ProblemDto> errors = new ArrayList<ProblemDto>();
-		List<QueryExecutionProblemDto> queryExecutionProblems = new ArrayList<QueryExecutionProblemDto>();
+		List<AnalysisExecutionProblemDto> queryExecutionProblems = new ArrayList<AnalysisExecutionProblemDto>();
 		logger.info("Creating report for program {}", programID);
 		try (Neo4jFacade queryRunner = new Neo4jFacade(url)) {
-			for (QueryDto query : queries) {
+			for (AnalysisDto query : queries) {
 				try {
 					logger.info("Running query {}", query.getName());
 					queryRunner.runQuery(database, query.getQueryText(), programID).forEach((record) -> {
 						ProblemDto problem = getProblemDtoFromResult(record);
-						problem.setQueryName(query.getName());
+						problem.setAnalysisName(query.getName());
 						errors.add(problem);
 					});
 				} catch (Neo4jException qee) {
 					logger.info("Could not execute query {}, error: {}", query.getName(), qee.getMessage());
-					queryExecutionProblems.add(new QueryExecutionProblemDto(query.getName(), qee.getMessage()));
+					queryExecutionProblems.add(new AnalysisExecutionProblemDto(query.getName(), qee.getMessage()));
 				}
 			}
 		} catch (Exception e) {

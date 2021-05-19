@@ -52,12 +52,12 @@ public class ResultService {
 		return problemsRepository.findAllByResult(pageable, result);
 	}
 
-	public List<Result> getByProgramAndQuery(Long programId, Long analysisId) {
-		return resultsRepository.findAllByProgramAndQuery(programId, analysisId);
+	public List<Result> getByProgramAndAnalysis(Long programId, Long analysisId) {
+		return resultsRepository.findAllByProgramAndAnalysis(programId, analysisId);
 	}
 
-	public List<Result> getByQuery(Long analysisId) {
-		return resultsRepository.findAllByQuery(analysisId);
+	public List<Result> getByAnalysis(Long analysisId) {
+		return resultsRepository.findAllByAnalysis(analysisId);
 	}
 	
 }

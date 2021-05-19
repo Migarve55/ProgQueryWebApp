@@ -13,7 +13,7 @@ import es.uniovi.analyzer.exceptions.EnviromentException;
 import es.uniovi.analyzer.exceptions.ReportException;
 import es.uniovi.analyzer.tools.ToolFactory;
 import es.uniovi.analyzer.tools.compilators.CompilerTool;
-import es.uniovi.analyzer.tools.reporter.dto.QueryDto;
+import es.uniovi.analyzer.tools.reporter.dto.AnalysisDto;
 import es.uniovi.analyzer.tools.reporter.dto.ResultDto;
 
 public abstract class AbstractAnalyzerCallable implements Callable<ResultDto> {
@@ -26,7 +26,7 @@ public abstract class AbstractAnalyzerCallable implements Callable<ResultDto> {
 	protected String programID;
 	protected String userId;
 	protected CompilerTool compiler;
-	protected List<QueryDto> queries = new ArrayList<QueryDto>();
+	protected List<AnalysisDto> queries = new ArrayList<AnalysisDto>();
 	
 	protected ResultDto result = new ResultDto();
 	
@@ -109,7 +109,7 @@ public abstract class AbstractAnalyzerCallable implements Callable<ResultDto> {
 		this.callback = callback;
 	}
 
-	public void setQueries(List<QueryDto> queries) {
+	public void setQueries(List<AnalysisDto> queries) {
 		this.queries = queries;
 	}
 

@@ -7,30 +7,30 @@ public class ResultDto {
 	
 	private List<ProblemDto> problems;
 	
-	private List<QueryExecutionProblemDto> queryExecutionProblems;
+	private List<AnalysisExecutionProblemDto> analysisExecutionProblems;
 	
 	public ResultDto() {
 		this.problems = new ArrayList<ProblemDto>();
-		this.queryExecutionProblems = new ArrayList<QueryExecutionProblemDto>();
+		this.analysisExecutionProblems = new ArrayList<AnalysisExecutionProblemDto>();
 	}
 	
-	public ResultDto(List<ProblemDto> problems, List<QueryExecutionProblemDto> queryExecutionProblems) {
+	public ResultDto(List<ProblemDto> problems, List<AnalysisExecutionProblemDto> analysisExecutionProblems) {
 		this.problems = problems;
-		this.queryExecutionProblems = queryExecutionProblems;
+		this.analysisExecutionProblems = analysisExecutionProblems;
 	}
 
 	public List<ProblemDto> getProblems() {
 		return problems;
 	}
 
-	public List<QueryExecutionProblemDto> getQueryExecutionProblems() {
-		return queryExecutionProblems;
+	public List<AnalysisExecutionProblemDto> getAnalysisExecutionProblems() {
+		return analysisExecutionProblems;
 	}
 
 	public String getTextSummary() {
 		StringBuilder sb = new StringBuilder();
-		for (QueryExecutionProblemDto qep : queryExecutionProblems) {
-			sb.append(String.format("%s%n", qep.getTextSummary()));
+		for (AnalysisExecutionProblemDto aep : analysisExecutionProblems) {
+			sb.append(String.format("%s%n", aep.getTextSummary()));
 		}
 		for (ProblemDto p : problems) {
 			sb.append(String.format("%s%n", p.getMsg()));

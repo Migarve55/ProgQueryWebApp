@@ -6,7 +6,7 @@ import es.uniovi.analyzer.tools.compilators.JavaCompilerTool;
 import es.uniovi.analyzer.tools.compilators.MavenCompilerTool;
 import es.uniovi.analyzer.tools.enviroment.EnviromentManagerTool;
 import es.uniovi.analyzer.tools.reporter.Neo4jTool;
-import es.uniovi.analyzer.tools.reporter.dto.QueryDto;
+import es.uniovi.analyzer.tools.reporter.dto.AnalysisDto;
 
 public class ToolFactory {
 	
@@ -22,7 +22,7 @@ public class ToolFactory {
 		return new MavenCompilerTool();
 	}
 
-	public static Neo4jTool getNeo4jTool(String url, String programID, List<QueryDto> queries) {
+	public static Neo4jTool getNeo4jTool(String url, String programID, List<AnalysisDto> queries) {
 		Neo4jTool tool = new Neo4jTool(url, programID);
 		tool.setQueries(queries);
 		return tool;

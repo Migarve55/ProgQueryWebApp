@@ -21,7 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import es.uniovi.analyzer.exceptions.AnalyzerException;
 import es.uniovi.entities.Problem;
-import es.uniovi.entities.Query;
+import es.uniovi.entities.Analysis;
 import es.uniovi.entities.Result;
 import es.uniovi.entities.User;
 import es.uniovi.services.AnalyzerService;
@@ -137,7 +137,7 @@ public class ResultController {
 	
 	private boolean shouldShowLegend(List<Problem> problems, Result result) {
 		return problems.stream().anyMatch(p -> {
-			Query q = p.getQuery();
+			Analysis q = p.getAnalysis();
 			if (q == null)
 				return false;
 			return q.getModified().after(result.getTimestamp());

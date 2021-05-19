@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 
 import es.uniovi.entities.Problem;
 import es.uniovi.entities.Program;
-import es.uniovi.entities.Query;
+import es.uniovi.entities.Analysis;
 import es.uniovi.entities.Result;
 import es.uniovi.entities.User;
 import es.uniovi.repositories.ProblemsRepository;
@@ -38,7 +38,7 @@ public class InsertSampleDataService {
 	private UsersService usersService;
 
 	@Autowired
-	private QueryService queryService;
+	private AnalysisService analysisService;
 	
 	@Autowired
 	private ResultsRepository resultRepository;
@@ -61,7 +61,7 @@ public class InsertSampleDataService {
 		logger.info("Inserting data for production...");
 		User miguel = createUser("miguel@email.com", "Miguel", "Garnacho Vélez", "123456");
 		createUser("oscar@email.com", "Oscar", "Rodrigez Prieto", "123456");
-		loadQueriesFromFile(miguel);
+		loadAnalysesFromFile(miguel);
 	}
 
 	public void resetDB() {
@@ -69,7 +69,7 @@ public class InsertSampleDataService {
 		problemsRepository.deleteAll();
 		resultRepository.deleteAll();
 		programRepository.deleteAll();
-		queryService.deleteAll();
+		analysisService.deleteAll();
 		usersService.deleteAll();
 	}
 	
@@ -81,9 +81,9 @@ public class InsertSampleDataService {
 		User oscar =  createUser("oscar@email.com", "Oscar", "Rodrigez Prieto", "123456");
 		
 		// Queries
-		Query q1 = createQuery("test1", "...", "...", true, miguel);
-		createQuery("test2", "...", "...", false, miguel);
-		createQuery("test3", "...", "...", false, oscar, miguel);
+		Analysis a1 = createAnalysis("test1", "...", "...", true, miguel);
+		createAnalysis("test2", "...", "...", false, miguel);
+		createAnalysis("test3", "...", "...", false, oscar, miguel);
 		
 		// Programs
 		Program p1 = createProgram("program1", miguel, new Date());
@@ -94,8 +94,8 @@ public class InsertSampleDataService {
 		Result r2 = createResult(p2, new Date());
 		
 		// Problems
-		createProblem(r1, q1, "You got a problem");
-		createProblem(r2, q1, "You got a problem");
+		createProblem(r1, a1, "You got a problem");
+		createProblem(r2, a1, "You got a problem");
 		
 	}
 	
@@ -106,22 +106,22 @@ public class InsertSampleDataService {
 		return user;
 	}
 	
-	private Query createQuery(String name, String description, String cipher, boolean isPublic, User creator, User... publicTo) {
-		Query query = new Query();
-		query.setName(name);
-		query.setDescription(description);
-		query.setQueryText(cipher);
-		query.setUser(creator);
-		query.setPublicForAll(isPublic);
+	private Analysis createAnalysis(String name, String description, String cipher, boolean isPublic, User creator, User... publicTo) {
+		Analysis analysis = new Analysis();
+		analysis.setName(name);
+		analysis.setDescription(description);
+		analysis.setQueryText(cipher);
+		analysis.setUser(creator);
+		analysis.setPublicForAll(isPublic);
 		if (publicTo.length > 0) {
 			Set<User> publicToUsers = new HashSet<User>();
 			for (User user : publicTo) {
 				publicToUsers.add(user);
 			}
-			query.setPublicTo(publicToUsers);
+			analysis.setPublicTo(publicToUsers);
 		}
-		queryService.saveQuery(creator, query);
-		return query;
+		analysisService.saveAnalysis(creator, analysis);
+		return analysis;
 	}
 	
 	private Program createProgram(String name, User owner, Date timestamp) {
@@ -141,30 +141,30 @@ public class InsertSampleDataService {
 		return result;
 	}
 	
-	private Problem createProblem(Result result, Query query, String msg) {
+	private Problem createProblem(Result result, Analysis analysis, String msg) {
 		Problem problem = new Problem(msg);
 		problem.setResult(result);
-		problem.setQuery(query);
+		problem.setAnalysis(analysis);
 		problemsRepository.save(problem);
 		return problem;
 	}
 
-	private void loadQueriesFromFile(User user) {
-		try (InputStream resource = new ClassPathResource("queries.json").getInputStream();) {
+	private void loadAnalysesFromFile(User user) {
+		try (InputStream resource = new ClassPathResource("analyses.json").getInputStream();) {
 			Object obj = new JSONParser().parse(new InputStreamReader(resource));
 			JSONObject jo = (JSONObject) obj;
-			JSONArray ja = (JSONArray) jo.get("queries");
+			JSONArray ja = (JSONArray) jo.get("analyses");
 			@SuppressWarnings("unchecked")
-			Iterator<JSONObject> queryIterator = ja.iterator(); 
-			while (queryIterator.hasNext()) {
-				JSONObject queryJson = queryIterator.next();
-				Query query = new Query(
-					(String) queryJson.get("name"), 
-					(String) queryJson.get("description"), 
-					(String) queryJson.get("query"));
-				query.setUser(user);
-				query.setPublicForAll(true);
-				queryService.saveQuery(user, query);
+			Iterator<JSONObject> analysisIterator = ja.iterator(); 
+			while (analysisIterator.hasNext()) {
+				JSONObject analysisJson = analysisIterator.next();
+				Analysis analysis = new Analysis(
+					(String) analysisJson.get("name"), 
+					(String) analysisJson.get("description"), 
+					(String) analysisJson.get("query"));
+				analysis.setUser(user);
+				analysis.setPublicForAll(true);
+				analysisService.saveAnalysis(user, analysis);
 			}
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();

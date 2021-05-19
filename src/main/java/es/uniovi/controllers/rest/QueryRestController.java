@@ -19,43 +19,43 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import es.uniovi.entities.Query;
+import es.uniovi.entities.Analysis;
 import es.uniovi.entities.User;
-import es.uniovi.services.QueryService;
+import es.uniovi.services.AnalysisService;
 import es.uniovi.services.UsersService;
-import es.uniovi.validators.AddQueryValidator;
-import es.uniovi.validators.EditQueryValidator;
+import es.uniovi.validators.AddAnalysisValidator;
+import es.uniovi.validators.EditAnalysisValidator;
 
 @RestController
 public class QueryRestController extends BaseRestController {
 
 	@Autowired
-	private QueryService queryService;
+	private AnalysisService queryService;
 	
 	@Autowired 
 	private UsersService usersService;
 	
 	@Autowired
-	private AddQueryValidator addQueryValidator;
+	private AddAnalysisValidator addQueryValidator;
 	
 	@Autowired
-	private EditQueryValidator editQueryValidator;
+	private EditAnalysisValidator editQueryValidator;
 	
 	@GetMapping("/api/analyses")
-	public List<Query> list(Principal principal, @RequestParam(required = false) String user, @RequestParam(required = false) Boolean owner) {
+	public List<Analysis> list(Principal principal, @RequestParam(required = false) String user, @RequestParam(required = false) Boolean owner) {
 		// Get queries
-		List<Query> queries;
+		List<Analysis> queries;
 		if (user != null) { // From user
 			User from = usersService.getUserByEmail(user);
 			if (from == null) {
 				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not Found");
 			}
 			if (owner != null && owner)
-				queries = queryService.getQueriesFromUser(from);
+				queries = queryService.getAnalysisFromUser(from);
 			else
-				queries = queryService.getAvailableQueriesForUser(from);
+				queries = queryService.getAvailableAnalysesForUser(from);
 		} else { // All public queries
-			queries = queryService.getPublicQueries();
+			queries = queryService.getPublicAnalyses();
 		}
 		return queries
 				.stream()
@@ -63,12 +63,12 @@ public class QueryRestController extends BaseRestController {
 	}
 	
 	@GetMapping("/api/analyses/{id}")
-	public Query get(@PathVariable(value = "id") String name, Principal principal) {
-		Query query = queryService.findQueryByName(name);
+	public Analysis get(@PathVariable(value = "id") String name, Principal principal) {
+		Analysis query = queryService.findAnalysisByName(name);
 		User user = usersService.getUserByEmail(principal.getName());
  		if (query == null) {
  			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Query not Found");
-		} else if (!queryService.canSeeQuery(user, query)) {
+		} else if (!queryService.canSeeAnalysis(user, query)) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can not access this query");
 		} else {
 			return query;
@@ -76,7 +76,7 @@ public class QueryRestController extends BaseRestController {
 	}
 	
 	@PostMapping("/api/analyses")
-	public Query post(@Validated @RequestBody Query query, BindingResult result, Principal principal) {
+	public Analysis post(@Validated @RequestBody Analysis query, BindingResult result, Principal principal) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
 		//Prepare query
@@ -86,15 +86,15 @@ public class QueryRestController extends BaseRestController {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed query, errors: " + toErrorList(result));
 		}
 		//Add it
-		queryService.saveQuery(user, query);
+		queryService.saveAnalysis(user, query);
 		return query;
 	}
 
 	@PutMapping("/api/analyses/{id}")
-	public Query edit(@PathVariable(value = "id") String name, @Validated @RequestBody Query query, BindingResult result, Principal principal) {
+	public Analysis edit(@PathVariable(value = "id") String name, @Validated @RequestBody Analysis query, BindingResult result, Principal principal) {
 		String email = principal.getName();
 		User user = usersService.getUserByEmail(email);
-		Query original = queryService.findQueryByName(name);
+		Analysis original = queryService.findAnalysisByName(name);
 		editQueryValidator.validate(query, result);
 		if (result.hasErrors()) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed query, errors: " + toErrorList(result));
@@ -102,7 +102,7 @@ public class QueryRestController extends BaseRestController {
 		if (original == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Query not Found");
 		}
-		if (!queryService.canModifyQuery(user, original)) {
+		if (!queryService.canModifyAnalysis(user, original)) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot modify query");
 		}
 		//Finally save
@@ -110,7 +110,7 @@ public class QueryRestController extends BaseRestController {
 		original.setQueryText(query.getQueryText());
 		original.setPublicForAll(query.isPublicForAll());
 		original.setPublicTo(query.getPublicTo());
-		queryService.saveQuery(user, original);
+		queryService.saveAnalysis(user, original);
 		return original;
 	}
 	
@@ -118,13 +118,13 @@ public class QueryRestController extends BaseRestController {
 	@ResponseStatus(HttpStatus.OK)
 	public void delete(@PathVariable(value = "id") String name, Principal principal) {
 		User user = usersService.getUserByEmail(principal.getName());
-		Query query = queryService.findQueryByName(name);
+		Analysis query = queryService.findAnalysisByName(name);
 		if (query == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Query not Found");
-		} else if (!queryService.canModifyQuery(user, query)) {
+		} else if (!queryService.canModifyAnalysis(user, query)) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can not delete this query");
 		} else {
-			queryService.deleteQuery(user, query);
+			queryService.deleteAnalysis(user, query);
 		}
 	}
 	

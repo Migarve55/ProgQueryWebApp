@@ -31,7 +31,7 @@ public class User {
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<Query> queries;
+	private Set<Analysis> analyses;
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
@@ -42,8 +42,8 @@ public class User {
 	@JoinTable(
 			name="PUBLIC_TO",
 	        joinColumns={@JoinColumn(name="USER_ID")},
-	        inverseJoinColumns={@JoinColumn(name="QUERY_ID")})
-	private Set<Query> canModify;
+	        inverseJoinColumns={@JoinColumn(name="ANALYSIS_ID")})
+	private Set<Analysis> canModify;
 	
 	public User(String email, String name, String lastName) {
 		super();
@@ -104,12 +104,12 @@ public class User {
 		this.passwordConfirm = passwordConfirm;
 	}
 
-	public Set<Query> getQueries() {
-		return queries;
+	public Set<Analysis> getAnalyses() {
+		return analyses;
 	}
 
-	public void setQueries(Set<Query> queries) {
-		this.queries = queries;
+	public void setAnalyses(Set<Analysis> analyses) {
+		this.analyses = analyses;
 	}
 
 	public Set<Program> getPrograms() {
@@ -120,11 +120,11 @@ public class User {
 		this.programs = programs;
 	}
 
-	public Set<Query> getCanModify() {
+	public Set<Analysis> getCanModify() {
 		return canModify;
 	}
 
-	public void setCanModify(Set<Query> canModify) {
+	public void setCanModify(Set<Analysis> canModify) {
 		this.canModify = canModify;
 	}
 

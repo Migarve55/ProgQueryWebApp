@@ -8,7 +8,7 @@
 		<h1 class="display-4 text-center mt-4 mb-4" th:text="#{signup.title}">Registrate como usuario:</h1>
 		<form class="form-horizontal wb-cont" method="post" action="/signup" th:object="${user}">
 			<div class="form-group">
-				<label class="control-label col-sm-2" for="email" th:text="#{signup.email}">Correo:</label>
+				<label class="control-label col-sm-12" for="email" th:text="#{signup.email}">Correo:</label>
 				<div class="col-sm-12">
 					<input type="email" class="form-control" name="email" 
 					th:value="*{email}" th:title="#{tooltip.emailPattern}"
@@ -18,7 +18,7 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="control-label col-sm-2" for="name" th:text="#{signup.name}">Nombre:</label>
+				<label class="control-label col-sm-12" for="name" th:text="#{signup.name}">Nombre:</label>
 				<div class="col-sm-12">
 					<input type="text" class="form-control" name="name" 
 					th:value="*{name}" th:title="#{tooltip.required}"
@@ -28,7 +28,7 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="control-label col-sm-2" for="lastName" th:text="#{signup.lastName}">Apellidos:</label>
+				<label class="control-label col-sm-12" for="lastName" th:text="#{signup.lastName}">Apellidos:</label>
 				<div class="col-sm-12">
 					<input type="text" class="form-control" name="lastName" 
 					th:value="*{lastName}" th:title="#{tooltip.required}"
@@ -38,7 +38,7 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="control-label col-sm-2" for="password" th:text="#{signup.password}">Contraseña:</label>
+				<label class="control-label col-sm-12" for="password" th:text="#{signup.password}">Contraseña:</label>
 				<div class="col-sm-12">
 					<input type="password" class="form-control" name="password" 
 					th:value="*{password}" th:title="#{tooltip.password}"
@@ -47,7 +47,7 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="control-label col-sm-2" for="passwordConfirm" th:text="#{signup.passwordAgain}">Repita la contraseña:</label>
+				<label class="control-label col-sm-12" for="passwordConfirm" th:text="#{signup.passwordAgain}">Repita la contraseña:</label>
 				<div class="col-sm-12">
 					<input type="password" class="form-control" name="passwordConfirm" 
 					th:value="*{passwordConfirm}" th:title="#{tooltip.password}"

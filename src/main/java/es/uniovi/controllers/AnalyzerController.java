@@ -23,7 +23,7 @@ import es.uniovi.entities.Program;
 import es.uniovi.entities.User;
 import es.uniovi.services.AnalyzerService;
 import es.uniovi.services.ProgramService;
-import es.uniovi.services.QueryService;
+import es.uniovi.services.AnalysisService;
 import es.uniovi.services.UsersService;
 import es.uniovi.tasks.AbstractTask;
 import es.uniovi.tasks.PlaygroundTask;
@@ -38,7 +38,7 @@ public class AnalyzerController {
 	private UsersService usersService;
 	
 	@Autowired
-	private QueryService queryService;
+	private AnalysisService analysisService;
 	
 	@Autowired
 	private ProgramService programService;
@@ -68,7 +68,7 @@ public class AnalyzerController {
 		String programId = params.get("programId_text");
 		String programSource = params.getOrDefault("programSource", "");
 		String useSource = params.get("useSource");
-		String querySyntaxError = queryService.checkQuerySyntax(querySource);
+		String querySyntaxError = analysisService.checkAnalysisSyntax(querySource);
 		if (querySyntaxError != null) {
 			redirect.addFlashAttribute("error", "error.query.text");
 			redirect.addFlashAttribute("errOutput", querySyntaxError);
@@ -80,14 +80,14 @@ public class AnalyzerController {
 				redirect.addFlashAttribute("error", "program.playground.noSource");
 				return "redirect:" + PlaygroundTask.getBaseUrl(programSource, querySource);
 			}
-			analyzerService.analyzeSourceWithQueryText(user, querySource, programSource);
+			analyzerService.analyzeSourceWithAnalysisText(user, querySource, programSource);
 		} else if (programId != null) {
 			Program program = programService.findProgramByName(programId);
 			if (program == null) {
 				redirect.addFlashAttribute("error", "program.playground.noProgram");
 				return "redirect:" + PlaygroundTask.getBaseUrl(programSource, querySource);
 			}
-			analyzerService.analyzeProgramWithQueryText(user, querySource, program);
+			analyzerService.analyzeProgramWithAnalysisText(user, querySource, program);
 		} 
 		return "redirect:/analyzer/loading";
 	}
@@ -98,7 +98,7 @@ public class AnalyzerController {
 		User user = usersService.getUserByEmail(email);
 		if (!isTaskDone(user))
 			return "redirect:/analyzer/loading";
-		model.addAttribute("queriesList", queryService.getAvailableQueriesForUser(user));
+		model.addAttribute("queriesList", analysisService.getAvailableAnalysesForUser(user));
 		return "analyzer/zip";
 	}
 
@@ -137,7 +137,7 @@ public class AnalyzerController {
 		User user = usersService.getUserByEmail(email);
 		if (!isTaskDone(user))
 			return "redirect:/analyzer/loading";
-		model.addAttribute("queriesList", queryService.getAvailableQueriesForUser(user));
+		model.addAttribute("queriesList", analysisService.getAvailableAnalysesForUser(user));
 		return "analyzer/git";
 	}
 

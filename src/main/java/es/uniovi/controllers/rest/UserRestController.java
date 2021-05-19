@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import es.uniovi.entities.Program;
-import es.uniovi.entities.Query;
+import es.uniovi.entities.Analysis;
 import es.uniovi.entities.Result;
 import es.uniovi.entities.User;
 import es.uniovi.services.ResultService;
@@ -59,11 +59,11 @@ public class UserRestController extends BaseRestController {
 	}
 
 	@GetMapping("/api/users/{user}/analyses")
-	public List<Query> getUserAnalyses(@PathVariable(value = "user") String email) {
+	public List<Analysis> getUserAnalyses(@PathVariable(value = "user") String email) {
 		User user = usersService.getUserByEmail(email);
 		if (user == null)
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Result not Found");
-		return user.getQueries()
+		return user.getAnalyses()
 				.stream()
 				.collect(Collectors.toList());
 	}
