@@ -37,11 +37,11 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr th:each="error : ${problems}" th:class="${error.query?.modified > timestamp} ? outdated">
-						<td class="fitwidth" th:if="${error.query}">
-							<a th:text="${error.query.name}" th:href="${'/query/detail/' + error.query.id}"></a>
+					<tr th:each="error : ${problems}" th:class="${error.analysis?.modified > timestamp} ? outdated">
+						<td class="fitwidth" th:if="${error.analysis}">
+							<a th:text="${error.analysis.name}" th:href="${'/query/detail/' + error.analysis.id}"></a>
 						</td>
-						<td class="fitwidth" th:unless="${error.query}" th:text="#{result.detail.userDeletedQuery}"></td>
+						<td class="fitwidth" th:unless="${error.analysis}" th:text="#{result.detail.userDeletedQuery}"></td>
 						<td th:if="${error.msg}" th:text="${error.msg}">
 							<span th:text="${error.msg}"></span>
 						</td>

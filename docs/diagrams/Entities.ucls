@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.2.4" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
   associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
-  <class id="1" language="java" name="es.uniovi.entities.Problem" project="progQueryWebApp" 
-    file="/progQueryWebApp/src/main/java/es/uniovi/entities/Problem.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="729" y="530"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
-      <operations public="false" package="true" protected="true" private="true" static="false"/>    
-    </display>  
-  </class>  
-  <class id="2" language="java" name="es.uniovi.entities.Program" project="progQueryWebApp" 
+  <class id="1" language="java" name="es.uniovi.entities.Program" project="progQueryWebApp" 
     file="/progQueryWebApp/src/main/java/es/uniovi/entities/Program.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="726" y="90"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -19,7 +10,7 @@
       <operations public="false" package="true" protected="true" private="true" static="false"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="es.uniovi.entities.Analysis" project="progQueryWebApp" 
+  <class id="2" language="java" name="es.uniovi.entities.Analysis" project="progQueryWebApp" 
     file="/progQueryWebApp/src/main/java/es/uniovi/entities/Analysis.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="258" y="527"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -28,17 +19,17 @@
       <operations public="false" package="true" protected="true" private="true" static="false"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="es.uniovi.entities.AnalysisExecutionProblem" project="progQueryWebApp" 
+  <class id="3" language="java" name="es.uniovi.entities.AnalysisExecutionProblem" project="progQueryWebApp" 
     file="/progQueryWebApp/src/main/java/es/uniovi/entities/AnalysisExecutionProblem.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="440" y="314"/>    
+    <position height="-1" width="-1" x="451" y="314"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="false"/>      
       <operations public="false" package="true" protected="true" private="true" static="false"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="es.uniovi.entities.Result" project="progQueryWebApp" 
+  <class id="4" language="java" name="es.uniovi.entities.Result" project="progQueryWebApp" 
     file="/progQueryWebApp/src/main/java/es/uniovi/entities/Result.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="728" y="317"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -47,7 +38,7 @@
       <operations public="false" package="true" protected="true" private="true" static="false"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="es.uniovi.entities.User" project="progQueryWebApp" 
+  <class id="5" language="java" name="es.uniovi.entities.User" project="progQueryWebApp" 
     file="/progQueryWebApp/src/main/java/es/uniovi/entities/User.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="267" y="110"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -56,160 +47,128 @@
       <operations public="false" package="true" protected="true" private="true" static="false"/>    
     </display>  
   </class>  
-  <association id="7">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="8" name="queryExecutionProblems">        
-        <position height="0" width="0" x="-626" y="102"/>      
+  <association id="6">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="7" name="user">        
+        <position height="18" width="30" x="266" y="305"/>      
       </attribute>      
-      <multiplicity id="9" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="-626" y="102"/>      
+      <multiplicity id="8" minimum="0" maximum="1">        
+        <position height="16" width="23" x="287" y="201"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="9">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="10" name="results">        
+        <position height="18" width="41" x="740" y="196"/>      
+      </attribute>      
+      <multiplicity id="11" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="62" y="69"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="10">    
+  <association id="12">    
     <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="11" name="user">        
-        <position height="0" width="0" x="-393" y="-692"/>      
+      <attribute id="13" name="result">        
+        <position height="18" width="35" x="587" y="289"/>      
       </attribute>      
-      <multiplicity id="12" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-393" y="-692"/>      
+      <multiplicity id="14" minimum="0" maximum="1">        
+        <position height="16" width="23" x="648" y="290"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
+    <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="13">    
+  <association id="15">    
+    <bendpoint x="300" y="317"/>    
     <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="14" name="program">        
-        <position height="0" width="0" x="-366" y="-609"/>      
+      <attribute id="16" name="analyses">        
+        <position height="18" width="52" x="125" y="308"/>      
       </attribute>      
-      <multiplicity id="15" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-366" y="-609"/>      
+      <multiplicity id="17" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="4" y="-239"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="16">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="17" name="publicTo">        
-        <position height="0" width="0" x="-393" y="-692"/>      
-      </attribute>      
-      <multiplicity id="18" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="-393" y="-692"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="19">    
+  <association id="18">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="20" name="analysis">        
-        <position height="0" width="0" x="4" y="-239"/>      
+      <attribute id="19" name="user">        
+        <position height="18" width="30" x="482" y="74"/>      
       </attribute>      
-      <multiplicity id="21" minimum="0" maximum="1">        
-        <position height="0" width="0" x="4" y="-239"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="22">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="23" name="analyses">        
-        <position height="0" width="0" x="4" y="-239"/>      
-      </attribute>      
-      <multiplicity id="24" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="4" y="-239"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="25">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="26" name="result">        
-        <position height="0" width="0" x="62" y="69"/>      
-      </attribute>      
-      <multiplicity id="27" minimum="0" maximum="1">        
-        <position height="0" width="0" x="62" y="69"/>      
+      <multiplicity id="20" minimum="0" maximum="1">        
+        <position height="16" width="23" x="352" y="86"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="28">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="29" name="programs">        
-        <position height="0" width="0" x="-366" y="-609"/>      
-      </attribute>      
-      <multiplicity id="30" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="-366" y="-609"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="31">    
+  <association id="21">    
     <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="32" name="results">        
-        <position height="0" width="0" x="62" y="69"/>      
+      <attribute id="22" name="publicTo">        
+        <position height="18" width="47" x="185" y="305"/>      
       </attribute>      
-      <multiplicity id="33" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="62" y="69"/>      
+      <multiplicity id="23" minimum="0" maximum="2147483647">        
+        <position height="16" width="21" x="230" y="204"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="34">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="35" name="canModify">        
-        <position height="0" width="0" x="4" y="-239"/>      
-      </attribute>      
-      <multiplicity id="36" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="4" y="-239"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="37">    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="38" name="user">        
-        <position height="0" width="0" x="-393" y="-692"/>      
-      </attribute>      
-      <multiplicity id="39" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-393" y="-692"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="40">    
+  <association id="24">    
+    <bendpoint x="510" y="121"/>    
     <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="41" name="problems">        
-        <position height="0" width="0" x="487" y="214"/>      
+      <attribute id="25" name="programs">        
+        <position height="18" width="54" x="477" y="130"/>      
       </attribute>      
-      <multiplicity id="42" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="487" y="214"/>      
+      <multiplicity id="26" minimum="0" maximum="2147483647">        
+        <position height="16" width="21" x="648" y="110"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="43">    
+  <association id="27">    
     <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="44" name="result">        
-        <position height="0" width="0" x="62" y="69"/>      
+      <attribute id="28" name="program">        
+        <position height="18" width="48" x="646" y="190"/>      
       </attribute>      
-      <multiplicity id="45" minimum="0" maximum="1">        
-        <position height="0" width="0" x="62" y="69"/>      
+      <multiplicity id="29" minimum="0" maximum="1">        
+        <position height="16" width="23" x="677" y="157"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
+    <end type="TARGET" refId="1" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="30">    
+    <bendpoint x="181" y="315"/>    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="31" name="canModify">        
+        <position height="18" width="58" x="297" y="334"/>      
+      </attribute>      
+      <multiplicity id="32" minimum="0" maximum="2147483647">        
+        <position height="16" width="21" x="202" y="416"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="33">    
+    <bendpoint x="610" y="333"/>    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="34" name="analysisExecutionProblems">        
+        <position height="18" width="127" x="542" y="345"/>      
+      </attribute>      
+      <multiplicity id="35" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="-615" y="102"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

@@ -27,6 +27,10 @@
  - Persistent program analysis storage: analyze your programs again and again without needing to upload them
  - Both in English and in Spanish
  
+ ## Documentation
+ 
+  JavaDoc generated at docs, available at project page: https://migarve55.github.io/ProgQueryWebApp/
+ 
  ## Instalation
  
  This is prepared to run in a linux based docker container.

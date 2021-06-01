@@ -29,7 +29,7 @@ public class Result {
 	private Set<Problem> problems;
 	
 	@OneToMany(mappedBy = "result", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<AnalysisExecutionProblem> queryExecutionProblems;
+	private Set<AnalysisExecutionProblem> analysisExecutionProblems;
 	
 	@ManyToOne
 	@JoinColumn(name = "program_id")
@@ -72,12 +72,12 @@ public class Result {
 		this.program = program;
 	}
 
-	public Set<AnalysisExecutionProblem> getQueryExecutionProblems() {
-		return queryExecutionProblems;
+	public Set<AnalysisExecutionProblem> getAnalysisExecutionProblems() {
+		return analysisExecutionProblems;
 	}
 
-	public void setQueryExecutionProblems(Set<AnalysisExecutionProblem> queryExecutionProblems) {
-		this.queryExecutionProblems = queryExecutionProblems;
+	public void setAnalysisExecutionProblems(Set<AnalysisExecutionProblem> analysisExecutionProblems) {
+		this.analysisExecutionProblems = analysisExecutionProblems;
 	}
 	
 }

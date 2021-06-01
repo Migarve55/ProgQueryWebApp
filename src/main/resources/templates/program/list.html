@@ -33,7 +33,7 @@
 			</table>
 		</div>
 		<th:block th:if="${not #lists.isEmpty(programsList)}">
-			<div  th:replace="fragments/pagination"/>
+			<div th:replace="fragments/pagination"/>
 		</th:block>
 		<div class="container" th:if="${#lists.isEmpty(programsList)}">
 			<h2 class="text-center mt-5" th:text="#{program.list.empty}">No programs to show</h2>
