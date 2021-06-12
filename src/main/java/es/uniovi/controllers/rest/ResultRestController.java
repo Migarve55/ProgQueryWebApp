@@ -50,7 +50,8 @@ public class ResultRestController extends BaseRestController {
 	public List<Result> list(
 			@RequestParam(required = false) String programName,
 			@RequestParam(required = false) String analysisName,
-			@RequestParam(required = false) String user) {		
+			@RequestParam(required = false) String user
+		) {		
 		// Get results
 		List<Result> results = new ArrayList<Result>();
 		if (programName != null && analysisName != null) {

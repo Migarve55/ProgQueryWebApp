@@ -64,11 +64,24 @@ public class ResultsRestApiTest extends AbstractRestApiTest {
 	
 	@Test
 	public void CP_RSL_05() throws Exception {
+		long resultId = given()
+	        .spec(getRequestSpecification())
+	        .contentType("application/json")
+	        	.params("programName", "program1")
+	        .when()
+	        	.get("/api/results")
+	        .then()
+	        	.statusCode(200)
+	        	.extract()
+	        	.jsonPath()
+	        	.getLong("[0].id");
+				
+		
 		given()
 	        .spec(getRequestSpecification())
 	        .contentType("application/json")
 	        .when()
-	        	.delete("/api/results/12")
+	        	.delete("/api/results/" + resultId)
 	        .then()
 	        	.statusCode(200);
 		
