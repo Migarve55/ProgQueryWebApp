@@ -5,7 +5,7 @@
 	<!-- Barra de Navegación superior -->
 	<nav th:replace="fragments/nav" />
 	<div class="container mt-2" th:if="not ${#lists.isEmpty(resultsList)}">
-		<h1 class="display-4 text-center" th:text="#{result.list.title}">Resultados</h1>
+		<h1 class="display-4 px-3 py-3 pt-md-5 pb-md-4 text-center" th:text="#{result.list.title}">Resultados</h1>
 		<div class="wb-cont mt-2 mb-2">
 			<div th:each="result : ${resultsList}">
 				<div class="resultHeader">

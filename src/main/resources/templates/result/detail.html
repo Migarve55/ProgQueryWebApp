@@ -4,7 +4,7 @@
 <body>
 	<nav th:replace="fragments/nav"/>
 	<div class="container mt-2" th:if="${not #lists.isEmpty(problems)}">
-  		<h1 class="display-4 text-center" th:text="#{result.detail.title}">Report</h1>
+  		<h1 class="display-4 px-3 py-3 pt-md-5 pb-md-4 text-center" th:text="#{result.detail.title}">Report</h1>
 		<!-- Report -->
 		<div th:if="${not #lists.isEmpty(queryProblems)}">
 		<h2 class="text-center mt-4 mb-4" th:text="#{result.detail.queryErrors}">Query errors</h2>

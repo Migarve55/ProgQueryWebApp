@@ -4,7 +4,7 @@
 <body>
 	<nav th:replace="fragments/nav" />
 	<div class="container">
-		<h1 class="display-4 text-center mt-4 mb-4" th:text="#{login.title}">Idéntificate</h1>
+		<h1 class="display-4 px-3 py-3 pt-md-5 pb-md-4 text-center" th:text="#{login.title}">Idéntificate</h1>
 		<div class="alert alert-danger" role="alert" th:if="${param.error}">
  			<span th:text="#{error.login}"></span>
 		</div>

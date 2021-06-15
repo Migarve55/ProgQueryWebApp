@@ -4,7 +4,7 @@
 <body>
 	<nav th:replace="fragments/nav" />
 	<div class="container mt-3">
-		<h1 class="display-4 text-center mt-4 mb-4" th:text="#{query.add.title}">Agregar consulta</h1>
+		<h1 class="display-4 px-3 py-3 pt-md-5 pb-md-4 text-center" th:text="#{query.add.title}">Agregar consulta</h1>
 		<form class="form-horizontal wb-cont" method="post" action="/query/add" th:object="${query}">
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="name" th:text="#{name}">Nombre:</label>
