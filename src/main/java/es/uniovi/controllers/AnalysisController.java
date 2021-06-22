@@ -57,7 +57,7 @@ public class AnalysisController {
 		List<User> users = usersService.getUsers();
 		users.remove(user);
 		model.addAttribute("usersList", users);
-		model.addAttribute("query", new Analysis());
+		model.addAttribute("analysis", new Analysis());
 		return "query/add";
 	}
 	
@@ -68,7 +68,7 @@ public class AnalysisController {
 		analysis.setUser(user);
 		addAnalysisValidator.validate(analysis, result);
 		if (result.hasErrors()) {
-			model.addAttribute("query", analysis);
+			model.addAttribute("analysis", analysis);
 			return "query/add";
 		}
 		//Add it
@@ -114,6 +114,7 @@ public class AnalysisController {
 		if (analysis == null) {
 			return "redirect:/";
 		}
+		analysisService.canModifyAnalysis(user, analysis);
 		// Change query
 		if (!analysisService.addUser(user, analysis, toAdd)) {
 			redirect.addFlashAttribute("error", "error.addUser");
@@ -132,6 +133,7 @@ public class AnalysisController {
 		if (analysis == null) {
 			return "redirect:/";
 		}
+		analysisService.canModifyAnalysis(user, analysis);
 		// Change query
 		if (!analysisService.removeUser(user, analysis, toRemove)) {
 			redirect.addFlashAttribute("error", "error.removeUser");
@@ -149,7 +151,7 @@ public class AnalysisController {
 			return "redirect:/";
 		}
 		analysisService.canModifyAnalysis(user, analysis);
-		model.addAttribute("query", analysis);
+		model.addAttribute("analysis", analysis);
 		return "query/edit";
 	}
 	
@@ -159,9 +161,10 @@ public class AnalysisController {
 		User user = usersService.getUserByEmail(email);
 		editAnalysisValidator.validate(analysis, result);
 		Analysis original = analysisService.findAnalysis(id);
+		analysisService.canModifyAnalysis(user, original);
 		if (result.hasErrors()) {
-			model.addAttribute("query", analysis);
-			return "/query/edit";
+			model.addAttribute("analysis", analysis);
+			return "query/edit";
 		}
 		if (original == null) {
 			return "redirect:/";

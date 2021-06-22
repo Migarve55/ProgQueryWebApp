@@ -7,9 +7,9 @@
 	<div class="container">
 		<div class="display-4 px-3 py-3 pt-md-5 pb-md-4 text-center">
   			<h1 class="display-4" th:text="#{query.edit.title}">Editar consulta</h1>
- 			<p class="lead" th:text="*{query.name}"></p>
+ 			<p class="lead" th:text="*{analysis.name}"></p>
 		</div>
-		<form class="form-horizontal wb-cont" method="post" th:action="${'/query/edit/' + query.id}" th:object="${query}">
+		<form class="form-horizontal wb-cont" method="post" th:action="${'/query/edit/' + analysis.id}" th:object="${analysis}">
 			<div class="form-group">
 				<label class="control-label col-sm-12" for="description" th:text="#{description}">Descripción:</label>
 				<div class="col-sm-12">
