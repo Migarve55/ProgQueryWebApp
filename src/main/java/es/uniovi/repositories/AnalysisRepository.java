@@ -21,10 +21,10 @@ public interface AnalysisRepository extends CrudRepository<Analysis, Long> {
 	@Query("select q from Analysis q where q.publicForAll = true")
 	List<Analysis> findAllPublic();
 	
-	@Query(value = "select q.* from Analysis q where q.name = ?1 and (q.public_for_all = true or q.user_id = ?2 or q.id in (select c.analysis_id from public_to c where c.user_id = ?2))", nativeQuery = true)
+	@Query(value = "select q.* from analysis q where q.name = ?1 and (q.public_for_all = true or q.user_id = ?2 or q.id in (select c.analysis_id from public_to c where c.user_id = ?2))", nativeQuery = true)
 	Analysis findAvailableByNameAndUser(String name, User user);
 	
-	@Query(value = "select q.* from Analysis q where q.name REGEXP ?1 and (q.public_for_all = true or q.user_id = ?2 or q.id in (select c.analysis_id from public_to c where c.user_id = ?2))", nativeQuery = true)
+	@Query(value = "select q.* from analysis q where q.name REGEXP ?1 and (q.public_for_all = true or q.user_id = ?2 or q.id in (select c.analysis_id from public_to c where c.user_id = ?2))", nativeQuery = true)
 	List<Analysis> findAllByFamily(String family, User user);
 	
 	@Query("select q from Analysis q where user = ?1 and name like ?2 order by name")
